@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="theme-color" content="#14233B">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Contractor Nexus V7.2 · ระบบบริหารงานติดตั้ง</title>
+<title>Contractor Nexus V7.4 · ระบบบริหารงานติดตั้ง</title>
 <meta name="description" content="Contractor Nexus ระบบบริหารงานติดตั้งเฟอร์นิเจอร์และผู้รับเหมา — Admin, Sale, จัดซื้อ, ผู้รับเหมา">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -300,6 +300,20 @@ table.t{width:100%;border-collapse:collapse;font-size:14px}
 .paper-doc{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 18px rgba(0,0,0,.08);padding:10px}
 .paper-doc svg{display:block;width:100%;height:auto}
 tr.dim td{opacity:.72}
+.sn{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:1px 7px;border-radius:999px;background:#EEF3FA;color:#1E4E8C;font:600 11.5px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;vertical-align:middle;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sn .ico{flex:none}
+.jsn{display:flex;align-items:center;gap:4px;font-size:12px;color:#1E4E8C;margin-top:2px}
+.sn-card{border-color:#BFD2EC;background:linear-gradient(0deg,#fff,#F5F8FD)}
+.sn-card label{font-weight:700;color:var(--ink)}
+.sn-in{font-size:18px;height:46px;letter-spacing:.3px}
+.sn-wait{margin-top:12px;border:1.5px dashed #C9D6E8;border-radius:10px;padding:10px 12px;background:#fff}
+.sn-wait-h{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text-2)}
+.sn-wait-b{margin-top:6px;font-size:12.5px;color:var(--text-3);line-height:1.9}
+.sn-chip{display:inline-block;margin:0 4px 0 0;padding:0 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);font-size:12px;line-height:1.7}
+.sbox{position:relative;flex:1;max-width:460px;min-width:220px}
+.sbox .ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3);pointer-events:none}
+.sbox .input{padding-left:34px}
+tr.hidden{display:none}
 .fv-links{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .actbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:10px 12px;margin-bottom:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px}
 .actbar .lbl{font-size:12px;color:var(--text-3);margin-right:2px}
@@ -311,6 +325,11 @@ tr.dim td{opacity:.72}
 .login .lg-h{display:flex;gap:12px;align-items:center;margin-bottom:18px}
 .login.setup{width:min(520px,100%)}
 .lg-mark{width:44px;height:44px;border-radius:12px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+.login.reg{width:min(560px,100%)}
+.reg-roles{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lg-reg{margin-top:14px;justify-content:center}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+@container app (max-width:520px){.reg-roles{grid-template-columns:1fr}}
 .lg-note{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);line-height:1.5}
 .login .acc{display:flex;flex-direction:column;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .login .acc button{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px}
@@ -531,7 +550,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.2';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.4';
 const BID_DAYS = 10; /* นับถอยหลัง 10 วันปฏิทิน (รวมวันอาทิตย์/วันหยุด) — ผู้รับเหมาเปลี่ยนไม่ได้ */
 /* % ค่าติดตั้งจากราคาขาย: เก็บที่ Server และส่งมาเฉพาะ Admin — ไม่มีค่าอัตราฝังในโค้ดหน้าเว็บ */
 const TYPES = [
@@ -593,7 +612,7 @@ async function signIn(username, pw) {
   const d = await bodyOf(r);
   if (!r.ok) {
     const t = JSON.stringify(d || {});
-    if (/banned/i.test(t)) throw new ApiError('บัญชีนี้ถูกปิดใช้งาน กรุณาติดต่อ Admin', r.status);
+    if (/banned/i.test(t)) throw new ApiError('บัญชีนี้ยังเข้าระบบไม่ได้ — รอ Admin อนุมัติการลงทะเบียน หรือบัญชีถูกปิดใช้งาน กรุณาติดต่อ Admin', r.status);
     if (r.status === 429) throw new ApiError('ลองเข้าสู่ระบบบ่อยเกินไป — รอสักครู่แล้วลองใหม่', 429);
     if (r.status >= 500) throw new ApiError('ระบบไม่พร้อมใช้งานชั่วคราว ลองใหม่อีกครั้ง', r.status);
     throw new ApiError('Username หรือ Password ไม่ถูกต้อง', r.status);
@@ -638,6 +657,13 @@ async function callFn(name, body) {
   if (!r.ok) throw new ApiError((d && (d.error || d.message)) || 'เกิดข้อผิดพลาด (' + r.status + ')', r.status);
   return d;
 }
+/* เรียก Edge Function โดยไม่ต้องเข้าสู่ระบบ (ใช้เฉพาะการลงทะเบียน — Server ตรวจข้อมูลและตั้งบัญชีเป็นรออนุมัติ) */
+async function callPublicFn(name, body) {
+  const r = await http('/functions/v1/' + name, { method: 'POST', headers: { apikey: CN.key, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const d = await bodyOf(r);
+  if (!r.ok) throw new ApiError((d && (d.error || d.message)) || 'เกิดข้อผิดพลาด (' + r.status + ')', r.status);
+  return d;
+}
 async function upload(path, blob) {
   const r = await authed('/storage/v1/object/' + CN.bucket + '/' + path, { method: 'POST', headers: { 'Content-Type': blob.type || 'application/octet-stream', 'x-upsert': 'false' }, body: blob });
   if (!r.ok) { const d = await bodyOf(r); throw new ApiError('อัปโหลดไฟล์ไม่สำเร็จ (' + ((d && (d.message || d.error)) || r.status) + ')', r.status); }
@@ -659,6 +685,7 @@ async function reload() {
   const changed = sig !== lastState; lastState = sig;
   st.settings.rates = st.settings.rates || {};
   st.settings.pay = Object.assign({}, DEFAULT_PAY, st.settings.pay || {});
+  st.signups = st.signups || [];
   DB = st;
   return changed;
 }
@@ -733,7 +760,7 @@ function pubOrder(o, cid) {
   const mine = !!(o.award && o.award.cid === cid);
   return {
     id: o.id, title: o.title, customer: o.customer, siteName: o.siteName, province: o.province, confirmedAt: o.confirmedAt, deadline: deadline(o),
-    saleName: userById(o.saleId).name, refTotal: fee(o), refChangedAt: o.refChangedAt, editedAt: o.editedAt, cancelledAt: o.cancelledAt, wantFrom: o.wantFrom, wantTo: o.wantTo, cabinets: o.cabinets, note: o.note,
+    saleName: userById(o.saleId).name, snOrder: o.snOrder || '', refTotal: fee(o), refChangedAt: o.refChangedAt, editedAt: o.editedAt, cancelledAt: o.cancelledAt, wantFrom: o.wantFrom, wantTo: o.wantTo, cabinets: o.cabinets, note: o.note,
     drawings: o.drawings, prodUrl: o.prodUrl, status: ost(o),
     address: mine ? o.address : '', contactName: mine ? o.contactName : '', contactPhone: mine ? o.contactPhone : '',
     myBid: (o.bids.find((b) => b.cid === cid) || null), awardMine: mine, awardOther: !!o.award && !mine,
@@ -746,7 +773,7 @@ function pubOrder(o, cid) {
 /* =====================================================================
    SHELL · ROUTER · MODAL · TOAST · ไฟล์แนบ (Supabase Storage)
    ===================================================================== */
-const S = { user: null, viewCid: '', navOpen: false, cal: { month: '' }, ordFilter: '', instTab: 'check', payCid: '', payF: 'due', queueProbe: '', pendingSync: false, booting: false, bootErr: '' };
+const S = { q: {}, user: null, viewCid: '', navOpen: false, cal: { month: '' }, ordFilter: '', instTab: 'check', payCid: '', payF: 'due', queueProbe: '', pendingSync: false, booting: false, bootErr: '' };
 function loadView() { try { S.viewCid = sessionStorage.getItem('cn_view') || ''; } catch (e) { S.viewCid = ''; } }
 function saveS() { try { sessionStorage.setItem('cn_view', S.viewCid || ''); } catch (e) { /* ignore */ } }
 const Acts = {};
@@ -800,6 +827,19 @@ function modal(o) {
 on('closeOv', () => closeOverlay());
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#overlay.on')) closeOverlay(); });
 
+/* เลขที่ Order StarNexus — ใช้เชื่อมกับ StarNexus และบาร์โค้ดหน้า Site (เทียบด้วยเลขนำหน้าเหมือน Server) */
+const SN_RE = /^[A-Za-z0-9][A-Za-z0-9_.\/-]{2,59}$/;
+function snKey(v) { const s = String(v || '').trim().toUpperCase(), m = /^([0-9]{6,})/.exec(s); return m ? m[1] : s; }
+function snTag(o) { return o && o.snOrder ? '<div class="sn" title="เลขที่ Order StarNexus">' + icon('link', 'xs') + '<span>' + esc(o.snOrder) + '</span></div>' : ''; }
+/* ช่องค้นหาในตาราง: ซ่อนแถวที่ไม่ตรง (ไม่วาดหน้าใหม่ — พิมพ์ต่อได้ลื่น) */
+function searchBox(key, ph) { return '<div class="sbox">' + icon('search', 'sm') + '<input class="input" type="search" data-inp="tblFilter" data-k="' + key + '" value="' + esc(S.q[key] || '') + '" placeholder="' + esc(ph) + '" aria-label="ค้นหา"></div>'; }
+function qAttr(o) { return ' data-q="' + esc([o.id, o.snOrder, o.title, o.customer, o.siteName, o.province].join(' ').toLowerCase()) + '"'; }
+function applyFilter(key) {
+  const q = String(S.q[key] || '').trim().toLowerCase(), rows = $$('#app tr[data-q]');
+  let n = 0; rows.forEach((tr) => { const hit = !q || q.split(/\s+/).every((w) => tr.dataset.q.indexOf(w) >= 0); tr.classList.toggle('hidden', !hit); if (hit) n++; });
+  const info = $('#sbox-info'); if (info) info.textContent = q ? 'พบ ' + n + ' รายการ' : '';
+}
+Acts.tblFilter = (el) => { S.q[el.dataset.k] = el.value; applyFilter(el.dataset.k); };
 function badge(st) { const m = OST[st]; return '<span class="badge t-' + m[1] + '">' + m[0] + '</span>'; }
 function payBadge(p) { if (!p) return '<span class="muted small">—</span>'; const m = PAYST[p.st]; return '<span class="badge t-' + m[1] + '">' + m[0] + '</span>'; }
 function sw(type) { const t = TYPE_BY[type]; return t ? '<span class="sw"><i class="mat-' + t.k + '"></i>' + t.name + '</span>' : '<span class="muted small">—</span>'; }
@@ -932,7 +972,7 @@ function navFor(area) {
     { h: '#/admin/booking', i: 'calendar', t: 'ปฏิทิน Booking' },
     { h: '#/admin/install', i: 'hammer', t: 'สถานะติดตั้ง & ใบส่งมอบ', n: c.check, w: true },
     { h: '#/admin/pay', i: 'wallet', t: 'การเงินผู้รับเหมา', n: c.payDue, w: true },
-    { h: '#/admin/users', i: 'key', t: 'จัดการผู้ใช้' },
+    { h: '#/admin/users', i: 'key', t: 'จัดการผู้ใช้', n: c.signups, w: true },
     { h: '#/admin/settings', i: 'gear', t: 'ตั้งค่าระบบ' },
     { sec: 'ดูหน้าจอของฝ่ายอื่น' },
     { h: '#/sale/orders', i: 'file', t: 'หน้าจอ Sale' },
@@ -957,7 +997,8 @@ function navFor(area) {
 function counts() {
   const st = DB.orders.map(ost);
   return { open: st.filter((x) => x === 'open').length, toApprove: st.filter((x) => x === 'open' || x === 'expired').length, check: st.filter((x) => x === 'check').length,
-    payDue: S.user && S.user.role === 'admin' ? DB.orders.map(payOf).filter((p) => p && p.left > 0).length : 0 };
+    payDue: S.user && S.user.role === 'admin' ? DB.orders.map(payOf).filter((p) => p && p.left > 0).length : 0,
+    signups: (DB.signups || []).filter((g) => g.status === 'pending').length };
 }
 function curCid() {
   if (S.user && S.user.role === 'contractor') return S.user.cid;
@@ -1015,7 +1056,7 @@ function route(re, area, fn) { ROUTES.push({ re, area, fn }); }
 function rerender() { render({ keep: true }); }
 function curPath() { return (location.hash || '').replace(/^#/, '').split('?')[0]; }
 /* หน้าที่กำลังกรอกข้อมูลอยู่ — ไม่รีเฟรชทับ */
-function isEditing() { const p = curPath(); return /^\/sale\/(new|edit\/)/.test(p) || p === '/admin/settings' || (p.indexOf('/con/job/') === 0 && typeof HF !== 'undefined' && HF.files.length > 0); }
+function isEditing() { const p = curPath(); return /^\/sale\/(new|edit\/)/.test(p) || p === '/admin/settings' || p === '/register' || (p.indexOf('/con/job/') === 0 && typeof HF !== 'undefined' && HF.files.length > 0); }
 function loadingPage(msg) {
   return '<div class="login-wrap"><div class="login" style="text-align:center"><div class="lg-mark" style="margin:0 auto 12px"><svg viewBox="0 0 24 24" width="26" height="26">' + ICONS.starMark + '</svg></div><h1 style="font-size:19px">' + APP_NAME + '</h1>' +
     (msg ? '<div style="margin-top:12px">' + notice('danger', esc(msg)) + '</div><button class="btn primary" style="margin-top:12px" data-act="retryBoot">' + icon('refresh', 'sm') + ' ลองใหม่</button> <button class="btn" style="margin-top:12px" data-act="logout">ออกจากระบบ</button>'
@@ -1032,12 +1073,12 @@ function render(opts) {
   const app = $('#app'); if (!app) return;
   const path = curPath();
   if (!AUTH.s) {
-    if (path !== '/login') { go('#/login'); return; }
+    if (path !== '/login' && path !== '/register') { go('#/login'); return; }
   } else if (!DB) {
     app.innerHTML = loadingPage(S.bootErr); if (!S.bootErr) boot(); return;
   }
   if (DB) S.user = DB.me;
-  if (S.user && (path === '' || path === '/' || path === '/login')) { go(ROLES[S.user.role].home); return; }
+  if (S.user && (path === '' || path === '/' || path === '/login' || path === '/register')) { go(ROLES[S.user.role].home); return; }
   const m = ROUTES.map((r) => ({ r, x: r.re.exec(path) })).find((z) => z.x);
   if (!m) { go(S.user ? ROLES[S.user.role].home : '#/login'); return; }
   if (m.r.area && !S.user) { go('#/login'); return; }
@@ -1124,7 +1165,7 @@ function openOrder(id) {
     body: (acts ? '<div class="actbar"><span class="lbl">จัดการ</span>' + acts + '</div>' : '') + cancelNote(o) +
       '<div class="row" style="margin:' + (o.cancelledAt ? '12px' : '0') + ' 0 12px">' + drawBtns(o) + '</div>' +
       (st === 'open' || st === 'expired' ? '<div style="margin-bottom:12px">' + cdHtml(o) + '</div>' : '') +
-      '<dl class="dl">' + [['ประเภทงาน', sw(o.type)], seeSalePrice() ? ['ราคาขาย', '<b>' + money(saleTotal(o), 0) + '</b> ' + icon('lock', 'xs') + ' <span class="xs muted">เฉพาะภายใน</span>'] : null,
+      '<dl class="dl">' + [o.snOrder ? ['เลขที่ Order StarNexus', '<span class="mono strong">' + esc(o.snOrder) + '</span>'] : null, ['ประเภทงาน', sw(o.type)], seeSalePrice() ? ['ราคาขาย', '<b>' + money(saleTotal(o), 0) + '</b> ' + icon('lock', 'xs') + ' <span class="xs muted">เฉพาะภายใน</span>'] : null,
         role !== 'sale' && ref != null ? ['ราคาตั้งต้นผู้รับเหมา', '<b style="color:var(--teal)">' + money(ref) + '</b>' + (isAdmin() && rateOf(o) != null ? ' <span class="xs muted">= ราคาขาย × ' + rateOf(o) + '%' + (o.confirmedAt ? '' : ' (อัตราปัจจุบัน)') + '</span>' : '') + (o.refChangedAt ? '<div class="xs" style="color:#8A5A00">แก้ไขราคาตั้งต้นเมื่อ ' + fmtDT(o.refChangedAt) + '</div>' : '')] : null,
         ['ลูกค้า', esc(o.customer)], ['สถานที่', esc(o.siteName) + '<div class="xs muted">' + esc(o.address) + ' จ.' + esc(o.province) + '</div>'], ['ผู้ติดต่อหน้างาน', esc(o.contactName) + (o.contactPhone ? ' · ' + esc(o.contactPhone) : '')],
         ['ลูกค้าต้องการติดตั้ง', fmtRange(o.wantFrom, o.wantTo)], ['จำนวนตู้ (Barpack)', num(o.cabinets) + ' ตู้'], ['Sale', esc(userById(o.saleId).name)], o.note ? ['หมายเหตุ', esc(o.note)] : null, o.editedAt ? ['แก้ไขล่าสุด', fmtDT(o.editedAt)] : null]
@@ -1257,6 +1298,7 @@ route(/^\/admin\/home$/, 'admin', () => {
   const kpi = (h, ico, tone, k, v, s) => '<a class="card kpi accent" href="' + h + '" style="--k:var(--' + tone + ')"><div class="k">' + icon(ico, 'sm') + k + '</div><div class="v">' + v + '</div><div class="s">' + s + '</div></a>';
   const flow = ['draft', 'open', 'expired', 'booked', 'installing', 'check', 'done'];
   const todo = [], soon = addDays(todayStr(), 7);
+  (DB.signups || []).filter((g) => g.status === 'pending').forEach((g) => todo.push(['user', 'violet', 'คำขอลงทะเบียนรออนุมัติ: ' + g.name, (ROLES[g.role] ? ROLES[g.role].label : g.role) + ' · ' + g.username + (g.company ? ' · ' + g.company : ''), '#/admin/users']));
   st.filter((x) => x.s === 'expired').forEach((x) => todo.push(['scale', 'amber', 'หมดเวลาเสนอราคา รอเลือกผู้รับเหมา: ' + x.o.id, x.o.bids.length + ' ราย · ' + x.o.title, '#/admin/bids/' + x.o.id]));
   st.filter((x) => x.s === 'check').forEach((x) => todo.push(['file', 'orange', 'รอตรวจใบส่งมอบ: ' + x.o.id, shortCo(conById(x.o.award.cid).company) + ' · ' + x.o.title, '#/admin/install']));
   st.filter((x) => x.s === 'open' && deadline(x.o) - nowMs() < DAY).forEach((x) => todo.push(['clock', 'red', 'ใกล้หมดเวลาเสนอราคา: ' + x.o.id, x.o.bids.length + ' ราย · ' + x.o.title, '#/admin/bids/' + x.o.id]));
@@ -1278,11 +1320,12 @@ on('ordFilter', (el) => { S.ordFilter = el.dataset.f; go('#/admin/orders'); });
 route(/^\/admin\/orders$/, 'admin', () => {
   const f = S.ordFilter;
   const rows = DB.orders.filter((o) => !f || ost(o) === f).sort((a, b) => b.id.localeCompare(a.id));
-  return { nav: '#/admin/orders', html: pageHead('Order ทั้งหมด', 'ทุก Sale Order ตั้งแต่ร่างจนจ่ายเงินผู้รับเหมา — กดแถวเพื่อดูรายละเอียด') +
+  return { nav: '#/admin/orders', after: () => applyFilter('adm'), html: pageHead('Order ทั้งหมด', 'ทุก Sale Order ตั้งแต่ร่างจนจ่ายเงินผู้รับเหมา — กดแถวเพื่อดูรายละเอียด') +
+    '<div class="row" style="margin-bottom:10px">' + searchBox('adm', 'ค้นหา เลข Order / เลข StarNexus / ชื่องาน / ลูกค้า') + '<span class="xs muted" id="sbox-info"></span></div>' +
     '<div class="chips" style="margin-bottom:12px"><button class="fchip ' + (!f ? 'on' : '') + '" data-act="setOrdF" data-f="">ทั้งหมด <span class="n">' + DB.orders.length + '</span></button>' +
     Object.keys(OST).map((k) => '<button class="fchip ' + (f === k ? 'on' : '') + '" data-act="setOrdF" data-f="' + k + '">' + OST[k][0] + ' <span class="n">' + DB.orders.filter((o) => ost(o) === k).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาขาย ' + icon('lock', 'xs') + '</th><th class="r">ราคาตั้งต้น</th><th>สถานะ</th><th>เวลาเสนอราคา / ผู้รับเหมา</th><th>การเงิน</th></tr></thead><tbody>' +
-    (rows.length ? rows.map((o) => { const s = ost(o); return '<tr class="click" data-act="order" data-id="' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b><div class="sub" style="max-width:300px">' + esc(o.title) + '</div></td>' +
+    (rows.length ? rows.map((o) => { const s = ost(o); return '<tr class="click" data-act="order" data-id="' + o.id + '"' + qAttr(o) + '><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:300px">' + esc(o.title) + '</div></td>' +
       '<td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="ราคาตั้งต้น" class="r money" style="color:var(--teal)">' + money(fee(o), 0) + '</td><td data-l="สถานะ">' + badge(s) + '</td>' +
       '<td data-l="เวลา/ผู้รับเหมา">' + (s === 'open' || s === 'expired' ? cdHtml(o, true) + '<div class="sub">' + o.bids.length + ' รายเสนอแล้ว</div>' : o.award ? '<b class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</b><div class="sub">' + fmtRange(o.award.start, o.award.end) + '</div>' : '<span class="muted small">—</span>') + '</td>' +
       '<td data-l="การเงิน">' + payBadge(payOf(o)) + '</td></tr>'; }).join('') : '<tr><td colspan="7">' + empty('list', 'ไม่มี Order ในสถานะนี้') + '</td></tr>') + '</tbody></table></div></div>' };
@@ -1298,7 +1341,7 @@ function installPage(nav) {
     '<div class="chips" style="margin-bottom:12px">' + tabs.map((x) => '<button class="fchip ' + (t === x[0] ? 'on' : '') + '" data-act="instTab" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + DB.orders.filter((o) => ost(o) === x[0]).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ผู้รับเหมา</th><th>ช่วงติดตั้ง</th><th>รับสินค้าหน้า Site</th><th>ใบส่งมอบ</th><th></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const h = o.install.handover, pct = Math.round(o.install.scanned / Math.max(1, o.cabinets) * 100);
-      return '<tr><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a><div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
+      return '<tr><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
         '<td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ช่วงติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + '</td>' +
         '<td data-l="รับสินค้า"><div class="small">' + o.install.scanned + '/' + o.cabinets + ' ตู้</div><div class="prog" style="width:120px"><i style="width:' + pct + '%"></i></div></td>' +
         '<td data-l="ใบส่งมอบ">' + (h ? (h.review ? (h.review.ok ? '<span class="badge t-green">ตรวจรับแล้ว</span>' : '<span class="badge t-red">ส่งกลับแก้ไข</span>') : '<span class="badge t-orange">รอตรวจ</span>') + '<div class="sub">ใบเซ็น ' + signCount(h) + ' · ภาพ ' + (h.files.length - signCount(h)) + ' รูป</div>' : '<span class="muted small">ยังไม่ส่ง</span>') + '</td>' +
@@ -1341,7 +1384,7 @@ on('paySave', async (el) => {
 
 route(/^\/admin\/users$/, 'admin', () => {
   const us = liveUsers(), del = DB.users.length - us.length;
-  return { nav: '#/admin/users', html: pageHead('จัดการผู้ใช้', 'เพิ่ม/แก้ไข/ลบผู้ใช้ กำหนด Username, Password และประเภทผู้ใช้ — ผู้รับเหมาแต่ละรายมีบัญชีแยกกัน', '<button class="btn primary" data-act="userForm">' + icon('plus') + ' เพิ่มผู้ใช้</button>') +
+  return { nav: '#/admin/users', html: pageHead('จัดการผู้ใช้', 'เพิ่ม/แก้ไข/ลบผู้ใช้ กำหนด Username, Password และประเภทผู้ใช้ — ผู้รับเหมาแต่ละรายมีบัญชีแยกกัน · Sale/จัดซื้อ/ผู้รับเหมาลงทะเบียนเองได้ที่หน้าเข้าสู่ระบบ (รอคุณอนุมัติ)', '<button class="btn primary" data-act="userForm">' + icon('plus') + ' เพิ่มผู้ใช้</button>') + signupSection() +
     '<div class="grid g4" style="margin-bottom:16px">' + Object.keys(ROLES).map((r) => '<div class="card kpi"><div class="k">' + roleTag(r) + '</div><div class="v">' + us.filter((u) => u.role === r).length + '</div><div class="s">ใช้งาน ' + us.filter((u) => u.role === r && u.active).length + ' บัญชี</div></div>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>ผู้ใช้</th><th>Username</th><th>ประเภท</th><th>บริษัทผู้รับเหมา</th><th>เข้าใช้ล่าสุด</th><th>สถานะ</th><th class="r">จัดการ</th></tr></thead><tbody>' +
     us.map((u) => { const me = u.id === S.user.id; return '<tr><td class="main"><b>' + esc(u.name) + '</b>' + (u.super ? ' <span class="badge t-amber plain">Super Admin</span>' : '') + (me ? ' <span class="badge t-blue plain">คุณ</span>' : '') + '<div class="sub">' + esc(u.phone || '') + '</div></td><td data-l="Username" class="mono">' + esc(u.username) + '</td><td data-l="ประเภท">' + roleTag(u.role) + '</td>' +
@@ -1355,6 +1398,61 @@ route(/^\/admin\/users$/, 'admin', () => {
     (DB.contractors.length ? DB.contractors.map((c) => { const n = us.filter((u) => u.cid === c.id); return '<tr><td class="main"><b>' + esc(c.company) + '</b><div class="sub mono">' + esc(c.id) + '</div></td><td data-l="ผู้ติดต่อ" class="small">' + esc(c.contact || '—') + (c.phone ? '<div class="sub">' + esc(c.phone) + '</div>' : '') + '</td><td data-l="ช่าง" class="r">' + (c.team ? c.team + ' คน' : '—') + '</td>' +
       '<td data-l="บัญชี" class="small">' + (n.length ? n.map((u) => esc(u.username) + (u.active ? '' : ' <span class="muted">(ปิด)</span>')).join(', ') : '<span class="muted">ไม่มีบัญชีใช้งาน</span>') + '</td><td class="r"><button class="btn xs" data-act="coForm" data-id="' + c.id + '">' + icon('edit', 'xs') + ' แก้ไข</button></td></tr>'; }).join('') : '<tr><td colspan="5">' + empty('building', 'ยังไม่มีบริษัทผู้รับเหมา') + '</td></tr>') + '</tbody></table></div></div>' +
     '<div style="margin-top:12px">' + notice('secret', 'รหัสผ่านเก็บโดยระบบยืนยันตัวตนของ Supabase (เข้ารหัส ไม่มีใครเห็นรหัสจริง) · แจ้ง Username/รหัสให้ผู้ใช้เอง · บัญชี Super Admin ลบหรือปิดใช้งานไม่ได้ · ผู้ใช้ที่ลบแล้วยังเก็บชื่อไว้ในประวัติงาน' + (del ? ' (ลบแล้ว ' + del + ' บัญชี)' : '')) + '</div>' };
+});
+/* ---------- คำขอลงทะเบียน (ผู้ใช้สมัครเองที่หน้าเข้าสู่ระบบ) ---------- */
+const SIGNST = { pending: ['รออนุมัติ', 'amber'], approved: ['อนุมัติแล้ว', 'green'], rejected: ['ปฏิเสธ', 'gray'] };
+const coKey = (n) => shortCo(n).toLowerCase().replace(/[\s.]/g, '');
+function signupSection() {
+  const all = DB.signups || [], pend = all.filter((g) => g.status === 'pending'), done = all.filter((g) => g.status !== 'pending').slice(0, 8);
+  if (!all.length) return '';
+  return (pend.length ? '<div class="card signup-card" style="margin-bottom:16px"><div class="card-h"><h2>' + icon('user') + ' คำขอลงทะเบียนรออนุมัติ <span class="badge t-amber">' + pend.length + '</span></h2><span class="xs muted">ผู้สมัครเข้าระบบไม่ได้จนกว่าคุณจะอนุมัติ</span></div>' +
+      '<div class="table-wrap"><table class="t resp"><thead><tr><th>ผู้สมัคร</th><th>Username</th><th>ขอเป็น</th><th>บริษัทที่แจ้ง</th><th>ส่งเมื่อ</th><th class="r">ดำเนินการ</th></tr></thead><tbody>' +
+      pend.map((g) => '<tr><td class="main"><b>' + esc(g.name) + '</b><div class="sub">' + esc(g.phone) + (g.note ? ' · ' + esc(g.note) : '') + '</div></td><td data-l="Username" class="mono">' + esc(g.username) + '</td><td data-l="ขอเป็น">' + roleTag(g.role) + '</td>' +
+        '<td data-l="บริษัท" class="small">' + (g.company ? esc(g.company) + (g.team ? '<div class="sub">ช่าง ' + g.team + ' คน</div>' : '') : '<span class="muted">—</span>') + '</td><td data-l="ส่งเมื่อ" class="small">' + fmtDT(g.createdAt) + '<div class="sub">' + timeAgo(g.createdAt) + '</div></td>' +
+        '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px"><button class="btn sm danger" data-act="sgReject" data-id="' + g.id + '">ปฏิเสธ</button><button class="btn sm ok" data-act="sgApprove" data-id="' + g.id + '">' + icon('check', 'sm') + ' อนุมัติ</button></span></td></tr>').join('') +
+      '</tbody></table></div></div>' : '') +
+    (done.length ? '<details class="small" style="margin:-4px 0 16px"><summary class="muted" style="cursor:pointer">คำขอที่ดำเนินการแล้ว (30 วันล่าสุด) ' + done.length + ' รายการ</summary><div class="card" style="margin-top:8px"><div class="table-wrap"><table class="t"><tbody>' +
+      done.map((g) => '<tr><td><b>' + esc(g.name) + '</b> <span class="mono xs">' + esc(g.username) + '</span></td><td>' + roleTag(g.role) + '</td><td><span class="badge t-' + SIGNST[g.status][1] + '">' + SIGNST[g.status][0] + '</span></td><td class="xs muted">' + fmtDT(g.decidedAt) + ' · ' + esc(g.decidedBy || '') + (g.decideNote ? ' · ' + esc(g.decideNote) : '') + '</td></tr>').join('') + '</tbody></table></div></div></details>' : '');
+}
+on('sgApprove', (el) => {
+  const g = (DB.signups || []).find((x) => String(x.id) === el.dataset.id); if (!g) return;
+  const same = g.company ? DB.contractors.find((c) => coKey(c.company) === coKey(g.company)) : null;
+  modal({ title: icon('check') + ' อนุมัติการลงทะเบียน', sub: esc(g.name) + ' · ' + esc(g.username),
+    body: '<dl class="dl"><dt>เบอร์โทร</dt><dd>' + esc(g.phone) + '</dd><dt>ขอเป็น</dt><dd>' + roleTag(g.role) + '</dd>' + (g.company ? '<dt>บริษัทที่แจ้ง</dt><dd>' + esc(g.company) + (g.team ? ' · ช่าง ' + g.team + ' คน' : '') + '</dd>' : '') + (g.note ? '<dt>หมายเหตุ</dt><dd>' + esc(g.note) + '</dd>' : '') + '<dt>ส่งเมื่อ</dt><dd>' + fmtDT(g.createdAt) + '</dd></dl>' +
+      '<div class="divider"></div><div class="form-grid" id="sa">' +
+      '<div class="field c6"><label>ประเภทผู้ใช้ที่อนุมัติ <span class="req">*</span></label><select class="select" name="role" data-chg="saSync">' + Object.keys(ROLES).map((r) => '<option value="' + r + '"' + (g.role === r ? ' selected' : '') + '>' + ROLES[r].label + '</option>').join('') + '</select><div class="help">เปลี่ยนได้ถ้าผู้สมัครเลือกผิด</div></div>' +
+      '<div class="field c6" id="sa-cid"><label>บริษัทผู้รับเหมา <span class="req">*</span></label><select class="select" name="cid" data-chg="saSync">' + DB.contractors.map((c) => '<option value="' + c.id + '"' + (same && same.id === c.id ? ' selected' : '') + '>' + esc(c.company) + '</option>').join('') + '<option value="__new"' + (same ? '' : ' selected') + '>+ เพิ่มบริษัทใหม่</option></select></div>' +
+      '<div class="c12 form-grid" id="sa-newco" style="margin:0"><div class="field c8"><label>ชื่อบริษัทใหม่ <span class="req">*</span></label><input class="input" name="coName" value="' + esc(g.company) + '"></div><div class="field c4"><label>จำนวนช่าง</label><div class="addon"><input class="input" name="coTeam" inputmode="numeric" value="' + (g.team || '') + '"><span>คน</span></div></div></div>' +
+      '<div class="c12" id="sa-warn"></div></div>',
+    foot: '<button class="btn" data-act="closeOv">ปิด</button><button class="btn ok" data-act="sgApproveOk" data-id="' + g.id + '">' + icon('check', 'sm') + ' อนุมัติให้เข้าระบบ</button>', onOpen: () => saSync() });
+});
+function saSync() {
+  const f = $('#sa'); if (!f) return;
+  const role = f.querySelector('[name=role]').value, cid = f.querySelector('[name=cid]').value, isCon = role === 'contractor';
+  $('#sa-cid').classList.toggle('hidden', !isCon); $('#sa-newco').classList.toggle('hidden', !(isCon && cid === '__new'));
+  $('#sa-warn').innerHTML = isCon && cid !== '__new' ? notice('warn', 'เข้าบริษัทเดิม <b>' + esc(conById(cid).company) + '</b> — ผู้ใช้นี้จะเห็นราคาและงานทั้งหมดของบริษัทนี้ ตรวจให้แน่ใจว่าเป็นคนของบริษัทจริง')
+    : role === 'admin' ? notice('danger', '<b>Admin เห็นทุกอย่าง</b> รวมราคาขาย อัตราค่าติดตั้ง และจัดการผู้ใช้ได้') : role === 'contractor' ? '' : notice('info', ROLES[role].label + ' เห็นข้อมูลภายในบริษัทตามสิทธิ์ของประเภทนี้');
+}
+Acts.saSync = saSync;
+on('sgApproveOk', async (el) => {
+  const f = $('#sa'), g = (n) => f.querySelector('[name=' + n + ']'), d = { sid: Number(el.dataset.id), role: g('role').value, cid: '' };
+  if (d.role === 'contractor') {
+    d.cid = g('cid').value;
+    if (d.cid === '__new') { const co = g('coName').value.trim(); if (co.length < 3) { toast('กรอกชื่อบริษัทผู้รับเหมา', 'err'); return; } if (DB.contractors.some((c) => c.company.trim() === co)) { toast('มีบริษัทชื่อนี้แล้ว — เลือกจากรายการ', 'err'); return; } d.newCompany = { company: co, team: parseInt(g('coTeam').value, 10) || 0 }; }
+  }
+  const sg = (DB.signups || []).find((x) => x.id === d.sid);
+  await callFn('cn-users', { action: 'approve', user: d });
+  await refresh(); closeOverlay(); toast('อนุมัติ ' + (sg ? sg.username : '') + ' แล้ว — เข้าระบบด้วย Username/Password ที่สมัครไว้ได้ทันที'); rerender();
+});
+on('sgReject', (el) => {
+  const g = (DB.signups || []).find((x) => String(x.id) === el.dataset.id); if (!g) return;
+  modal({ title: icon('x') + ' ปฏิเสธคำขอลงทะเบียน?', sub: esc(g.name) + ' · ' + esc(g.username),
+    body: '<p class="small">บัญชีที่สมัครจะถูกลบ (ยังไม่เคยเข้าระบบ) · Username นี้ลงทะเบียนใหม่ได้ · ระบบเก็บประวัติคำขอไว้ 30 วัน</p><div class="field" style="margin-top:10px"><label for="sr-note">เหตุผล (ไม่บังคับ)</label><input class="input" id="sr-note" placeholder="เช่น ไม่ใช่พนักงาน / สมัครซ้ำ"></div>',
+    foot: '<button class="btn" data-act="closeOv">ปิด</button><button class="btn danger" data-act="sgRejectOk" data-id="' + g.id + '">ปฏิเสธคำขอ</button>' });
+});
+on('sgRejectOk', async (el) => {
+  await callFn('cn-users', { action: 'reject', user: { sid: Number(el.dataset.id), note: ($('#sr-note').value || '').trim() } });
+  await refresh(); closeOverlay(); toast('ปฏิเสธคำขอลงทะเบียนแล้ว'); rerender();
 });
 on('userForm', (el) => {
   const u = el.dataset.id ? DB.users.find((x) => x.id === el.dataset.id) : { username: '', name: '', role: 'sale', phone: '', active: true, cid: '' };
@@ -1435,11 +1533,12 @@ route(/^\/sale\/orders$/, 'sale', () => {
     if (canCancelOrder(o)) b.push('<button class="btn sm danger" data-act="ordCancel" data-id="' + o.id + '">' + icon('ban', 'sm') + ' ยกเลิก</button>');
     return b.join('');
   };
-  const row = (o) => { const s = ost(o); return '<tr' + (o.cancelledAt ? ' class="dim"' : '') + '><td class="main"><b class="mono">' + o.id + '</b><div class="sub" style="max-width:320px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td><td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="สถานะ">' + badge(s) + (o.editedAt && !o.cancelledAt ? '<div class="sub">แก้ไข ' + fmtDT(o.editedAt) + '</div>' : '') + '</td>' +
+  const row = (o) => { const s = ost(o); return '<tr' + (o.cancelledAt ? ' class="dim"' : '') + qAttr(o) + '><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:320px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td><td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="สถานะ">' + badge(s) + (o.editedAt && !o.cancelledAt ? '<div class="sub">แก้ไข ' + fmtDT(o.editedAt) + '</div>' : '') + '</td>' +
       '<td data-l="เวลา/ผู้รับเหมา">' + (s === 'open' || s === 'expired' ? cdHtml(o, true) + '<div class="sub">มีผู้รับเหมาเสนอแล้ว ' + o.bids.length + ' ราย</div>' : o.cancelledAt ? '<span class="small">' + esc(o.cancelReason || '') + '</span><div class="sub">' + fmtDT(o.cancelledAt) + (o.cancelledBy ? ' · ' + esc(o.cancelledBy) : '') + '</div>' : o.award ? '<b class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</b><div class="sub">ติดตั้ง ' + fmtRange(o.award.start, o.award.end) + '</div>' : '<span class="muted small">ยังไม่ยืนยัน</span>') + '</td>' +
       '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + actsOf(o, s) + '</span></td></tr>'; };
   const head = '<thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาขาย</th><th>สถานะ</th><th>เวลาเสนอราคา / ผู้รับเหมา</th><th class="r">จัดการ</th></tr></thead>';
-  return { nav: '#/sale/orders', html: pageHead('Sale Order ของฉัน', 'สร้าง Order แนบแบบงาน แล้วกดยืนยัน — ระบบเปิดให้ผู้รับเหมาทุกคนเสนอราคาและเริ่มนับถอยหลัง 10 วันทันที · แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ', '<a class="btn primary" href="#/sale/new">' + icon('plus') + ' สร้าง Sale Order</a>') +
+  return { nav: '#/sale/orders', after: () => applyFilter('sale'), html: pageHead('Sale Order ของฉัน', 'สร้าง Order แนบแบบงาน แล้วกดยืนยัน — ระบบเปิดให้ผู้รับเหมาทุกคนเสนอราคาและเริ่มนับถอยหลัง 10 วันทันที · แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ', '<a class="btn primary" href="#/sale/new">' + icon('plus') + ' สร้าง Sale Order</a>') +
+    (all.length ? '<div class="row" style="margin-bottom:10px">' + searchBox('sale', 'ค้นหา เลข Order / เลข StarNexus / ชื่องาน / ลูกค้า') + '<span class="xs muted" id="sbox-info"></span></div>' : '') +
     '<div class="card"><div class="table-wrap"><table class="t resp">' + head + '<tbody>' +
     (mine.length ? mine.map(row).join('') : '<tr><td colspan="6">' + empty('file', 'ยังไม่มี Sale Order', '', '<a class="btn primary" href="#/sale/new">สร้าง Sale Order</a>') + '</td></tr>') + '</tbody></table></div></div>' +
     (gone.length ? '<div class="sec-t">' + icon('ban') + ' ยกเลิกแล้ว <span class="n">' + gone.length + '</span> <span class="xs muted" style="font-weight:400">เก็บไว้เป็นประวัติ · ผู้รับเหมาไม่เห็น</span></div><div class="card"><div class="table-wrap"><table class="t resp">' + head + '<tbody>' + gone.map(row).join('') + '</tbody></table></div></div>' : '') };
@@ -1449,7 +1548,7 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
   const o = m[1] ? DB.orders.find((x) => x.id === m[1]) : null;
   if (m[1] && (!o || !canEditOrder(o))) return { nav: '#/sale/orders', html: empty('lock', 'แก้ไขไม่ได้', !o ? 'ไม่พบ Order นี้' : o.cancelledAt ? 'Order นี้ถูกยกเลิกแล้ว' : o.award ? 'จัดซื้ออนุมัติผู้รับเหมาแล้ว — แก้ไข Order ไม่ได้ (ถ้าต้องยกเลิก ติดต่อ Admin)' : 'ไม่ใช่ Order ของคุณ', '<a class="btn" href="#/sale/orders">กลับ</a>') };
   const live = !!(o && o.confirmedAt), admin = S.user.role === 'admin';
-  const d = o || { title: '', customer: '', siteName: '', address: '', province: '', contactName: '', contactPhone: '', type: '', sale: '', cabinets: '', wantFrom: addDays(todayStr(), 14), wantTo: addDays(todayStr(), 21), note: '', prodUrl: '', drawings: [] };
+  const d = o || { snOrder: '', title: '', customer: '', siteName: '', address: '', province: '', contactName: '', contactPhone: '', type: '', sale: '', cabinets: '', wantFrom: addDays(todayStr(), 14), wantTo: addDays(todayStr(), 21), note: '', prodUrl: '', drawings: [] };
   SF.files = (d.drawings || []).slice(); SF.id = o ? o.id : ''; SF.busy = false; SF.live = live; SF.orig = o ? { sale: Number(o.sale) || 0, type: o.type || '' } : null;
   const F = (n, label, val, cls, extra) => '<div class="field ' + cls + '" data-f="' + n + '"><label>' + label + '</label>' + (extra || '<input class="input" name="' + n + '" value="' + esc(val) + '">') + '<div class="err"></div></div>';
   const PROV = ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'สมุทรสาคร', 'นครปฐม', 'อยุธยา', 'ชลบุรี', 'ระยอง', 'ฉะเชิงเทรา', 'จังหวัดอื่น ๆ'];
@@ -1457,9 +1556,15 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
   const btns = live
     ? (canCancelOrder(o) ? '<button class="btn danger" data-act="ordCancel" data-id="' + o.id + '">' + icon('ban', 'sm') + ' ยกเลิก Order</button>' : '') + '<button class="btn primary" data-act="saleSave" data-c="0">' + icon('check', 'sm') + ' บันทึกการแก้ไข</button>'
     : (o ? '<button class="btn danger" data-act="ordDel" data-id="' + o.id + '">' + icon('trash', 'sm') + ' ลบร่าง</button>' : '') + '<button class="btn" data-act="saleSave" data-c="0">' + icon('check', 'sm') + ' บันทึกร่าง</button><button class="btn primary" data-act="saleSave" data-c="1">' + icon('send', 'sm') + ' ยืนยัน Order</button>';
-  return { nav: m[1] ? '#/sale/orders' : '#/sale/new', after: () => { saleCalc(); renderSfFiles(); }, html: pageHead(o ? 'แก้ไข Sale Order ' + o.id + (live ? ' ' + badge(ost(o)) : '') : 'สร้าง Sale Order', 'กรอกรายละเอียดงาน เลือกประเภทงาน 1 ประเภท ใส่ราคาขาย แนบแบบงานติดตั้ง และลิงก์แบบงานผลิต', btns, '<a href="#/sale/orders">Sale Order ของฉัน</a> › ' + (o ? o.id : 'สร้างใหม่')) +
+  return { nav: m[1] ? '#/sale/orders' : '#/sale/new', after: () => { saleCalc(); renderSfFiles(); snCheck(); }, html: pageHead(o ? 'แก้ไข Sale Order ' + o.id + (live ? ' ' + badge(ost(o)) : '') : 'สร้าง Sale Order', 'กรอกรายละเอียดงาน เลือกประเภทงาน 1 ประเภท ใส่ราคาขาย แนบแบบงานติดตั้ง และลิงก์แบบงานผลิต', btns, '<a href="#/sale/orders">Sale Order ของฉัน</a> › ' + (o ? o.id : 'สร้างใหม่')) +
     (live ? '<div style="margin-bottom:14px">' + notice('warn', '<b>Order นี้ยืนยันแล้ว ผู้รับเหมาเห็นงานนี้แล้ว</b> — แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ · นับถอยหลังเดิมไม่เปลี่ยน (หมดเวลา ' + fmtDT(deadline(o)) + ')<br>ถ้าแก้ราคาขายหรือประเภทงาน ราคาตั้งต้นจะคำนวณใหม่ และผู้รับเหมาจะเห็นป้าย "ราคาตั้งต้นมีการแก้ไข" · มีผู้รับเหมาเสนอราคาแล้ว ' + o.bids.length + ' ราย') + '</div>' : '') +
     '<form id="sf" onsubmit="return false" novalidate>' +
+    '<div class="card sn-card"><div class="card-b"><div class="field" data-f="snOrder"><label for="sf-sn">' + icon('link', 'sm') + ' เลขที่ Order (StarNexus)</label>' +
+      '<input class="input mono sn-in" id="sf-sn" name="snOrder" value="' + esc(d.snOrder || '') + '" placeholder="เช่น 2609170003 หรือ 2609170003_FOREST_J_PANTRY" autocomplete="off" autocapitalize="characters" spellcheck="false" data-inp="snCheck">' +
+      '<div class="help">ใส่ได้ทั้งเลขสั้น (2609170003) หรือเลขเต็ม (2609170003_FOREST_J_PANTRY) · ใช้เชื่อมกับ StarNexus และบาร์โค้ดรับสินค้าหน้า Site · 1 Order StarNexus เปิดได้ 1 Sale Order</div>' +
+      '<div class="err"></div><div id="sn-dup"></div></div>' +
+      '<div class="sn-wait"><div class="sn-wait-h">' + icon('refresh', 'sm') + ' ข้อมูลจาก StarNexus (Odoo) <span class="badge t-gray">รอเชื่อมระบบ</span></div>' +
+        '<div class="sn-wait-b">เมื่อเชื่อม Odoo แล้ว ใส่เลขด้านบนระบบจะเติมให้อัตโนมัติ: ' + ['ลูกค้า / โครงการ', 'สถานที่ติดตั้ง', 'จำนวนตู้', 'แบบงานติดตั้ง', 'ลิงก์แบบงานผลิต'].map((t) => '<span class="sn-chip">' + t + '</span>').join('') + '<div class="xs muted" style="margin-top:6px">ตอนนี้กรอกช่องด้านล่างเองตามเดิม</div></div></div></div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('building') + ' ลูกค้าและสถานที่ติดตั้ง</h2></div><div class="card-b form-grid">' +
       F('title', 'ชื่องาน <span class="req">*</span>', d.title, 'c8', '<input class="input" name="title" value="' + esc(d.title) + '" placeholder="เช่น ตู้เสื้อผ้า Built-in 3 ห้องนอน">') + F('cabinets', 'จำนวนตู้ที่ติดตั้ง <span class="req">*</span>', d.cabinets, 'c4', '<div class="addon"><input class="input" name="cabinets" inputmode="numeric" value="' + esc(d.cabinets) + '"><span>ตู้</span></div><div class="help">ใช้นับการยิง Barpack หน้า Site</div>') +
       F('customer', 'ชื่อลูกค้า / โครงการ <span class="req">*</span>', d.customer, 'c6') + F('siteName', 'สถานที่ติดตั้ง <span class="req">*</span>', d.siteName, 'c6') +
@@ -1477,6 +1582,15 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       '<div class="field c6" data-f="prodUrl"><label>ลิงก์ดูแบบงานผลิต (Production Drawing) <span class="req">*</span></label><input class="input" name="prodUrl" type="url" value="' + esc(d.prodUrl) + '" placeholder="https://drive.google.com/…"><div class="help">ผู้รับเหมากดเปิดได้จากทุกหน้าที่เกี่ยวกับ Order นี้</div><div class="err"></div></div></div></div>' +
     '<div class="card"><div class="card-f" style="border-top:0;border-radius:var(--r-lg)"><a class="btn" href="#/sale/orders">กลับ</a><span class="spacer"></span>' + btns + '</div></div></form>' };
 });
+/* เตือนเลข StarNexus ซ้ำกับ Order ที่มองเห็นอยู่ (Server ตรวจซ้ำกับทุก Order อีกครั้งตอนบันทึก) */
+function snCheck() {
+  const el = $('#sf-sn'), box = $('#sn-dup'); if (!el || !box) return;
+  const v = el.value.trim(), k = snKey(v);
+  const dup = v ? DB.orders.filter((o) => o.id !== SF.id && !o.cancelledAt && o.snOrder && snKey(o.snOrder) === k) : [];
+  box.innerHTML = v && !SN_RE.test(v) ? '<div class="small" style="color:var(--red);margin-top:6px">ใช้ตัวอักษรอังกฤษ ตัวเลข _ - . / ยาว 3–60 ตัว</div>'
+    : dup.length ? '<div style="margin-top:8px">' + notice('warn', 'เลขนี้ใช้แล้วใน ' + dup.map((o) => '<b>' + esc(o.id) + '</b> ' + esc(o.title)).join(', ') + ' — 1 Order StarNexus เปิดได้ 1 Sale Order') + '</div>' : '';
+}
+Acts.snCheck = snCheck;
 function saleCalc() {
   const f = $('#sf'); if (!f) return;
   const t = (f.querySelector('[name=type]:checked') || {}).value, s = parseNum(f.sale.value);
@@ -1497,10 +1611,12 @@ on('sfDel', (el) => { SF.files.splice(Number(el.dataset.i), 1); renderSfFiles();
 on('saleSave', async (el) => {
   const f = $('#sf'), confirmIt = el.dataset.c === '1', full = confirmIt || SF.live, admin = S.user.role === 'admin';
   const v = (n) => (f.querySelector('[name=' + n + ']') || {}).value || '';
-  const d = { title: v('title').trim(), customer: v('customer').trim(), siteName: v('siteName').trim(), address: v('address').trim(), province: v('province'), contactName: v('contactName').trim(), contactPhone: v('contactPhone').trim(),
+  const d = { snOrder: v('snOrder').trim(), title: v('title').trim(), customer: v('customer').trim(), siteName: v('siteName').trim(), address: v('address').trim(), province: v('province'), contactName: v('contactName').trim(), contactPhone: v('contactPhone').trim(),
     type: (f.querySelector('[name=type]:checked') || {}).value || '', sale: parseNum(v('sale')), cabinets: parseNum(v('cabinets')), wantFrom: v('wantFrom'), wantTo: v('wantTo'), note: v('note').trim(), prodUrl: v('prodUrl').trim() };
   const errs = {};
   if (!d.title) errs.title = 'กรอกชื่องาน';
+  if (d.snOrder && !SN_RE.test(d.snOrder)) errs.snOrder = 'เลขที่ Order StarNexus ใช้ตัวอักษรอังกฤษ ตัวเลข _ - . / ยาว 3–60 ตัว';
+  else if (d.snOrder && DB.orders.some((o) => o.id !== SF.id && !o.cancelledAt && o.snOrder && snKey(o.snOrder) === snKey(d.snOrder))) errs.snOrder = 'เลขนี้ใช้แล้วใน Sale Order อื่น';
   if (full) { /* ยืนยัน หรือแก้ Order ที่ยืนยันแล้ว: ตรวจครบทุกช่อง */
     if (!d.customer) errs.customer = 'กรอกชื่อลูกค้า'; if (!d.siteName) errs.siteName = 'กรอกสถานที่'; if (!d.province) errs.province = 'เลือกจังหวัด';
     if (!(d.cabinets > 0)) errs.cabinets = 'ใส่จำนวนตู้';
@@ -1551,7 +1667,7 @@ function bidsList(base) {
   return { nav: base + '/bids', html: pageHead('งานรอผู้รับเหมาเสนอราคา', 'Order ที่ Sale ยืนยันแล้ว เปิดให้ผู้รับเหมาทุกคนเสนอราคา 10 วัน — กดเพื่อเปรียบเทียบราคา ตรวจคิว และอนุมัติ') +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาตั้งต้น</th><th>นับถอยหลัง</th><th class="c">เสนอแล้ว</th><th class="r">ราคาต่ำสุด</th><th>สถานะ</th><th></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const lo = o.bids.length ? Math.min.apply(null, o.bids.map((b) => b.price)) : null;
-      return '<tr class="click" data-act="go" data-h="' + base + '/bids/' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b><div class="sub" style="max-width:300px">' + esc(o.title) + '</div><div class="sub">ติดตั้ง ' + fmtRange(o.wantFrom, o.wantTo) + ' · ' + esc(o.province) + '</div></td>' +
+      return '<tr class="click" data-act="go" data-h="' + base + '/bids/' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:300px">' + esc(o.title) + '</div><div class="sub">ติดตั้ง ' + fmtRange(o.wantFrom, o.wantTo) + ' · ' + esc(o.province) + '</div></td>' +
         '<td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาตั้งต้น" class="r money" style="color:var(--teal)">' + money(fee(o), 0) + '</td><td data-l="นับถอยหลัง">' + cdHtml(o, true) + '</td>' +
         '<td data-l="เสนอแล้ว" class="c"><b>' + o.bids.length + '</b> ราย</td><td data-l="ราคาต่ำสุด" class="r money">' + (lo == null ? '—' : money(lo, 0)) + '</td><td data-l="สถานะ">' + badge(ost(o)) + '</td>' +
         '<td class="r"><span class="row" style="justify-content:flex-end">' + drawBtns(o) + '<a class="btn sm primary" href="' + base + '/bids/' + o.id + '">ตรวจราคา</a></span></td></tr>'; }).join('')
@@ -1566,7 +1682,7 @@ function bidReview(base, id) {
   const st = ost(o), bids = o.bids.slice().sort((a, b) => a.price - b.price), ref = fee(o);
   const rows = bids.map((b, i) => { const end = bidEnd(b), cl = clashes(b.cid, b.start, end, o.id); return { b, i, end, cl }; });
   const canApprove = st === 'open' || st === 'expired';
-  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st), esc(o.title), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>', '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
+  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>', '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
     '<div class="grid g3"><div class="card card-b"><div class="small muted">นับถอยหลัง 10 วัน (เวลาเดียวกับที่ผู้รับเหมาเห็น)</div><div style="margin-top:6px">' + cdHtml(o) + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="money" style="font-size:24px;color:var(--teal)">' + money(ref) + '</div><div class="xs muted">' + sw(o.type) + (S.user.role === 'admin' ? ' ' + rateOf(o) + '% ของราคาขาย' : '') + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ลูกค้าต้องการติดตั้ง</div><div class="strong" style="font-size:18px">' + fmtRange(o.wantFrom, o.wantTo) + '</div><div class="xs muted">' + esc(o.siteName) + ' จ.' + esc(o.province) + ' · ' + o.cabinets + ' ตู้</div></div></div>' +
@@ -1687,6 +1803,7 @@ function chgTag(p) { return p.refChangedAt ? '<span class="refchg" title="แก
 /* การ์ดงาน — ยึดรูปแบบจากภาพตัวอย่างที่ 1 */
 function jobCard(p, foot, tag) {
   return '<div class="job ' + (p.status === 'expired' && !p.myBid ? 'expired' : '') + '"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(p.id) + '</span>' + (tag || '<span class="badge t-blue">Order ใหม่</span>') + chgTag(p) + '</div>' +
+    (p.snOrder ? '<div class="jsn">' + icon('link', 'xs') + ' StarNexus <span class="mono">' + esc(p.snOrder) + '</span></div>' : '') +
     '<div class="jmeta">Sale ยืนยันเมื่อ ' + fmtDT(p.confirmedAt) + ' (' + timeAgo(p.confirmedAt) + ') · ' + esc(p.saleName) + (p.refChangedAt ? ' · แก้ราคาตั้งต้นเมื่อ ' + fmtDT(p.refChangedAt) : p.editedAt ? ' · แก้ไขล่าสุด ' + fmtDT(p.editedAt) : '') + '</div></div>' +
     '<div class="ref"><div class="k">' + icon('tag', 'xs') + ' ราคาตั้งต้นรวม</div><div class="v">' + money(p.refTotal) + '</div><div class="s">ก่อน VAT</div></div></div>' +
     '<div class="jb"><h3>' + esc(p.title) + '</h3><div class="ln">' + icon('building', 'sm') + '<span>' + esc(p.customer) + '</span></div><div class="ln">' + icon('pin', 'sm') + '<span>' + esc(p.siteName) + ' จ.' + esc(p.province) + '</span></div>' +
@@ -1757,7 +1874,7 @@ route(/^\/con\/sent$/, 'con', () => {
   const cid = curCid(), all = conOrders(cid).filter((x) => x.p.myBid);
   const wait = all.filter((x) => !x.p.awardMine && !x.p.awardOther), lost = all.filter((x) => x.p.awardOther);
   const card = (x, lostIt) => { const b = x.p.myBid, open = x.p.status === 'open', stale = !lostIt && x.p.refChangedAt && x.p.refChangedAt > b.at;
-    return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + (lostIt ? '<span class="badge t-gray">ไม่ได้รับเลือก</span>' : '<span class="badge t-amber">รออนุมัติ</span>' + chgTag(x.p)) + '</div><div class="jmeta">' + esc(x.p.title) + '</div></div>' +
+    return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + (lostIt ? '<span class="badge t-gray">ไม่ได้รับเลือก</span>' : '<span class="badge t-amber">รออนุมัติ</span>' + chgTag(x.p)) + '</div><div class="jmeta">' + esc(x.p.title) + '</div>' + (x.p.snOrder ? '<div class="jsn">' + icon('link', 'xs') + ' StarNexus <span class="mono">' + esc(x.p.snOrder) + '</span></div>' : '') + '</div>' +
       '<div class="ref" style="background:var(--blue-bg);border-color:#C3D5EF"><div class="k" style="color:var(--blue)">ราคาที่ท่านเสนอ</div><div class="v" style="color:var(--blue)">' + money(b.price, 0) + '</div><div class="s" style="color:var(--blue)">ก่อน VAT</div></div></div>' +
       '<div class="jb"><dl class="dl small"><dt>เสนอเมื่อ</dt><dd>' + fmtDT(b.at) + '</dd><dt>วันติดตั้งที่เสนอ</dt><dd>' + fmtRange(b.start, bidEnd(b)) + ' (' + b.days + ' วัน)</dd><dt>การชำระเงิน</dt><dd>' + payOptTag(b.payOpt) + '</dd><dt>ราคาตั้งต้นรวม</dt><dd>' + money(x.p.refTotal) + '</dd><dt>สถานที่</dt><dd>' + esc(x.p.siteName) + ' จ.' + esc(x.p.province) + '</dd></dl>' +
       (stale ? '<div style="margin-top:8px">' + notice('warn', 'Sale แก้ราคาตั้งต้นเมื่อ ' + fmtDT(x.p.refChangedAt) + ' — หลังจากท่านเสนอราคา' + (open ? ' · ตรวจและแก้ราคาได้จนหมดเวลา' : '')) + '</div>' : '') + conDraw(x.p) + '</div>' +
@@ -1811,7 +1928,7 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
     '<button class="btn primary block" style="margin-top:12px" data-act="hfSend" data-id="' + o.id + '">' + icon('send', 'sm') + (returned ? ' ส่งเอกสารใหม่' : ' ส่งยืนยันติดตั้งเสร็จ') + '</button></div>';
   return { nav: '#/con/work', after: renderHfFiles, html: '<div class="crumb"><a href="#/con/work">สถานะการทำงาน</a> › ' + esc(o.id) + '</div>' +
     '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + '<h2 style="margin-top:4px">' + esc(p.title) + '</h2></div></div>' +
-    '<dl class="dl small" style="margin-top:10px"><dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
+    '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
     '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับงานหน้า Site</h4><div class="small muted">สแกน Barpack จากตัวสินค้าทุกตู้ เพื่อยืนยันว่าสินค้ามาถึงหน้างาน</div>' +
       '<div class="box"><div class="barcode-ph"><span class="bc"></span><div style="flex:1"><div class="small"><b>รับแล้ว ' + i.scanned + ' / ' + o.cabinets + ' ตู้</b> (' + pct + '%)</div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div></div></div>' +
@@ -1895,11 +2012,54 @@ route(/^\/con\/pay$/, 'con', () => {
 
 /* ===================== เข้าสู่ระบบ ===================== */
 const LOGIN = { fails: 0, until: 0 };
-route(/^\/login$/, null, () => ({ html: '<div class="login-wrap"><div class="login"><div class="lg-h"><div class="lg-mark"><svg viewBox="0 0 24 24" width="26" height="26">' + ICONS.starMark + '</svg></div><div><h1 style="font-size:20px">' + APP_NAME + '</h1><div class="small muted">ระบบบริหารงานติดตั้งเฟอร์นิเจอร์ · ' + APP_VERSION + '</div></div></div>' +
+route(/^\/login$/, null, () => (REG.done = '', { html: '<div class="login-wrap"><div class="login"><div class="lg-h"><div class="lg-mark"><svg viewBox="0 0 24 24" width="26" height="26">' + ICONS.starMark + '</svg></div><div><h1 style="font-size:20px">' + APP_NAME + '</h1><div class="small muted">ระบบบริหารงานติดตั้งเฟอร์นิเจอร์ · ' + APP_VERSION + '</div></div></div>' +
   '<form id="lf" onsubmit="return false"><div class="field"><label for="lf-u">Username</label><input class="input" id="lf-u" name="u" autocomplete="username" autocapitalize="off" spellcheck="false"></div><div class="field" style="margin-top:12px"><label for="lf-p">Password</label><input class="input" id="lf-p" name="p" type="password" autocomplete="current-password"></div>' +
   '<div id="lf-err" class="small" role="alert" style="color:var(--red);margin-top:8px;min-height:18px"></div><button class="btn primary lg block" data-act="doLogin">เข้าสู่ระบบ</button><div class="xs muted" style="margin-top:8px;text-align:center">ลืมรหัสผ่าน ติดต่อ Admin เพื่อตั้งรหัสใหม่</div></form>' +
+  '<a class="btn block lg-reg" href="#/register">' + icon('user', 'sm') + ' ยังไม่มีบัญชี? ลงทะเบียนใช้งาน</a><div class="xs muted" style="text-align:center;margin-top:6px">สำหรับ Sale · จัดซื้อ · ผู้รับเหมา — ใช้งานได้หลัง Admin อนุมัติ</div>' +
   '<div class="xs muted lg-note">' + icon('lock', 'xs') + ' ใช้ Username และ Password ที่ได้รับจาก Admin · เห็นเฉพาะข้อมูลตามสิทธิ์ของบัญชี</div></div></div>',
   after: () => { const u = $('#lf-u'); if (u) u.focus(); } }));
+/* ===================== ลงทะเบียนเอง (รอ Admin อนุมัติ) ===================== */
+const REG = { done: '' };
+const REG_ROLES = { sale: ['Sale', 'สร้าง Sale Order ของลูกค้า'], purchasing: ['จัดซื้อ', 'ตรวจราคา อนุมัติผู้รับเหมา ตรวจใบส่งมอบ'], contractor: ['ผู้รับเหมา', 'เสนอราคางานติดตั้ง รับงาน ส่งมอบ'] };
+route(/^\/register$/, null, () => ({ html: '<div class="login-wrap"><div class="login reg"><div class="lg-h"><div class="lg-mark"><svg viewBox="0 0 24 24" width="26" height="26">' + ICONS.starMark + '</svg></div><div><h1 style="font-size:20px">ลงทะเบียนใช้งาน</h1><div class="small muted">' + APP_NAME + ' · ส่งคำขอแล้วรอ Admin อนุมัติ</div></div></div>' +
+  (REG.done ? notice('ok', '<b>ส่งคำขอลงทะเบียนแล้ว</b><br>Username: <b class="mono">' + esc(REG.done) + '</b><br>ใช้งานได้หลัง Admin อนุมัติ — แจ้ง Admin ของบริษัทว่าลงทะเบียนแล้ว จากนั้นเข้าสู่ระบบด้วย Username และ Password ที่ตั้งไว้') + '<a class="btn primary lg block" style="margin-top:14px" href="#/login" data-act="regBack">ไปหน้าเข้าสู่ระบบ</a>'
+  : '<form id="rf" onsubmit="return false" novalidate>' +
+    '<div class="field" data-f="role"><label>ลงทะเบียนเป็น <span class="req">*</span></label><div class="pay-opts reg-roles" role="radiogroup" aria-label="ประเภทผู้ใช้">' + Object.keys(REG_ROLES).map((k) => '<label class="pay-opt"><input type="radio" name="role" value="' + k + '" data-chg="regRole"><span class="po-dot"></span><span><b>' + REG_ROLES[k][0] + '</b><span class="xs">' + REG_ROLES[k][1] + '</span></span></label>').join('') + '</div><div class="err"></div></div>' +
+    '<div class="form-grid" style="margin-top:12px">' +
+    '<div class="field c6" data-f="name"><label>ชื่อ-นามสกุล <span class="req">*</span></label><input class="input" name="name" autocomplete="name"><div class="err"></div></div>' +
+    '<div class="field c6" data-f="phone"><label>เบอร์โทร <span class="req">*</span></label><input class="input" name="phone" inputmode="tel" autocomplete="tel" placeholder="08x-xxx-xxxx"><div class="err"></div></div>' +
+    '<div class="c12 form-grid hidden" id="rf-co" style="margin:0"><div class="field c8" data-f="company"><label>ชื่อบริษัทผู้รับเหมา <span class="req">*</span></label><input class="input" name="company" placeholder="เช่น บริษัท ช่างดี ติดตั้ง จำกัด"><div class="err"></div></div><div class="field c4"><label>จำนวนช่าง</label><div class="addon"><input class="input" name="team" inputmode="numeric"><span>คน</span></div></div></div>' +
+    '<div class="field c12" data-f="username"><label>Username <span class="req">*</span></label><input class="input mono" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="เช่น somchai.s"><div class="help">a-z, 0-9, จุด ขีด ขีดล่าง · 3–32 ตัว</div><div class="err"></div></div>' +
+    '<div class="field c6" data-f="password"><label>Password <span class="req">*</span></label><input class="input" name="password" type="password" autocomplete="new-password" placeholder="อย่างน้อย 8 ตัว"><div class="err"></div></div>' +
+    '<div class="field c6" data-f="password2"><label>ยืนยัน Password <span class="req">*</span></label><input class="input" name="password2" type="password" autocomplete="new-password"><div class="err"></div></div>' +
+    '<div class="field c12"><label>หมายเหตุถึง Admin</label><input class="input" name="note" placeholder="เช่น ฝ่ายขายสาขาบางนา / หัวหน้าทีมช่าง"></div>' +
+    '<div class="hp" aria-hidden="true"><label>เว็บไซต์<input name="website" tabindex="-1" autocomplete="off"></label></div></div>' +
+    '<div id="rf-err" class="small" role="alert" style="color:var(--red);margin-top:8px;min-height:18px"></div><button class="btn primary lg block" data-act="regSend">' + icon('send', 'sm') + ' ส่งคำขอลงทะเบียน</button></form>' +
+    '<div class="xs muted" style="text-align:center;margin-top:10px">มีบัญชีแล้ว? <a href="#/login">เข้าสู่ระบบ</a></div>') +
+  '<div class="xs muted lg-note">' + icon('lock', 'xs') + ' บัญชีใหม่ยังเข้าระบบไม่ได้จนกว่า Admin จะอนุมัติและกำหนดสิทธิ์ · ผู้รับเหมาเห็นเฉพาะข้อมูลของบริษัทตนเอง</div></div></div>' }));
+Acts.regRole = (el) => { const f = $('#rf'); $$('.pay-opt', f).forEach((x) => x.classList.toggle('on', x.querySelector('input').checked)); $('#rf-co').classList.toggle('hidden', el.value !== 'contractor'); };
+on('regBack', () => { REG.done = ''; go('#/login'); });
+on('regSend', async (el) => {
+  const f = $('#rf'), v = (n) => (f.querySelector('[name=' + n + ']') || {}).value || '';
+  const r = f.querySelector('[name=role]:checked');
+  const d = { role: r ? r.value : '', name: v('name').trim(), phone: v('phone').trim(), company: v('company').trim(), team: parseInt(v('team'), 10) || 0, username: v('username').trim().toLowerCase(), password: v('password'), note: v('note').trim(), website: v('website') };
+  const errs = {};
+  if (!d.role) errs.role = 'เลือก Sale / จัดซื้อ / ผู้รับเหมา';
+  if (d.name.length < 2) errs.name = 'กรอกชื่อ-นามสกุล';
+  if (d.phone.replace(/\D/g, '').length < 9) errs.phone = 'กรอกเบอร์โทรที่ติดต่อได้';
+  if (d.role === 'contractor' && d.company.length < 3) errs.company = 'กรอกชื่อบริษัท';
+  if (!/^[a-z0-9._-]{3,32}$/.test(d.username)) errs.username = 'ใช้ a-z, 0-9, . _ - ยาว 3–32 ตัว';
+  if (d.password.length < 8) errs.password = 'อย่างน้อย 8 ตัวอักษร';
+  else if (d.password.length > 72) errs.password = 'ไม่เกิน 72 ตัวอักษร';
+  if (!errs.password && v('password2') !== d.password) errs.password2 = 'Password ไม่ตรงกัน';
+  $$('.field', f).forEach((x) => { const k = x.dataset.f; if (!k) return; x.classList.toggle('invalid', !!errs[k]); const e = x.querySelector('.err'); if (e) e.textContent = errs[k] || ''; });
+  $('#rf-err').textContent = '';
+  if (Object.keys(errs).length) { const first = f.querySelector('.field.invalid'); if (first) first.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  if (d.role !== 'contractor') { d.company = ''; d.team = 0; }
+  try { await callPublicFn('cn-users', { action: 'signup', user: d }); }
+  catch (err) { $('#rf-err').textContent = err.message; if (/Username/.test(err.message)) { const x = f.querySelector('[data-f=username]'); x.classList.add('invalid'); x.querySelector('.err').textContent = err.message; } return; }
+  REG.done = d.username; render();
+});
 on('doLogin', async () => {
   const f = $('#lf'), e = $('#lf-err'), name = f.u.value.trim().toLowerCase(), pw = f.p.value;
   if (Date.now() < LOGIN.until) { e.textContent = 'ใส่รหัสผิดหลายครั้ง — รอ ' + Math.ceil((LOGIN.until - Date.now()) / 1000) + ' วินาที'; return; }
