@@ -855,7 +855,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.13';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.14';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -897,15 +897,17 @@ const OST = {
 };
 const STAGES = { not_started: 'ยังไม่เริ่มติดตั้ง', in_progress: 'กำลังติดตั้ง', done: 'ติดตั้งเสร็จแล้ว' };
 /* งวดจ่ายเงินผู้รับเหมา: เริ่มนับวันครบกำหนดจากเหตุการณ์ใด */
-const TERM_WHEN = { approve: 'หลังจัดซื้ออนุมัติ (มัดจำ)', start: 'หลังเริ่มติดตั้ง', handover: 'หลังจบงาน (ตรวจรับใบส่งมอบ)' };
-const DEFAULT_PAY = { days: 30, depDays: 7 }; /* หลังจบงานจ่ายภายใน N วัน · มัดจำจ่ายภายใน N วันหลังอนุมัติ — Admin แก้ได้ */
+const TERM_WHEN = { approve: 'หลังจัดซื้ออนุมัติ (มัดจำ)', start: 'หลังผู้รับเหมาเข้าหน้างาน (มัดจำ)', handover: 'หลังจบงาน (ตรวจรับใบส่งมอบ)' };
+const DEFAULT_PAY = { days: 30, depDays: 7, depWhen: 'approve' };   /* V7.14: depWhen = มัดจำนับจาก 'start' วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง) / 'approve' วันที่จัดซื้ออนุมัติ */
+const DEP_WHEN = { start: 'วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง)', approve: 'วันที่จัดซื้ออนุมัติ' };
+ /* หลังจบงานจ่ายภายใน N วัน · มัดจำจ่ายภายใน N วันหลังอนุมัติ — Admin แก้ได้ */
 /* ผู้รับเหมาเลือกการชำระเงินตอนเสนอราคา 1 ใน 2 แบบ — จัดซื้อใช้พิจารณาและเป็นเงื่อนไขตอนอนุมัติ */
 const PAY_OPTS = {
   full: { label: '100% หลังจบงาน', sub: 'รับเงินครั้งเดียว หลังบริษัทตรวจรับใบส่งมอบ' },
-  dep30: { label: 'มัดจำ 30%', sub: '30% หลังอนุมัติ · 70% หลังจบงาน' },
+  dep30: { label: 'มัดจำ 30%', get sub() { return '30% ' + (payCfg().depWhen === 'start' ? 'หลังเข้าหน้างาน' : 'หลังอนุมัติ') + ' · 70% หลังจบงาน'; } },
 };
 function payCfg() { return Object.assign({}, DEFAULT_PAY, (DB && DB.settings.pay) || {}); }
-function optTerms(opt) { const c = payCfg(); return opt === 'dep30' ? [{ pct: 30, when: 'approve', days: c.depDays }, { pct: 70, when: 'handover', days: c.days }] : [{ pct: 100, when: 'handover', days: c.days }]; }
+function optTerms(opt) { const c = payCfg(); return opt === 'dep30' ? [{ pct: 30, when: c.depWhen === 'start' ? 'start' : 'approve', days: c.depDays }, { pct: 70, when: 'handover', days: c.days }] : [{ pct: 100, when: 'handover', days: c.days }]; }
 const DEFAULT_TERMS = [{ pct: 100, when: 'handover', days: 30 }];
 function termsText(terms) { terms = terms && terms.length ? terms : DEFAULT_TERMS; return terms.map((t, i) => (terms.length > 1 ? 'งวด ' + (i + 1) + ': ' : '') + t.pct + '% ' + TERM_WHEN[t.when] + ' ภายใน ' + t.days + ' วัน').join(' · '); }
 function payOptTag(opt) { const o = PAY_OPTS[opt]; return o ? '<span class="badge plain ' + (opt === 'dep30' ? 't-violet' : 't-teal') + '">' + o.label + '</span>' : '<span class="muted small">ไม่ระบุ</span>'; }
@@ -4148,7 +4150,11 @@ route(/^\/admin\/settings$/, 'admin', () => {
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="rateSave">' + icon('check', 'sm') + ' บันทึกอัตรา</button></div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('wallet') + ' การชำระเงินผู้รับเหมา</h2></div><div class="card-b"><div id="pc" class="form-grid">' +
       '<div class="field c6"><label>หลังจบงาน จ่ายภายใน</label><div class="addon"><input class="input" name="days" inputmode="numeric" value="' + pc.days + '"><span>วัน</span></div><div class="help">นับจากวันที่ตรวจรับใบส่งมอบ</div></div>' +
-      '<div class="field c6"><label>มัดจำ 30% จ่ายภายใน</label><div class="addon"><input class="input" name="depDays" inputmode="numeric" value="' + pc.depDays + '"><span>วัน</span></div><div class="help">นับจากวันที่จัดซื้ออนุมัติ</div></div></div>' +
+      '<div class="field c6"><label>มัดจำ 30% จ่ายภายใน</label><div class="addon"><input class="input" name="depDays" inputmode="numeric" value="' + pc.depDays + '"><span>วัน</span></div><div class="help">นับจาก' + DEP_WHEN[pc.depWhen === 'start' ? 'start' : 'approve'] + '</div></div>' +
+      /* V7.14: มัดจำ 30% เริ่มนับวันจาก — วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง) หรือ วันที่จัดซื้ออนุมัติ · จำนวนวันยังแก้ได้ที่ช่องด้านบน */
+      '<div class="field c12"><label>มัดจำ 30% เริ่มนับวันจาก</label><select class="select" name="depWhen" aria-label="มัดจำ 30% เริ่มนับวันจาก">' +
+        ['start', 'approve'].map((k) => '<option value="' + k + '"' + ((pc.depWhen === 'start' ? 'start' : 'approve') === k ? ' selected' : '') + '>' + DEP_WHEN[k] + '</option>').join('') +
+      '</select><div class="help">เข้าหน้างาน = ผู้รับเหมาเปลี่ยนสถานะเป็น “กำลังติดตั้ง” · ก่อนเข้าหน้างาน มัดจำยังไม่ถึงกำหนด บันทึกจ่ายไม่ได้</div></div></div>' +
       '<div class="small" style="margin-top:10px">ผู้รับเหมาเลือก 1 แบบตอนเสนอราคา:<ul style="margin:4px 0 0;padding-left:18px">' + Object.keys(PAY_OPTS).map((k) => '<li><b>' + PAY_OPTS[k].label + '</b> — ' + esc(termsText(optTerms(k))) + '</li>').join('') + '</ul></div><div class="xs muted" style="margin-top:6px">มีผลกับงานที่อนุมัติหลังจากบันทึก</div></div>' +
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="paySet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     /* V7.11: ระยะเวลาเปิดรับราคา — Admin ตั้ง · ล็อกกับ Order ตอนยืนยัน */
@@ -4173,8 +4179,9 @@ on('rateSave', () => {
 });
 on('paySet', async () => {
   const g = (n) => parseNum($('#pc [name=' + n + ']').value), days = g('days'), depDays = g('depDays');
+  const depWhen = ($('#pc [name=depWhen]') || {}).value === 'start' ? 'start' : 'approve';   /* V7.14 */
   if (![days, depDays].every((v) => v >= 0 && v <= 365 && Math.floor(v) === v)) { toast('จำนวนวันต้องเป็นจำนวนเต็ม 0–365', 'err'); return; }
-  await rpc('cn_save_settings', { p_rates: null, p_pay: { days, depDays } });
+  await rpc('cn_save_settings', { p_rates: null, p_pay: { days, depDays, depWhen } });
   await refresh(); toast('บันทึกการชำระเงินแล้ว — มีผลกับงานที่อนุมัติหลังจากนี้'); rerender();
 });
 on('bidSet', () => {
