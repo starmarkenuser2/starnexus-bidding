@@ -714,6 +714,18 @@ span.loc-chip{cursor:default}
 @media (max-width:640px){.hide-sm{display:none}.wh-step > .card-b{gap:10px}.wh-step .ws-n{width:26px;height:26px;font-size:13px}.wh-scan .ws-row .input{font-size:16px}.pick .pk{flex-direction:column;gap:6px}.wh-big .v{font-size:28px}}
 @media (pointer:coarse){.loc-chip{height:34px;padding:0 12px}}
 
+/* V7.15: กล่องรับแจ้งเตือนในมือถือ (หน้าแรกผู้รับเหมา / หัวหน้าช่างโรงงาน) */
+.pushcard{display:flex;gap:12px;align-items:flex-start;border:1px solid #EBD3A0;background:#FFF8EA;border-radius:12px;padding:12px 14px;margin:0 0 14px;color:var(--ink-text)}
+.pushcard.on{background:#EEF7F1;border-color:#C3E3CF}
+.pushcard.off{background:#F5F6F8;border-color:#E1E5EB}
+.pushcard>svg{flex-shrink:0;margin-top:2px;color:#B8862B}
+.pushcard.on>svg{color:#1F7A4D}
+.pushcard .pc-b{flex:1;min-width:0;font-size:14px}
+.pushcard .pc-what{font-size:12.5px;color:#5B6878;margin-top:3px;line-height:1.5}
+.pushcard .pc-steps{margin:6px 0 4px;padding-left:20px;font-size:13.5px;line-height:1.7}
+.pushcard .pc-act{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex-shrink:0}
+@media (max-width:640px){.pushcard{flex-wrap:wrap}.pushcard .pc-act{width:100%;padding-left:32px}}
+
 </style>
 </head>
 <body>
@@ -855,7 +867,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.14';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.15';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -1484,7 +1496,7 @@ async function forceLogout(msg) {
   if (msg) toast(msg, 'err');
   go('#/login');
 }
-on('logout', async () => { await signOut(); DB = null; S.user = null; lastState = ''; FURL.clear(); toast('ออกจากระบบแล้ว'); go('#/login'); });
+on('logout', async () => { await pushOnLogout(); await signOut(); DB = null; S.user = null; lastState = ''; FURL.clear(); toast('ออกจากระบบแล้ว'); go('#/login'); });
 on('go', (el) => go(el.dataset.h));
 function go(h) { if (location.hash === h) render(); else if (FRAMED) location.replace(location.href.split('#')[0] + h); else location.hash = h; } /* V7.6: ในแท็บของ Production ไม่เพิ่มประวัติปุ่ม Back ของหน้าแม่ */
 
@@ -1631,6 +1643,7 @@ function render(opts) {
   if (m.r.area) { navTrack(location.hash.split('?')[0]); S.navArea = m.r.area; S.navActive = out.nav; }
   app.innerHTML = m.r.area ? shell(m.r.area, out.nav, out.html) : out.html;
   hydrate(app);
+  try { pushAfter(path); } catch (e) { /* V7.15: กล่องแจ้งเตือน / เลขบนไอคอน — ไม่ขวางหน้าเว็บ */ }
   if (out.after) out.after();
   if (!(opts && opts.keep)) window.scrollTo(0, 0);
 }
@@ -4162,6 +4175,11 @@ route(/^\/admin\/settings$/, 'admin', () => {
       '<div class="field c6"><label>ค่าเริ่มต้นของ Order ใหม่</label><div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + bidDaysNow() + '" aria-label="ระยะเวลาเปิดรับราคา (วัน)"><span>วัน</span></div><div class="help">1–60 วัน · นับจากเวลาที่จัดซื้อกดยืนยันส่งให้ผู้รับเหมา (วันปฏิทิน รวมวันหยุด)</div></div></div>' +
       '<div class="small muted" style="margin-top:10px">Sale เลือกจำนวนวันรายงานได้ในฟอร์ม Sale Order (1–60 วัน · เริ่มที่ค่านี้) · จัดซื้อปรับได้อีกครั้งตอนส่งให้ผู้รับเหมา · แก้ได้จนกว่าจัดซื้อจะอนุมัติ (ต้องเหลือเวลาอย่างน้อย 1 วัน) · <b>เปลี่ยนค่านี้ไม่กระทบ Order ที่มีอยู่</b></div></div>' +
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="bidSet">' + icon('check', 'sm') + ' บันทึก</button></div></div></div>' +
+    /* V7.15: แจ้งเตือนผ่านแอป — สถานะระบบ (กดตรวจ) */
+    '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('bell') + ' แจ้งเตือนผ่านแอป (ผู้รับเหมา / หัวหน้าช่าง)</h2><span class="xs muted">ฟรี · ไม่ใช้ LINE</span></div><div class="card-b">' +
+      '<div class="small">ผู้รับเหมา / หัวหน้าช่างเปิดลิงก์ผู้รับเหมาบนมือถือ → ติดตั้งเป็นแอป → กด “เปิดการแจ้งเตือน” ที่หน้าแรกของตัวเอง · Order ตัวอย่าง (เลข StarNexus ขึ้นต้น DEMO_) แจ้งเฉพาะบัญชีตัวอย่าง (.demo)</div>' +
+      '<div id="pushInfo" class="small muted" style="margin-top:8px"></div>' +
+      '<button class="btn" style="margin-top:12px" data-act="pushInfo">' + icon('refresh', 'sm') + ' ตรวจสถานะ</button></div></div>' +
     '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('download') + ' สำรองข้อมูล</h2></div><div class="card-b">' +
       '<div class="small">ข้อมูลทั้งหมดเก็บอยู่บนฐานข้อมูลออนไลน์ (Supabase) อยู่แล้ว — ปุ่มนี้ดาวน์โหลดสำเนาเป็นไฟล์ JSON เก็บไว้เอง (การตั้งค่า ผู้ใช้ บริษัทผู้รับเหมา Order ราคาเสนอ การติดตั้ง การจ่ายเงิน · ไม่รวมรูป/ไฟล์แนบ และไม่มีรหัสผ่าน)</div>' +
       '<button class="btn" style="margin-top:12px" data-act="exportGo">' + icon('download', 'sm') + ' ดาวน์โหลดสำเนา JSON</button>' +
@@ -4657,6 +4675,169 @@ function whOrderHtml(o) {
     (w.locs.length ? '<dt>อยู่ที่</dt><dd><div class="row" style="gap:4px">' + w.locs.map((x) => canWh() ? locChip(x.loc, x.n) : '<span class="loc-chip"><b class="mono">' + esc(x.loc) + '</b> <span>×' + x.n + '</span></span>').join('') + '</div></dd>' : '') + '</dl>' +
     (canWh() ? '<div class="row" style="gap:6px;margin-top:8px">' + (!o.cancelledAt ? '<button class="btn sm" data-act="whRecvGo" data-id="' + o.id + '">' + icon('barcode', 'sm') + ' ยิงรับเข้า</button>' : '') + (w.in ? '<button class="btn sm" data-act="whFind" data-q="' + esc(o.id) + '">' + icon('shelf', 'sm') + ' ดูในผังคลัง</button>' : '') + '<button class="btn sm" data-act="whHist" data-q="' + esc(o.id) + '">' + icon('clock', 'sm') + ' ประวัติ</button></div>' : '');
 }
+
+/* ---------- V7.15: ติดตั้งเป็นแอปบนมือถือ + แจ้งเตือนผ่านแอป (Web Push · ฟรี) + เลขบนไอคอนแอป ----------
+   ใช้ได้เฉพาะเปิดจากลิงก์ (GitHub Pages / https) ตรง ๆ — ในแท็บของ Production (กรอบ) ไม่เปิดส่วนนี้
+   ไฟล์คู่กันในโฟลเดอร์เดียวกับ index.html: manifest.webmanifest · sw.js · icons/ (ไม่มีไฟล์ = ส่วนนี้ไม่ทำงาน ส่วนอื่นใช้ได้ตามเดิม)
+   เปิดการแจ้งเตือน = ขออนุญาต → ขอกุญแจสาธารณะจาก Edge Function cn-push → สมัครกับบริการแจ้งเตือนของมือถือ → บันทึกเครื่อง (cn_push_subscribe)
+   ผู้รับเหมา: งานใหม่ · ใกล้หมดเวลาเสนอราคา · ได้รับอนุมัติ / ปิดรับราคา · เปลี่ยนวันติดตั้ง · ใบส่งมอบต้องแก้ · บันทึกจ่ายเงิน · ยกเลิก
+   หัวหน้าช่างโรงงาน: งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · ย้ายไปผู้รับเหมา / ยกเลิก */
+const PUSH = { reg: null, sub: null, perm: 'default', inst: null, busy: false, linked: '', tick: 0, ready: false };
+const PUSH_ROLES = { contractor: 1, installer: 1 };
+function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
+function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
+function pwaStandalone() { try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
+function pwaIOS() { return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function pushUA() { const u = navigator.userAgent; return (pwaIOS() ? 'iPhone/iPad' : /Android/.test(u) ? 'Android' : 'คอมพิวเตอร์') + (pwaStandalone() ? ' · แอป' : ' · เบราว์เซอร์'); }
+function b64uBytes(s) { const t = String(s).replace(/-/g, '+').replace(/_/g, '/'); const bin = atob(t + '==='.slice((t.length + 3) % 4)); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; }
+function sameKey(sub, key) { try { const a = new Uint8Array(sub.options.applicationServerKey); return a.length === key.length && a.every((v, i) => v === key[i]); } catch (e) { return false; } }
+
+(function pwaInit() {
+  if (!pwaTop()) return;
+  const add = (tag, at) => { const e = document.createElement(tag); Object.keys(at).forEach((k) => e.setAttribute(k, at[k])); document.head.appendChild(e); };
+  if (!document.querySelector('link[rel="manifest"]')) add('link', { rel: 'manifest', href: 'manifest.webmanifest' });
+  add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' });
+  add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
+  add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: 'CN ติดตั้ง' });
+  if (!document.querySelector('meta[name="theme-color"]')) add('meta', { name: 'theme-color', content: '#14233B' });
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); PUSH.inst = e; pushCardRefresh(); });
+  window.addEventListener('appinstalled', () => { PUSH.inst = null; pushCardRefresh(); });
+  navigator.serviceWorker.addEventListener('message', (e) => { const d = e.data || {}; if (d.type === 'cn-nav' && typeof d.hash === 'string' && d.hash.charAt(0) === '#') location.hash = d.hash; });
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then((reg) => { PUSH.reg = reg; PUSH.ready = true; return pushSync(); }).catch(() => { PUSH.ready = true; pushCardRefresh(); });
+})();
+
+/* สถานะในเครื่อง + ผูกเครื่องกับผู้ใช้ที่ล็อกอินอยู่ (เปลี่ยนบัญชี / ล็อกอินใหม่ = ผูกให้เองเมื่อเคยอนุญาตแล้ว) */
+async function pushSync() {
+  if (!PUSH.reg || !pushCapable()) { pushCardRefresh(); return; }
+  try {
+    PUSH.perm = Notification.permission;
+    PUSH.sub = await PUSH.reg.pushManager.getSubscription();
+    const u = S.user;
+    if (PUSH.sub && PUSH.perm === 'granted' && u && PUSH_ROLES[u.role] && PUSH.linked !== u.id && AUTH.s) {
+      await rpc('cn_push_subscribe', { p_sub: PUSH.sub.toJSON(), p_ua: pushUA() });
+      PUSH.linked = u.id;
+    }
+  } catch (e) { /* ไม่ขวางการใช้งาน */ }
+  pushCardRefresh(); pushBadge();
+}
+const pushOnFor = () => !!(PUSH.sub && PUSH.perm === 'granted' && S.user && PUSH.linked === S.user.id);
+
+/* เลขบนไอคอนแอป — นับแบบเดียวกับ Server (cn_push_badge_for) */
+function pushBadgeCount() {
+  if (!DB || !S.user) return 0;
+  if (S.user.role === 'contractor') {
+    const cid = S.user.cid, k = conCounts(cid);
+    const fix = DB.orders.filter((o) => conVisible(o, cid) && !o.cancelledAt && o.award && o.award.cid === cid && o.install && o.install.handover && o.install.handover.review && o.install.handover.review.ok === false).length;
+    return k.open + fix;
+  }
+  if (S.user.role === 'installer') { const c = counts(); return c.ihWait + c.ihSign; }
+  return 0;
+}
+function pushBadge() {
+  if (!pwaTop() || !('setAppBadge' in navigator)) return;
+  try { const n = AUTH.s ? pushBadgeCount() : 0; (n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } catch (e) { /* ไม่รองรับ */ }
+}
+
+/* กล่อง “รับแจ้งเตือนในมือถือ” บนหน้าแรกของผู้รับเหมา / หัวหน้าช่างโรงงาน */
+const PUSH_WHAT = {
+  contractor: 'งานใหม่ให้เสนอราคา · ใกล้หมดเวลาเสนอราคา · ได้รับอนุมัติ · เปลี่ยนวันติดตั้ง · ใบส่งมอบต้องแก้ · บันทึกจ่ายเงิน',
+  installer: 'งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · งานย้ายไปผู้รับเหมา / ยกเลิก',
+};
+function pushCardHtml() {
+  const u = S.user;
+  if (!u || !PUSH_ROLES[u.role] || !pwaTop() || !PUSH.ready) return '';
+  const what = '<div class="pc-what">' + PUSH_WHAT[u.role] + '</div>';
+  if (pwaIOS() && !pwaStandalone()) {
+    return '<div class="pushcard">' + icon('phone') + '<div class="pc-b"><b>ติดตั้งแอปบน iPhone เพื่อรับแจ้งเตือน</b>' +
+      '<ol class="pc-steps"><li>เปิดลิงก์นี้ใน <b>Safari</b></li><li>กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</li><li>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></li><li>เปิดแอป <b>CN ติดตั้ง</b> จากไอคอน แล้วกด “เปิดการแจ้งเตือน”</li></ol>' + what + '</div></div>';
+  }
+  if (!pushCapable() || !PUSH.reg) return '';
+  if (PUSH.perm === 'denied') {
+    return '<div class="pushcard off">' + icon('bell') + '<div class="pc-b"><b>การแจ้งเตือนถูกปิดในเครื่องนี้</b><div class="pc-what">เปิดได้ที่ ตั้งค่าของมือถือ → การแจ้งเตือน → CN ติดตั้ง (หรือ ตั้งค่าเว็บไซต์ของเบราว์เซอร์) แล้วกลับมากดเปิดอีกครั้ง</div></div></div>';
+  }
+  const inst = PUSH.inst && !pwaStandalone() ? '<button class="btn sm" data-act="pwaInstall">' + icon('download', 'sm') + ' ติดตั้งแอปบนเครื่อง</button>' : '';
+  if (pushOnFor()) {
+    return '<div class="pushcard on">' + icon('bell') + '<div class="pc-b"><b>แจ้งเตือนเปิดอยู่ในเครื่องนี้</b>' + what + '</div>' +
+      '<div class="pc-act">' + inst + '<button class="btn sm" data-act="pushTest">' + icon('send', 'sm') + ' ส่งทดสอบ</button><button class="btn sm ghost" data-act="pushOff">ปิด</button></div></div>';
+  }
+  return '<div class="pushcard">' + icon('bell') + '<div class="pc-b"><b>รับแจ้งเตือนในมือถือ</b><div class="pc-what">ไม่ต้องเปิดเว็บค้างไว้ · เด้งเตือนแบบไม่มีเสียง · เลขสีแดงบนไอคอน = งานที่รอท่าน</div>' + what + '</div>' +
+    '<div class="pc-act">' + inst + '<button class="btn sm primary" data-act="pushOn"' + (PUSH.busy ? ' disabled' : '') + '>' + icon('bell', 'sm') + ' เปิดการแจ้งเตือน</button></div></div>';
+}
+const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue' };
+function pushAfter(path) {
+  pushBadge();
+  if (AUTH.s && PUSH.reg && S.user && PUSH_ROLES[S.user.role] && PUSH.linked !== S.user.id && Date.now() - PUSH.tick > 60000) { PUSH.tick = Date.now(); pushSync(); }
+  if (!S.user || PUSH_HOME[S.user.role] !== path) return;
+  const h = pushCardHtml(), c = document.querySelector('#app .content');
+  if (h && c) c.insertAdjacentHTML('afterbegin', '<div id="pushCard">' + h + '</div>');
+}
+function pushCardRefresh() {
+  const el = document.getElementById('pushCard');
+  if (el) el.innerHTML = pushCardHtml();
+  else if (S.user && PUSH_HOME[S.user.role] === (location.hash.slice(1).split('?')[0])) { const h = pushCardHtml(), c = document.querySelector('#app .content'); if (h && c) c.insertAdjacentHTML('afterbegin', '<div id="pushCard">' + h + '</div>'); }
+}
+
+on('pushOn', async () => {
+  if (PUSH.busy || !PUSH.reg) return;
+  PUSH.busy = true;
+  try {
+    const perm = await Notification.requestPermission();   /* ต้องเรียกทันทีจากการกดปุ่ม (iPhone) */
+    PUSH.perm = perm;
+    if (perm !== 'granted') { toast(perm === 'denied' ? 'ไม่ได้อนุญาตแจ้งเตือน — เปิดได้ที่ตั้งค่าของมือถือ' : 'ยังไม่ได้อนุญาตแจ้งเตือน', 'err'); return; }
+    const key = b64uBytes((await callFn('cn-push', { action: 'pubkey' })).pub);
+    let sub = await PUSH.reg.pushManager.getSubscription();
+    if (sub && !sameKey(sub, key)) { try { await sub.unsubscribe(); } catch (e) { /* ข้าม */ } sub = null; }
+    if (!sub) sub = await PUSH.reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+    await rpc('cn_push_subscribe', { p_sub: sub.toJSON(), p_ua: pushUA() });
+    PUSH.sub = sub; PUSH.linked = S.user.id;
+    toast('เปิดการแจ้งเตือนในเครื่องนี้แล้ว — กด “ส่งทดสอบ” เพื่อลองได้');
+  } catch (e) {
+    toast('เปิดการแจ้งเตือนไม่สำเร็จ: ' + ((e && e.message) || e), 'err');
+  } finally { PUSH.busy = false; pushCardRefresh(); pushBadge(); }
+});
+on('pushTest', async () => {
+  if (!PUSH.sub) return;
+  const r = await callFn('cn-push', { action: 'test', endpoint: PUSH.sub.endpoint });
+  if (r && r.ok > 0) toast('ส่งทดสอบแล้ว — แจ้งเตือนจะเด้งภายในไม่กี่วินาที');
+  else { toast('ส่งไม่ถึงเครื่องนี้ — กดปิดแล้วเปิดการแจ้งเตือนใหม่', 'err'); PUSH.linked = ''; await pushSync(); }
+});
+on('pushOff', async () => {
+  const sub = PUSH.sub;
+  if (sub) { try { await rpc('cn_push_unsubscribe', { p_endpoint: sub.endpoint }); } catch (e) { /* ข้าม */ } try { await sub.unsubscribe(); } catch (e) { /* ข้าม */ } }
+  PUSH.sub = null; PUSH.linked = '';
+  try { if (navigator.clearAppBadge) await navigator.clearAppBadge(); } catch (e) { /* ข้าม */ }
+  toast('ปิดการแจ้งเตือนในเครื่องนี้แล้ว'); pushCardRefresh();
+});
+on('pwaInstall', async () => {
+  const ev = PUSH.inst; if (!ev) return;
+  PUSH.inst = null;
+  try { ev.prompt(); await ev.userChoice; } catch (e) { /* ข้าม */ }
+  pushCardRefresh();
+});
+/* ออกจากระบบ: เลิกผูกเครื่องนี้กับบัญชี (เครื่องที่ใช้ร่วมกันจะไม่ได้แจ้งเตือนของบัญชีเดิม) */
+async function pushOnLogout() {
+  try {
+    if (PUSH.sub && AUTH.s) await Promise.race([rpc('cn_push_unsubscribe', { p_endpoint: PUSH.sub.endpoint }), new Promise((r) => setTimeout(r, 2500))]);
+  } catch (e) { /* ข้าม */ }
+  PUSH.linked = '';
+  try { if (navigator.clearAppBadge) navigator.clearAppBadge().catch(() => {}); } catch (e) { /* ข้าม */ }
+}
+/* รอบเตือนตามเวลา (ใกล้หมดเวลาเสนอราคา / พรุ่งนี้ติดตั้ง): แอปที่เปิดอยู่ช่วยปลุกตัวส่งทุก 10 นาที (สำรองถ้าไม่มี pg_cron) */
+setInterval(() => { if (AUTH.s && DB && document.visibilityState === 'visible') rpc('cn_push_tick', {}).catch(() => {}); }, 600000);
+
+/* Admin: สถานะระบบแจ้งเตือน (ตั้งค่าระบบ) */
+on('pushInfo', async () => {
+  const el = document.getElementById('pushInfo'); if (!el) return;
+  let d;
+  try { d = await rpc('cn_push_info', {}); } catch (e) { el.innerHTML = '<span style="color:var(--bad)">ยังไม่ได้รัน SQL V7.15 (แจ้งเตือนผ่านแอป) หรืออ่านสถานะไม่ได้: ' + esc((e && e.message) || e) + '</span>'; return; }
+  const t = (x) => x ? fmtDT(x) : '—', late = d.pending > 0 && d.oldest && Date.now() - new Date(d.oldest).getTime() > 5 * 60000;
+  const warn = !d.hooked ? 'ยังไม่ได้ตั้งที่อยู่ตัวส่ง (push_cfg.fn_url) — รัน SQL V7.15 ให้ครบ'
+    : late ? 'มีข้อความค้างส่งเกิน 5 นาที — ตรวจ Edge Function cn-push (ต้องปิด Verify JWT) และส่วนขยาย pg_net'
+    : !d.ready ? 'ยังไม่มีใครเปิดการแจ้งเตือน (กุญแจแจ้งเตือนจะสร้างเองตอนกดเปิดครั้งแรก)' : '';
+  el.innerHTML = 'เครื่องที่เปิดแจ้งเตือน <b>' + d.devices + '</b> เครื่อง (ผู้รับเหมา ' + d.contractors + ' ราย) · รอส่ง <b>' + d.pending + '</b> · ส่งล่าสุด ' + t(d.lastSent) + ' · ตัวส่งทำงานล่าสุด ' + t(d.lastDrain) +
+    (warn ? '<div style="color:var(--warn-ink,#8A6420);margin-top:4px">⚠ ' + warn + '</div>' : '<div style="color:var(--ok,#1F7A4D);margin-top:4px">✓ พร้อมใช้งาน</div>');
+});
 
 })();
 
