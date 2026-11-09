@@ -625,7 +625,7 @@ a.map-link:hover{border-color:var(--green)}
 .side .brand .nx-back + .nx-home{width:30px;height:30px}
 .side .brand:has(.nx-home) .bm{display:none}
 /* V7.12.1: ปฏิทินช่างโรงงาน — คลิกช่องวันเพื่อจัดคิว */
-.cw .cday.pick{cursor:pointer}
+.cw .cday.pick{cursor:pointer;display:block}   /* V7.15.1: กันชนกับ .pick (ใบหยิบของคลัง = grid) ที่ทำให้เลขวันนี้ยืดเป็นก้อนเต็มช่อง */
 .cw .cday.pick:hover{background:#F2F7FF;box-shadow:inset 0 0 0 1px #B9CCEA}
 .cw .cday.pick:hover .dn::after{content:'+ จัดคิว';margin-left:6px;font-size:11px;font-weight:600;color:var(--action)}
 /* V7.12.2: แถบ "ตัวเลขนี้เตือนอะไร" + แถวที่ต้องดำเนินการ */
@@ -679,6 +679,11 @@ span.loc-chip{cursor:default}
 .wh-log .wl > div{flex:1;min-width:0;word-break:break-word}
 .wh-log .wl.ok > .ico{color:var(--green)}.wh-log .wl.w{background:#FFFBF2}.wh-log .wl.w > .ico{color:var(--amber)}
 .wh-log .wl.no{background:var(--red-bg)}.wh-log .wl.no > .ico{color:var(--red)}
+/* V7.16: ผลยิงรับที่หน้างาน */
+#pk-msg.wl{display:flex;gap:8px;align-items:flex-start;padding:8px 12px;border-radius:8px;background:var(--green-bg,#EEF7F1);border:1px solid #C3E3CF}
+#pk-msg.wl > div{flex:1;min-width:0;word-break:break-word}#pk-msg.wl > .ico{color:var(--green);margin-top:2px}
+#pk-msg.wl.w{background:#FFFBF2;border-color:#EBD3A0}#pk-msg.wl.w > .ico{color:var(--amber)}
+#pk-msg.wl.no{background:var(--red-bg);border-color:#F1C2BC}#pk-msg.wl.no > .ico{color:var(--red)}
 .pick{display:grid;gap:10px}
 .pick .pk{display:flex;gap:12px;align-items:flex-start;padding-bottom:10px;border-bottom:1px dashed var(--line)}
 .pick .pk:last-child{border-bottom:0;padding-bottom:0}
@@ -708,6 +713,7 @@ span.loc-chip{cursor:default}
 .wz-c.hl{outline:3px solid var(--action);outline-offset:1px;border-color:var(--action)}
 .wz-c .hl-n{position:absolute;top:4px;right:4px;z-index:2;font-style:normal;min-width:18px;height:18px;border-radius:9px;background:var(--action);color:#fff;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 5px}
 .wz-c.hl .hl-n{display:inline-flex}
+.cam-ok{color:var(--ok,#1F7A4D)}.cam-w{color:var(--warn-ink,#8A6420)}.cam-no{color:var(--red,#B42318)}
 .cam-box{position:relative;border-radius:var(--r);overflow:hidden;background:#000;aspect-ratio:4/3;max-height:60vh}
 .cam-box video{width:100%;height:100%;object-fit:cover;display:block}
 .cam-frame{position:absolute;left:12%;right:12%;top:30%;bottom:30%;border:2px solid rgba(255,255,255,.9);border-radius:10px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
@@ -715,6 +721,7 @@ span.loc-chip{cursor:default}
 @media (pointer:coarse){.loc-chip{height:34px;padding:0 12px}}
 
 /* V7.15: กล่องรับแจ้งเตือนในมือถือ (หน้าแรกผู้รับเหมา / หัวหน้าช่างโรงงาน) */
+.pushadm{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13.5px}.pushadm input{margin-top:3px;width:18px;height:18px;flex:none}.pushadm > span{display:flex;flex-direction:column;gap:2px}
 .pushcard{display:flex;gap:12px;align-items:flex-start;border:1px solid #EBD3A0;background:#FFF8EA;border-radius:12px;padding:12px 14px;margin:0 0 14px;color:var(--ink-text)}
 .pushcard.on{background:#EEF7F1;border-color:#C3E3CF}
 .pushcard.off{background:#F5F6F8;border-color:#E1E5EB}
@@ -867,7 +874,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.15';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.1';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -909,14 +916,14 @@ const OST = {
 };
 const STAGES = { not_started: 'ยังไม่เริ่มติดตั้ง', in_progress: 'กำลังติดตั้ง', done: 'ติดตั้งเสร็จแล้ว' };
 /* งวดจ่ายเงินผู้รับเหมา: เริ่มนับวันครบกำหนดจากเหตุการณ์ใด */
-const TERM_WHEN = { approve: 'หลังจัดซื้ออนุมัติ (มัดจำ)', start: 'หลังผู้รับเหมาเข้าหน้างาน (มัดจำ)', handover: 'หลังจบงาน (ตรวจรับใบส่งมอบ)' };
+const TERM_WHEN = { approve: 'หลังจัดซื้ออนุมัติ (มัดจำ)', start: 'หลังผู้รับเหมารับของ / เริ่มงาน (มัดจำ)', handover: 'หลังจบงาน (ตรวจรับใบส่งมอบ)' };
 const DEFAULT_PAY = { days: 30, depDays: 7, depWhen: 'approve' };   /* V7.14: depWhen = มัดจำนับจาก 'start' วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง) / 'approve' วันที่จัดซื้ออนุมัติ */
-const DEP_WHEN = { start: 'วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง)', approve: 'วันที่จัดซื้ออนุมัติ' };
+const DEP_WHEN = { start: 'วันที่ผู้รับเหมายิงรับของ (เริ่มงาน)', approve: 'วันที่จัดซื้ออนุมัติ' };
  /* หลังจบงานจ่ายภายใน N วัน · มัดจำจ่ายภายใน N วันหลังอนุมัติ — Admin แก้ได้ */
 /* ผู้รับเหมาเลือกการชำระเงินตอนเสนอราคา 1 ใน 2 แบบ — จัดซื้อใช้พิจารณาและเป็นเงื่อนไขตอนอนุมัติ */
 const PAY_OPTS = {
   full: { label: '100% หลังจบงาน', sub: 'รับเงินครั้งเดียว หลังบริษัทตรวจรับใบส่งมอบ' },
-  dep30: { label: 'มัดจำ 30%', get sub() { return '30% ' + (payCfg().depWhen === 'start' ? 'หลังเข้าหน้างาน' : 'หลังอนุมัติ') + ' · 70% หลังจบงาน'; } },
+  dep30: { label: 'มัดจำ 30%', get sub() { return '30% ' + (payCfg().depWhen === 'start' ? 'หลังรับของ (เริ่มงาน)' : 'หลังอนุมัติ') + ' · 70% หลังจบงาน'; } },
 };
 function payCfg() { return Object.assign({}, DEFAULT_PAY, (DB && DB.settings.pay) || {}); }
 function optTerms(opt) { const c = payCfg(); return opt === 'dep30' ? [{ pct: 30, when: c.depWhen === 'start' ? 'start' : 'approve', days: c.depDays }, { pct: 70, when: 'handover', days: c.days }] : [{ pct: 100, when: 'handover', days: c.days }]; }
@@ -1676,8 +1683,13 @@ const seePay = () => S.user.role === 'admin' || S.user.role === 'accounting';   
 const canInhouse = () => S.user.role === 'admin' || S.user.role === 'installer';  /* จัดทีมช่างติดตั้งโรงงาน */
 const teamById = (id) => ((DB && DB.teams) || []).find((t) => t.id === id) || { id, name: id || '—', size: null };
 const ihStarted = (o) => o.channel === 'inhouse' && !!o.inhouse && o.inhouse.stage !== 'not_started';
-/* V7.12: เปลี่ยนช่องทางได้เมื่อยังไม่มีใครเสนอราคา / หัวหน้าช่างยังไม่จัดทีม */
-function canSwitch(o) { return o.channel === 'contractor' ? !o.bids.length && !o.award : o.channel === 'inhouse' ? !!o.inhouse && !o.inhouse.teamId && o.inhouse.stage === 'not_started' : false; }
+/* V7.16: เปลี่ยนช่องทางได้จนกว่าจะเริ่มงานจริง — ผู้รับเหมา: ยังไม่เข้าหน้างาน · ไม่มีใบส่งมอบ · ไม่มีการจ่ายเงิน (มีราคาเสนอ / อนุมัติแล้วก็เปลี่ยนได้)
+   ช่างโรงงาน: ทีมยังไม่เริ่มติดตั้ง (จัดทีมแล้วก็เปลี่ยนได้ — ระบบยกเลิกทีมให้) · Server ตรวจซ้ำทุกข้อ */
+function canSwitch(o) {
+  if (o.cancelledAt) return false;
+  if (o.channel === 'contractor') { const i = o.install || {}; return i.stage === 'not_started' && !i.startedAt && !i.handover && !(o.payments || []).length; }
+  return o.channel === 'inhouse' ? !!o.inhouse && o.inhouse.stage === 'not_started' && !o.inhouse.handover : false;
+}
 /* คอลัมน์ "ความคืบหน้า" ในรายการ Order (Admin / Sale / จัดซื้อ) */
 function progCell(o, s) {
   if (o.cancelledAt) return '<span class="small">' + esc(o.cancelReason || '') + '</span><div class="sub">' + fmtDT(o.cancelledAt) + (o.cancelledBy ? ' · ' + esc(o.cancelledBy) : '') + '</div>';
@@ -1709,8 +1721,7 @@ function orderActs(o) {
   if (canManage() && st === 'dispatch') b.push('<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทางติดตั้ง</button>');
   if (canManage() && !o.cancelledAt && st !== 'dispatch' && canSwitch(o)) b.push('<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('refresh', 'sm') + ' เปลี่ยนช่องทางติดตั้ง</button>');
   if (canInhouse() && o.channel === 'inhouse' && !o.cancelledAt && st !== 'ih_done' && st !== 'ih_sign') b.push('<button class="btn sm primary" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + (o.inhouse && o.inhouse.teamId ? ' แก้ทีม / วันติดตั้ง' : ' จัดทีมช่าง') + '</button>');
-  if (canInhouse() && st === 'ih_booked') b.push('<button class="btn sm" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มติดตั้ง</button>');
-  if (canInhouse() && st === 'ih_installing') b.push('<button class="btn sm ok" data-act="ihStage" data-id="' + o.id + '" data-s="done">' + icon('checkCircle', 'sm') + ' ติดตั้งเสร็จ</button>');
+  if (canInhouse() && st === 'ih_booked' && !packStat(o).total) b.push('<button class="btn sm" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button>');   /* V7.16: มีกล่อง = เริ่มด้วยการยิงรับของ */
   if (canInhouse() && ['ih_booked', 'ih_installing', 'ih_sign', 'ih_done'].indexOf(st) >= 0) b.push(ihJobBtn(o, st));   /* V7.13 */
   if (seeBids() && o.channel === 'contractor' && o.dispatchedAt && !o.award && !o.cancelledAt) b.push('<a class="btn sm primary" href="' + (isAdmin() ? '#/admin/bids/' : '#/pur/bids/') + o.id + '">' + icon('scale', 'sm') + ' ตรวจราคา & อนุมัติ</a>');
   if (h && !h.review && canReview() && !o.cancelledAt) b.push('<button class="btn sm primary" data-act="reviewHand" data-id="' + o.id + '">' + icon('eye', 'sm') + ' ตรวจใบส่งมอบ</button>');
@@ -1759,7 +1770,7 @@ function openOrder(id) {
         (bids.length ? '<table class="t" style="margin-top:8px"><tbody>' + bids.map((b, i) => '<tr><td>' + (i + 1) + '. ' + esc(shortCo(conById(b.cid).company)) + (aw && aw.cid === b.cid ? ' <span class="badge t-green">ได้งาน</span>' : '') + '<div class="sub">ติดตั้ง ' + fmtRange(b.start, bidEnd(b)) + ' · ' + (PAY_OPTS[b.payOpt] ? PAY_OPTS[b.payOpt].label : 'ไม่ระบุการชำระเงิน') + '</div></td><td class="r money">' + money(b.price, 0) + '</td></tr>').join('') + '</tbody></table>' : '<div class="small muted" style="margin-top:6px">ยังไม่มีผู้เสนอราคา</div>') : '') +
       (aw ? '<div class="divider"></div><h3>Booking ติดตั้ง</h3><dl class="dl" style="margin-top:8px"><dt>ผู้รับเหมา</dt><dd><b>' + esc(conById(aw.cid).company) + '</b></dd><dt>ช่วงติดตั้ง</dt><dd>' + fmtRange(aw.start, aw.end) + ' (' + aw.days + ' วัน · ทีม ' + aw.team + ' คน)</dd>' +
         (role !== 'sale' && role !== 'installer' ? '<dt>ราคาที่อนุมัติ</dt><dd class="money">' + money(aw.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd class="small">' + esc(termsText(aw.terms || DEFAULT_TERMS)) + '</dd>' : '') + '<dt>อนุมัติโดย</dt><dd>' + esc(aw.by) + ' · ' + fmtDT(aw.at) + '</dd>' +
-        '<dt>ยิงรับงาน</dt><dd>' + ins.scanned + '/' + o.cabinets + ' ตู้ <span class="xs muted">(รอเชื่อมระบบ Barcode)</span></dd><dt>สถานะติดตั้ง</dt><dd>' + STAGES[ins.stage] + '</dd></dl>' : '') +
+        '<dt>ยิงรับงาน</dt><dd>' + pkTxt(o) + '</dd><dt>สถานะติดตั้ง</dt><dd>' + STAGES[ins.stage] + '</dd></dl>' : '') +
       (h ? '<div class="divider"></div><div class="row between"><h3>ใบส่งมอบงาน</h3>' + (h.review ? (h.review.ok ? '<span class="badge t-green">ตรวจรับแล้ว</span>' : '<span class="badge t-red">ส่งกลับแก้ไข</span>') : '<span class="badge t-orange">รอตรวจ</span>') + '</div>' +
         '<div class="thumbs">' + h.files.map((f, i) => '<div class="thumb" data-act="viewHand" data-id="' + o.id + '" data-i="' + i + '" title="' + esc(f.name) + '">' + thumbHtml(f, o) + (f.cat === 'sign' ? '<span class="tcat">ใบเซ็น</span>' : '') + '</div>').join('') + '</div>' +
         '<div class="small" style="margin-top:6px">วันที่ส่งมอบ ' + fmtDate(h.date) + ' · รูปใบส่งมอบที่ลูกค้าเซ็น ' + signCount(h) + ' รูป' + (h.note ? '<br>' + esc(h.note) : '') + (h.review && h.review.note ? '<br><span class="muted">ผลตรวจ: ' + esc(h.review.note) + '</span>' : '') + '</div>' : '') +
@@ -1778,7 +1789,7 @@ function chanHtml(o) {
     (x ? '<dt>ทีมช่าง</dt><dd>' + (x.teamId ? '<b>' + esc(teamById(x.teamId).name) + '</b>' + (teamById(x.teamId).size ? ' <span class="xs muted">(' + teamById(x.teamId).size + ' คน)</span>' : '') : '<span class="muted">รอหัวหน้าช่างจัดทีม</span>') + '</dd>' +
       (x.teamId ? '<dt>ช่วงติดตั้ง</dt><dd>' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</dd>' : '') + '<dt>สถานะ</dt><dd>' + STAGES[x.stage || 'not_started'] + '</dd>' +
       (x.note ? '<dt>หมายเหตุหัวหน้าช่าง</dt><dd>' + esc(x.note) + '</dd>' : '') + (x.assignedBy && x.teamId ? '<dt>จัดทีมโดย</dt><dd>' + esc(x.assignedBy) + ' · ' + fmtDT(x.assignedAt) + '</dd>' : '') +
-      (x.teamId ? '<dt>ยิงรับงาน</dt><dd>' + o.install.scanned + '/' + o.cabinets + ' ตู้ <span class="xs muted">(รอเชื่อมระบบ Barcode)</span></dd>' : '') : '') + '</dl>' +
+      (x.teamId ? '<dt>ยิงรับงาน</dt><dd>' + pkTxt(o) + '</dd>' : '') : '') + '</dl>' +
     (x && x.handover ? ihHandHtml(o, x.handover) : x && x.stage === 'done' && 'handover' in x ? '<div style="margin-top:10px">' + notice('warn', '<b>ติดตั้งเสร็จแล้ว รอหัวหน้าช่างแนบใบส่งมอบที่ลูกค้าเซ็น</b>') + '</div>' : '');
 }
 /* V7.13: ใบส่งมอบของงานช่างโรงงาน (หัวหน้าช่างแนบ → ปิดงาน · ไม่มีขั้นตอนบัญชี) */
@@ -1797,8 +1808,27 @@ function ihJobBtn(o, st) {
   return '<a class="btn sm' + (st === 'ih_sign' ? ' primary' : '') + '" href="#/ins/job/' + o.id + '">' + icon(st === 'ih_sign' ? 'sign' : 'hammer', 'sm') + (st === 'ih_sign' ? ' แนบใบส่งมอบ' : ' เปิดงาน') + '</a>';
 }
 /* ---------- V7.12: จัดซื้อเลือกช่องทางติดตั้ง (ช่างติดตั้งโรงงาน / ผู้รับเหมาติดตั้ง) ---------- */
+/* V7.16: เปลี่ยนช่องทาง — บอกให้ชัดว่าระบบจะทำอะไรให้ + เหตุผล (บังคับเมื่ออนุมัติผู้รับเหมาแล้ว) */
+function dpSwitchNote(o) {
+  let t, tone = 'warn';
+  if (o.channel === 'contractor') {
+    const n = o.bids.length, a = o.award;
+    if (a) { tone = 'danger'; t = '<b>อนุมัติ ' + esc(conById(a.cid).company) + ' แล้ว</b> (ติดตั้ง ' + fmtRange(a.start, a.end) + ') — ระบบจะ<b>ยกเลิกการอนุมัติ</b>และแจ้งผู้รับเหมารายนี้ว่า “ยกเลิกการอนุมัติงาน” · คิวของรายนี้ว่างทันที' + (n > 1 ? '<br>ผู้รับเหมาอีก ' + (n - 1) + ' รายที่เสนอไว้ได้แจ้งว่า “ปิดรับราคาแล้ว”' : ''); }
+    else if (n) t = '<b>มีผู้รับเหมาเสนอราคาแล้ว ' + n + ' ราย</b> — ระบบจะ<b>ปิดรับราคา</b>และแจ้งผู้รับเหมาที่เสนอว่า “ปิดรับราคาแล้ว ขอบคุณที่เสนอราคา” (ไม่บอกเหตุผล / ราคา)';
+    else t = 'งานนี้เปิดให้ผู้รับเหมาเห็นแล้ว (ยังไม่มีใครเสนอราคา) — เปลี่ยนแล้วผู้รับเหมาจะไม่เห็นงานนี้อีก';
+    if (n || a) t += '<br><span class="xs">ราคาที่เสนอไว้เก็บในประวัติ Order (เห็นเฉพาะจัดซื้อ / Admin) · ถ้าเปลี่ยนกลับเป็นผู้รับเหมา = เปิดรับราคารอบใหม่</span>';
+  } else {
+    const x = o.inhouse || {}, tm = x.teamId ? teamById(x.teamId) : null;
+    t = x.teamId ? '<b>หัวหน้าช่างจัดทีม ' + esc(tm ? tm.name : x.teamId) + ' แล้ว</b> (' + fmtRange(x.start, x.end) + ') — ระบบจะ<b>ยกเลิกทีม</b>ให้ และแจ้งหัวหน้าช่างว่างานย้ายไปผู้รับเหมา' : 'หัวหน้าช่างยังไม่จัดทีม — เปลี่ยนแล้วงานออกจากคิวช่างโรงงาน';
+  }
+  const need = o.channel === 'contractor' && !!o.award;
+  return '<div style="margin-top:10px">' + notice(tone, t) + '</div>' +
+    '<div class="field" style="margin-top:12px"><label for="dp-reason">เหตุผลที่เปลี่ยน' + (need ? ' <span class="req">*</span>' : ' <span class="xs muted">(ไม่บังคับ)</span>') + '</label>' +
+    '<textarea class="textarea" id="dp-reason" rows="2" placeholder="เช่น ราคาสูงเกินงบ / ให้ช่างเราทำเพื่อความรวดเร็ว"></textarea><div class="help">' + (need ? 'อย่างน้อย 5 ตัวอักษร · ' : '') + 'เก็บไว้ในประวัติ Order — ผู้รับเหมาไม่เห็น</div></div>';
+}
 on('dispatch', (el) => {
   const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o || !canManage() || o.cancelledAt || !o.confirmedAt) return;
+  if (o.channel && !canSwitch(o)) { toast(o.channel === 'contractor' ? 'ผู้รับเหมารับของ (เริ่มงาน) / ส่งมอบ / ได้รับเงินแล้ว — เปลี่ยนช่องทางไม่ได้' : 'ทีมช่างโรงงานรับของ (เริ่มงาน) แล้ว — เปลี่ยนช่องทางไม่ได้', 'err'); return; }
   const sw0 = !!o.channel, pick = sw0 ? (o.channel === 'inhouse' ? 'contractor' : 'inhouse') : '';
   S.dpDays = bidDaysOf(o);
   const card = (k, t, sub, ico) => '<label class="pay-opt dp-opt' + (pick === k ? ' on' : '') + '"><input type="radio" name="dpCh" value="' + k + '"' + (pick === k ? ' checked' : '') + (o.channel === k ? ' disabled' : '') + ' data-chg="dpPick"><span class="po-dot"></span><span>' + icon(ico, 'sm') + ' <b>' + t + '</b>' + (o.channel === k ? ' <span class="badge t-gray plain">ช่องทางปัจจุบัน</span>' : '') + '<span class="xs">' + sub + '</span></span></label>';
@@ -1808,7 +1838,7 @@ on('dispatch', (el) => {
       card('inhouse', 'ช่างติดตั้งเรา (ช่างติดตั้งโรงงาน)', 'ส่งให้หัวหน้าช่างติดตั้งเลือกทีมและคิว — ผู้รับเหมาไม่เห็นงานนี้', 'hammer') +
       card('contractor', 'ผู้รับเหมาติดตั้ง', 'เปิดให้ผู้รับเหมาทุกคนเสนอราคา — เริ่มนับเวลาตอนกดยืนยันนี้', 'users') + '</div>' +
       '<div id="dp-bd" class="field' + (pick === 'contractor' ? '' : ' hidden') + '" style="margin-top:12px"><label for="dp-days">' + icon('clock', 'sm') + ' เปิดรับราคา <span class="req">*</span></label><div class="addon" style="max-width:220px"><input class="input" id="dp-days" inputmode="numeric" value="' + bidDaysOf(o) + '" data-inp="dpCalc"><span>วัน</span></div><div class="help" id="dp-help"></div></div>' +
-      (sw0 ? '<div style="margin-top:10px">' + notice('warn', o.channel === 'contractor' ? 'งานนี้เปิดให้ผู้รับเหมาเห็นแล้ว (ยังไม่มีใครเสนอราคา) — เปลี่ยนแล้วผู้รับเหมาจะไม่เห็นงานนี้อีก' : 'หัวหน้าช่างยังไม่จัดทีม — เปลี่ยนแล้วงานออกจากคิวช่างโรงงาน') + '</div>' : ''),
+      (sw0 ? dpSwitchNote(o) : ''),
     foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="dispatchOk" data-id="' + o.id + '">' + icon('check', 'sm') + ' ยืนยันช่องทาง</button>', onOpen: () => dpCalc() });
 });
 function dpCalc() {
@@ -1824,8 +1854,13 @@ on('dispatchOk', async (el) => {
   if (!ch) { toast('เลือกช่องทางติดตั้ง: ช่างติดตั้งโรงงาน หรือ ผู้รับเหมาติดตั้ง', 'err'); return; }
   const n = parseNum(($('#dp-days') || {}).value);
   if (ch === 'contractor' && !(n >= 1 && n <= 60 && Math.floor(n) === n)) { toast('ใส่จำนวนวันเปิดรับราคา 1–60 วัน', 'err'); $('#dp-days').focus(); return; }
-  await rpc('cn_dispatch', { p_order: id, p_channel: ch, p_bid_days: ch === 'contractor' ? n : null });
-  await afterChange(ch === 'contractor' ? 'ส่ง ' + id + ' ให้ผู้รับเหมาเสนอราคาแล้ว — เปิดรับราคา ' + n + ' วัน' : 'ส่ง ' + id + ' ให้ช่างติดตั้งโรงงานแล้ว — รอหัวหน้าช่างจัดทีม');
+  const o = DB.orders.find((x) => x.id === id) || {}, rs = (($('#dp-reason') || {}).value || '').trim();
+  if (o.channel === 'contractor' && o.award && rs.length < 5) { toast('อนุมัติผู้รับเหมาแล้ว — ระบุเหตุผลที่เปลี่ยน (อย่างน้อย 5 ตัวอักษร)', 'err'); $('#dp-reason').focus(); return; }
+  const closed = o.channel === 'contractor' ? o.bids.length : 0, wasTeam = o.channel === 'inhouse' && o.inhouse && o.inhouse.teamId;
+  const args = { p_order: id, p_channel: ch, p_bid_days: ch === 'contractor' ? n : null }; if (rs) args.p_reason = rs;   /* ไม่มีเหตุผล = เรียกแบบเดิม (ใช้ได้แม้ยังไม่รัน SQL V7.16) */
+  await rpc('cn_dispatch', args);
+  await afterChange(ch === 'contractor' ? (o.channel ? 'เปลี่ยน ' + id + ' เป็นผู้รับเหมาแล้ว' + (wasTeam ? ' — ยกเลิกทีมช่างโรงงานให้แล้ว' : '') + ' · เปิดรับราคา ' + n + ' วัน' : 'ส่ง ' + id + ' ให้ผู้รับเหมาเสนอราคาแล้ว — เปิดรับราคา ' + n + ' วัน')
+    : (o.channel ? 'เปลี่ยน ' + id + ' เป็นช่างติดตั้งโรงงานแล้ว' + (closed ? ' — ปิดรับราคาและแจ้งผู้รับเหมาที่เสนอ ' + closed + ' รายแล้ว' : '') : 'ส่ง ' + id + ' ให้ช่างติดตั้งโรงงานแล้ว — รอหัวหน้าช่างจัดทีม'));
 });
 /* หลังแก้ข้อมูลจากหน้ารายละเอียด: เปิดหน้าเดิมซ้ำให้เห็นผลทันที */
 async function afterChange(msg, reopenId) {
@@ -1998,10 +2033,10 @@ function installPage(nav) {
     alertBar(nCheck, nCheck + ' ใบส่งมอบรอตรวจ', 'ผู้รับเหมาส่งรูปใบส่งมอบที่ลูกค้าเซ็นแล้ว — กด <b>ตรวจใบส่งมอบ</b> ใส่วันชำระเงินแล้วกดผ่าน หรือส่งกลับให้แก้ (แถวที่มีแถบสีส้ม)' + (acc ? '' : ' · บัญชีเป็นผู้ตรวจหลัก'), t !== 'check' ? jumpBtn('instTab', 'data-t="check"', 'ไปแท็บรอตรวจใบส่งมอบ') : '') +
     '<div class="chips" style="margin-bottom:12px">' + tabs.map((x) => '<button class="fchip ' + (t === x[0] ? 'on' : '') + '" data-act="instTab" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + DB.orders.filter((o) => ost(o) === x[0]).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ผู้รับเหมา</th><th>ช่วงติดตั้ง</th><th>ยิงรับงาน</th><th>ใบส่งมอบ</th><th></th></tr></thead><tbody>' +
-    (rows.length ? rows.map((o) => { const h = o.install.handover, pct = Math.round(o.install.scanned / Math.max(1, o.cabinets) * 100);
+    (rows.length ? rows.map((o) => { const h = o.install.handover, pk = packStat(o), pct = pk.total ? Math.round(pk.got / pk.total * 100) : 0;
       return '<tr' + (t === 'check' ? ' class="need"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
         '<td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ช่วงติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + '</td>' +
-        '<td data-l="ยิงรับงาน"><div class="small">' + o.install.scanned + '/' + o.cabinets + ' ตู้</div><div class="prog" style="width:120px"><i style="width:' + pct + '%"></i></div></td>' +
+        '<td data-l="ยิงรับงาน"><div class="small">' + (pk.total ? pk.got + '/' + pk.total + ' กล่อง' : '<span class="muted">คลังยังไม่รับเข้า</span>') + '</div><div class="prog" style="width:120px"><i style="width:' + pct + '%"></i></div></td>' +
         '<td data-l="ใบส่งมอบ">' + (h ? (h.review ? (h.review.ok ? '<span class="badge t-green">ตรวจรับแล้ว</span>' : '<span class="badge t-red">ส่งกลับแก้ไข</span>') : '<span class="badge t-orange">รอตรวจ</span>') + '<div class="sub">ใบเซ็น ' + signCount(h) + ' · ภาพ ' + (h.files.length - signCount(h)) + ' รูป</div>' + (h.payDate && h.review && h.review.ok ? '<div class="sub" style="color:var(--teal)">' + icon('wallet', 'xs') + ' ชำระ ' + fmtDate(h.payDate) + '</div>' : '') : '<span class="muted small">ยังไม่ส่ง</span>') + '</td>' +
         '<td class="r">' + (h && !h.review && canReview() ? '<button class="btn sm primary" data-act="reviewHand" data-id="' + o.id + '">' + icon('eye', 'sm') + ' ตรวจใบส่งมอบ</button>' : '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>') + '</td></tr>'; }).join('')
       : '<tr><td colspan="6">' + empty('hammer', 'ไม่มีงานในสถานะนี้') + '</td></tr>') + '</tbody></table></div></div>' };
@@ -2497,8 +2532,7 @@ function inhousePage(nav) {
         '<td data-l="ทีม/วันติดตั้ง" class="small">' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' <span class="xs muted">' + tm.size + ' คน</span>' : '') + '<div class="sub">' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</div>' : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</td>' +
         '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + drawBtns(o) +
           (canInhouse() && st !== 'ih_done' && st !== 'ih_sign' ? '<button class="btn sm ' + (tm ? '' : 'primary') + '" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + (tm ? ' แก้ทีม/วัน' : ' จัดทีม') + '</button>' : '') +
-          (canInhouse() && st === 'ih_booked' ? '<button class="btn sm primary" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มติดตั้ง</button>' : '') +
-          (canInhouse() && st === 'ih_installing' ? '<button class="btn sm ok" data-act="ihStage" data-id="' + o.id + '" data-s="done">' + icon('checkCircle', 'sm') + ' ติดตั้งเสร็จ</button>' : '') +
+          (canInhouse() && st === 'ih_booked' && !packStat(o).total ? '<button class="btn sm primary" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button>' : '') +
           (canInhouse() && st !== 'ih_wait' ? ihJobBtn(o, st) : '') +
           (st === 'ih_done' && !canInhouse() ? '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>' : '') + '</span></td></tr>'; }).join('')
       : '<tr><td colspan="5">' + empty('hammer', 'ไม่มีงานในสถานะนี้', t === 'ih_wait' ? 'งานที่จัดซื้อเลือก "ช่างติดตั้งโรงงาน" จะมาอยู่ที่นี่' : '') + '</td></tr>') + '</tbody></table></div></div>' };
@@ -2563,16 +2597,16 @@ on('ihUnassign', async (el) => {
 on('ihStage', (el) => {
   const o = DB.orders.find((x) => x.id === el.dataset.id), to = el.dataset.s; if (!o || !canInhouse()) return;
   const x = o.inhouse || {}, tm = teamById(x.teamId);
-  modal({ title: icon(to === 'done' ? 'checkCircle' : 'hammer') + (to === 'done' ? ' ยืนยันติดตั้งเสร็จ?' : ' เริ่มติดตั้ง?'), sub: esc(o.id) + ' · ' + esc(o.title),
+  modal({ title: icon(to === 'done' ? 'checkCircle' : 'hammer') + (to === 'done' ? ' ยืนยันติดตั้งเสร็จ?' : ' เริ่มงาน?'), sub: esc(o.id) + ' · ' + esc(o.title),
     body: '<dl class="dl"><dt>ทีม</dt><dd><b>' + esc(tm.name) + '</b></dd><dt>ช่วงติดตั้ง</dt><dd>' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(o.siteName) + ' จ.' + esc(o.province) + '</dd></dl>' +
       '<div class="small muted" style="margin-top:8px">' + (to === 'done' ? 'ทีมนี้ว่างสำหรับคิวช่วงนี้ — ขั้นต่อไป: <b>แนบรูปใบส่งมอบที่ลูกค้าเซ็น</b> + ภาพหน้างาน เพื่อปิดงาน (ระบบพาไปหน้างานให้)' : 'สถานะเปลี่ยนเป็น "ช่างโรงงาน · กำลังติดตั้ง" — หลังเริ่มแล้ว Sale แก้ Order ไม่ได้') + '</div>',
-    foot: '<button class="btn" data-act="closeOv">ปิด</button><button class="btn ' + (to === 'done' ? 'ok' : 'primary') + '" data-act="ihStageOk" data-id="' + o.id + '" data-s="' + to + '">' + icon('check', 'sm') + (to === 'done' ? ' ติดตั้งเสร็จ' : ' เริ่มติดตั้ง') + '</button>' });
+    foot: '<button class="btn" data-act="closeOv">ปิด</button><button class="btn ' + (to === 'done' ? 'ok' : 'primary') + '" data-act="ihStageOk" data-id="' + o.id + '" data-s="' + to + '">' + icon('check', 'sm') + (to === 'done' ? ' ติดตั้งเสร็จ' : ' เริ่มงาน') + '</button>' });
 });
 on('ihStageOk', async (el) => {
   const id = el.dataset.id, done = el.dataset.s === 'done';
   await rpc('cn_set_inhouse_stage', { p_order: id, p_stage: el.dataset.s });
   if (done && DB.orders.find((x) => x.id === id) && 'handover' in (DB.orders.find((x) => x.id === id).inhouse || {})) { await refresh(); closeOverlay(); toast('บันทึก ' + id + ' ติดตั้งเสร็จแล้ว — แนบใบส่งมอบที่ลูกค้าเซ็นเพื่อปิดงาน'); if (location.hash.split('?')[0] === '#/ins/job/' + id) rerender(); else go('#/ins/job/' + id); return; }
-  await afterChange(done ? 'บันทึก ' + id + ' ติดตั้งเสร็จแล้ว' : 'บันทึก ' + id + ' เริ่มติดตั้งแล้ว');
+  await afterChange(done ? 'บันทึก ' + id + ' ติดตั้งเสร็จแล้ว' : 'บันทึก ' + id + ' เริ่มงานแล้ว');
 });
 /* ===================== V7.13 หน้างานช่างติดตั้งโรงงาน: ยิงรับงาน → ติดตั้ง → แนบใบส่งมอบที่ลูกค้าเซ็น (ปิดงาน · ไม่ผ่านบัญชี) ===================== */
 const IHF = { files: [], id: '', busy: 0, date: '', note: '' };
@@ -2581,9 +2615,8 @@ route(/^\/ins\/job\/([^/]+)$/, 'ins', (m) => {
   if (!o || o.channel !== 'inhouse' || !o.inhouse) return { nav: back, html: empty('lock', 'ไม่พบงานช่างโรงงานนี้', 'งานอาจถูกเปลี่ยนช่องทางเป็นผู้รับเหมา', '<a class="btn" href="' + back + '">กลับ</a>') };
   if (o.cancelledAt) return { nav: back, html: empty('ban', 'Order ' + esc(o.id) + ' ถูกยกเลิกแล้ว', 'ยกเลิกเมื่อ ' + fmtDT(o.cancelledAt), '<a class="btn" href="' + back + '">กลับ</a>') };
   const x = o.inhouse, s = ost(o), h = x.handover, tm = x.teamId ? teamById(x.teamId) : null, i = o.install;
-  const can = canInhouse(), scanDone = i.scanned >= o.cabinets, stDone = x.stage === 'done', sent = !!h;
-  const st1 = scanDone ? 'done' : 'cur', st2 = stDone ? 'done' : x.stage === 'in_progress' || scanDone ? 'cur' : '', st3 = sent ? 'done' : stDone ? 'cur' : '';
-  const pct = Math.round(i.scanned / Math.max(1, o.cabinets) * 100);
+  const can = canInhouse(), kk = packStat(o), okHand = recvOk(o) && !!tm, sent = !!h;
+  const st1 = recvDone(o) || sent || (!kk.total && jobStarted(o)) ? 'done' : 'cur', st3 = sent ? 'done' : okHand ? 'cur' : '';
   if (IHF.id !== o.id) { IHF.id = o.id; IHF.files = []; IHF.busy = 0; IHF.date = ''; IHF.note = ''; }
   const up = (cat, cam, pick) => '<div class="row"><label class="btn sm">' + icon('camera', 'sm') + ' ' + cam + '<input type="file" accept="image/*" capture="environment" hidden data-chg="ihfFile" data-cat="' + cat + '"></label><label class="btn sm">' + icon('upload', 'sm') + ' ' + pick + '<input type="file" accept="image/*' + (cat === 'sign' ? ',application/pdf' : '') + '" multiple hidden data-chg="ihfFile" data-cat="' + cat + '"></label></div><div id="ihf-' + cat + '"></div>';
   const form = '<div class="box" id="ihf">' +
@@ -2599,17 +2632,13 @@ route(/^\/ins\/job\/([^/]+)$/, 'ins', (m) => {
       '<dt>สถานที่</dt><dd>' + esc(o.siteName) + '<br>' + esc(o.address) + ' จ.' + esc(o.province) + (o.mapUrl ? '<br>' + mapNavHtml(o.mapUrl) : '') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(o.contactName) + (o.contactPhone ? ' · <a href="tel:' + esc(o.contactPhone) + '">' + esc(o.contactPhone) + '</a>' : '') + '</dd>' +
       '<dt>จำนวนตู้</dt><dd>' + num(o.cabinets) + ' ตู้</dd>' + (x.note ? '<dt>หมายเหตุหัวหน้าช่าง</dt><dd>' + esc(x.note) + '</dd>' : '') + (o.note ? '<dt>หมายเหตุ Order</dt><dd>' + esc(o.note) + '</dd>' : '') + '</dl></div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
-    '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับงาน</h4><div class="small muted">สแกน Barpack จากตัวสินค้าทุกตู้ เพื่อยืนยันว่าสินค้ามาถึงหน้างาน</div>' +
-      '<div class="box"><div class="barcode-ph"><span class="bc"></span><div style="flex:1"><div class="small"><b>รับแล้ว ' + i.scanned + ' / ' + o.cabinets + ' ตู้</b> (' + pct + '%)</div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div></div></div>' +
-      '<button class="btn sm" style="margin-top:10px" data-act="scanOpen" data-id="' + o.id + '">' + icon('barcode', 'sm') + ' รายการ Barpack</button><div class="xs muted" style="margin-top:6px">ระบบสแกน Barcode จะเชื่อมจากโปรแกรมอีกตัวในภายหลัง — รอบนี้เตรียมหน้าจอและโครงสร้างไว้</div></div></div></div>' +
-    '<div class="stp ' + st2 + '"><div class="dot">' + (st2 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งงาน</h4><div class="small muted">อัปเดตสถานะให้บริษัทเห็นใน Booking ช่างโรงงาน</div>' +
-      '<div class="box">' + (tm ? '<div class="seg" role="group" aria-label="สถานะติดตั้ง">' + Object.keys(STAGES).map((k) => '<button class="' + (x.stage === k ? 'on' : '') + '" data-act="ihSeg" data-id="' + o.id + '" data-s="' + k + '"' + (sent || !can ? ' disabled' : '') + '>' + STAGES[k] + '</button>').join('') + '</div>' + (x.startedAt ? '<div class="xs muted" style="margin-top:6px">เริ่มติดตั้งเมื่อ ' + fmtDT(x.startedAt) + (x.doneAt ? ' · เสร็จเมื่อ ' + fmtDT(x.doneAt) : '') + '</div>' : '')
-        : '<div class="small muted">จัดทีม / วันติดตั้งก่อน</div>' + (can ? '<button class="btn sm primary" style="margin-top:8px" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + ' จัดทีมช่าง</button>' : '')) + '</div></div></div>' +
-    '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '3') + '</div><div class="sb"><h4>ยืนยันติดตั้งเสร็จ</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ส่งแล้วปิดงานทันที (ช่างโรงงานไม่ต้องผ่านบัญชี)</div>' +
+    '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนกล่องทุกกล่องตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงกล่องแรก = เริ่มงาน</div>' +
+      recvBox(o, can) + '</div></div>' +
+    '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งเสร็จ · ส่งมอบงาน</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ส่งแล้วปิดงานทันที (ช่างโรงงานไม่ต้องผ่านบัญชี)</div>' +
       (sent ? '<div class="box">' + notice('ok', 'ส่งใบส่งมอบแล้วเมื่อ ' + fmtDT(h.at) + (h.by ? ' โดย ' + esc(h.by) : '') + ' · ปิดงานแล้ว') +
           (can ? '<div class="row" style="margin:-2px 0 8px"><button class="btn sm" data-act="ihfWithdraw" data-id="' + o.id + '">' + icon('undo', 'sm') + ' ถอนใบส่งมอบเพื่อแก้ไข</button><span class="xs muted">ส่งผิด / ลืมแนบรูป</span></div>' : '') +
           '<div class="thumbs">' + h.files.map((f, k) => '<div class="thumb" data-act="viewIhHand" data-id="' + o.id + '" data-i="' + k + '">' + thumbHtml(f, o) + (f.cat === 'sign' ? '<span class="tcat">ใบเซ็น</span>' : '') + '</div>').join('') + '</div><div class="small" style="margin-top:6px">วันที่ส่งมอบ ' + fmtDate(h.date) + (h.note ? ' · ' + esc(h.note) : '') + '</div></div>'
-        : stDone ? (can ? form : '<div class="box small muted">รอหัวหน้าช่างแนบใบส่งมอบ</div>') : '<div class="box small muted">เลือก "ติดตั้งเสร็จแล้ว" ในขั้นที่ 2 ก่อน จึงแนบใบส่งมอบได้</div>') + '</div></div>' +
+        : okHand ? (can ? form : '<div class="box small muted">รอหัวหน้าช่างแนบใบส่งมอบ</div>') : '<div class="box small muted"' + (tm ? ' id="pk-next"' : '') + '>' + (!tm ? 'จัดทีม / วันติดตั้งก่อน' + (can ? ' <button class="btn sm primary" style="margin-left:6px" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + ' จัดทีมช่าง</button>' : '') : '<span>' + pkNextTxt(kk) + '</span>') + '</div>') + '</div></div>' +
     '</div></div></div>' };
 });
 function renderIhfFiles() {
@@ -2716,7 +2745,7 @@ function bidReview(base, id) {
   const st = ost(o), bids = o.bids.slice().sort((a, b) => a.price - b.price), ref = fee(o);
   const rows = bids.map((b, i) => { const end = bidEnd(b), cl = clashes(b.cid, b.start, end, o.id); return { b, i, end, cl }; });
   const canApprove = st === 'open' || st === 'expired';
-  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>', '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
+  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>' + (canManage() && o.channel === 'contractor' && canSwitch(o) ? '<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('hammer', 'sm') + ' เปลี่ยนเป็นช่างโรงงาน</button>' : ''), '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
     '<div class="grid g3"><div class="card card-b"><div class="small muted">นับถอยหลัง ' + bidDaysOf(o) + ' วัน (เวลาเดียวกับที่ผู้รับเหมาเห็น)</div><div style="margin-top:6px">' + cdHtml(o) + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="money" style="font-size:24px;color:var(--teal)">' + money(ref) + '</div><div class="xs muted">' + sw(o.type) + (S.user.role === 'admin' ? ' ' + rateOf(o) + '% ของราคาขาย' : '') + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ลูกค้าต้องการติดตั้ง</div><div class="strong" style="font-size:18px">' + fmtRange(o.wantFrom, o.wantTo) + '</div><div class="xs muted">' + esc(o.siteName) + ' จ.' + esc(o.province) + ' · ' + o.cabinets + ' ตู้</div></div></div>' +
@@ -3043,7 +3072,7 @@ route(/^\/con\/work$/, 'con', () => {
     return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + tag + '</div><div class="jmeta">' + esc(x.p.title) + '</div></div>' +
       '<div class="ref" style="background:var(--teal-bg);border-color:#9FD5CB"><div class="k" style="color:var(--teal)">ติดตั้ง</div><div class="v" style="color:var(--teal);font-size:15px">' + fmtRange(a.start, a.end) + '</div><div class="s" style="color:var(--teal)">' + a.days + ' วัน</div></div></div>' +
       '<div class="jb"><div class="ln">' + icon('pin', 'sm') + '<span>' + esc(x.p.siteName) + '<br><span class="xs">' + esc(x.p.address) + ' จ.' + esc(x.p.province) + '</span>' + (x.p.mapUrl ? '<br>' + mapNavHtml(x.p.mapUrl) : '') + '</span></div><div class="ln">' + icon('phone', 'sm') + '<span>' + esc(x.p.contactName) + ' · <a href="tel:' + esc(x.p.contactPhone) + '">' + esc(x.p.contactPhone) + '</a></span></div>' +
-      '<div class="ln">' + icon('barcode', 'sm') + '<span>ยิงรับงาน ' + i.scanned + '/' + x.p.cabinets + ' ตู้</span></div>' + conDraw(x.p) + '</div>' +
+      '<div class="ln">' + icon('barcode', 'sm') + '<span>ยิงรับงาน: ' + pkTxt(x.o) + '</span></div>' + conDraw(x.p) + '</div>' +
       '<div class="jf"><span class="small muted">ราคางาน ' + money(a.price, 0) + '</span><a class="btn primary sm" href="#/con/job/' + x.p.id + '">' + icon('hammer', 'sm') + ' เปิดงาน</a></div></div>'; };
   return { nav: '#/con/work', html: conHero(cid, 'สถานะการทำงาน', 'งานที่ได้รับอนุมัติ — ทำตาม 3 ขั้น: ยิงรับงาน → ติดตั้ง → ยืนยันติดตั้งเสร็จ') +
     alertBar(act.filter((x) => !finished(x.o)).length, act.filter((x) => !finished(x.o)).length + ' งานที่ได้รับอนุมัติ ยังไม่ส่งมอบ', 'อัปเดตสถานะติดตั้ง แล้วส่งรูปใบส่งมอบที่ลูกค้าเซ็นเมื่อติดตั้งเสร็จ (กด <b>เปิดงาน</b>)', '', 'info') +
@@ -3056,9 +3085,8 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
   if (o.cancelledAt) return { nav: '#/con/work', html: empty('ban', 'Order ' + esc(o.id) + ' ถูกยกเลิกโดยบริษัท', 'ยกเลิกเมื่อ ' + fmtDT(o.cancelledAt) + ' · ดูประวัติรับเงินของงานนี้ได้ที่แท็บรอรับเงิน', '<a class="btn" href="#/con/pay">ไปแท็บรอรับเงิน</a>') };
   const p = pubOrder(o, cid), i = o.install, h = i.handover, s = ost(o);
   const returned = h && h.review && h.review.ok === false;
-  const scanDone = i.scanned >= o.cabinets, stDone = i.stage === 'done', sent = h && !returned;
-  const st1 = scanDone ? 'done' : 'cur', st2 = stDone ? 'done' : i.stage === 'in_progress' || scanDone ? 'cur' : '', st3 = sent ? 'done' : stDone ? 'cur' : '';
-  const pct = Math.round(i.scanned / Math.max(1, o.cabinets) * 100);
+  const kk = packStat(o), okHand = recvOk(o), sent = h && !returned;
+  const st1 = recvDone(o) || sent || (!kk.total && jobStarted(o)) ? 'done' : 'cur', st3 = sent ? 'done' : okHand ? 'cur' : '';
   if (HF.id !== o.id) { HF.id = o.id; HF.files = returned ? h.files.slice() : []; HF.busy = 0; HF.date = returned ? h.date : ''; HF.note = returned ? h.note : ''; }
   const up = (cat, cam, pick, multi) => '<div class="row"><label class="btn sm">' + icon('camera', 'sm') + ' ' + cam + '<input type="file" accept="image/*" capture="environment" hidden data-chg="hfFile" data-cat="' + cat + '"></label><label class="btn sm">' + icon('upload', 'sm') + ' ' + pick + '<input type="file" accept="image/*' + (cat === 'sign' ? ',application/pdf' : '') + '"' + (multi ? ' multiple' : '') + ' hidden data-chg="hfFile" data-cat="' + cat + '"></label>' + '</div><div id="hf-' + cat + '"></div>';
   const handForm = '<div class="box" id="hf">' +
@@ -3070,16 +3098,13 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
     '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + '<h2 style="margin-top:4px">' + esc(p.title) + '</h2></div></div>' +
     '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + (p.mapUrl ? '<br>' + mapNavHtml(p.mapUrl) : '') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
-    '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับงาน</h4><div class="small muted">สแกน Barpack จากตัวสินค้าทุกตู้ เพื่อยืนยันว่าสินค้ามาถึงหน้างาน</div>' +
-      '<div class="box"><div class="barcode-ph"><span class="bc"></span><div style="flex:1"><div class="small"><b>รับแล้ว ' + i.scanned + ' / ' + o.cabinets + ' ตู้</b> (' + pct + '%)</div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div></div></div>' +
-      '<button class="btn sm" style="margin-top:10px" data-act="scanOpen" data-id="' + o.id + '">' + icon('barcode', 'sm') + ' รายการ Barpack</button><div class="xs muted" style="margin-top:6px">ระบบสแกน Barcode จะเชื่อมจากโปรแกรมอีกตัวในภายหลัง — รอบนี้เตรียมหน้าจอและโครงสร้างไว้</div></div></div></div>' +
-    '<div class="stp ' + st2 + '"><div class="dot">' + (st2 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งงาน</h4><div class="small muted">อัปเดตสถานะให้บริษัทเห็นในปฏิทิน Booking</div>' +
-      '<div class="box"><div class="seg" role="group" aria-label="สถานะติดตั้ง">' + Object.keys(STAGES).map((k) => '<button class="' + (i.stage === k ? 'on' : '') + '" data-act="stage" data-id="' + o.id + '" data-s="' + k + '"' + (sent ? ' disabled' : '') + '>' + STAGES[k] + '</button>').join('') + '</div>' + (i.startedAt ? '<div class="xs muted" style="margin-top:6px">เริ่มติดตั้งเมื่อ ' + fmtDT(i.startedAt) + '</div>' : '') + '</div></div></div>' +
-    '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '3') + '</div><div class="sb"><h4>ยืนยันติดตั้งเสร็จ</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ฝ่ายบัญชีของบริษัทจะตรวจเอกสารและแจ้งวันชำระเงิน</div>' +
+    '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนกล่องทุกกล่องตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงกล่องแรก = เริ่มงาน</div>' +
+      recvBox(o, true) + '</div></div>' +
+    '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งเสร็จ · ส่งมอบงาน</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ฝ่ายบัญชีของบริษัทจะตรวจเอกสารและแจ้งวันชำระเงิน</div>' +
       (returned ? '<div style="margin-top:8px">' + notice('danger', '<b>ส่งกลับให้แก้ไข:</b> ' + esc(h.review.note) + ' — แก้ไข/เพิ่มรูปแล้วส่งอีกครั้ง') + '</div>' : '') +
       (sent ? '<div class="box">' + (h.review && h.review.ok ? notice('ok', 'ตรวจรับใบส่งมอบแล้ว โดย ' + esc(h.review.by) + (h.payDate ? ' · <b>วันชำระเงิน ' + fmtDateFull(h.payDate) + '</b>' : '') + ' · ดูยอดเงินที่แท็บ <a href="#/con/pay">รอรับเงิน</a>') : notice('info', 'ส่งแล้วเมื่อ ' + fmtDT(h.at) + ' — รอฝ่ายบัญชีตรวจเอกสาร') + '<div class="row" style="margin:-2px 0 8px"><button class="btn sm" data-act="hfWithdraw" data-id="' + o.id + '">' + icon('undo', 'sm') + ' ถอนใบส่งมอบเพื่อแก้ไข</button><span class="xs muted">ส่งผิด/ลืมแนบรูป แก้ได้ก่อนบริษัทตรวจ</span></div>') +
         '<div class="thumbs">' + h.files.map((f, k) => '<div class="thumb" data-act="viewHand" data-id="' + o.id + '" data-i="' + k + '">' + thumbHtml(f, o) + (f.cat === 'sign' ? '<span class="tcat">ใบเซ็น</span>' : '') + '</div>').join('') + '</div><div class="small" style="margin-top:6px">วันที่ส่งมอบ ' + fmtDate(h.date) + '</div></div>'
-        : stDone ? handForm : '<div class="box small muted">เลือก "ติดตั้งเสร็จแล้ว" ในขั้นที่ 2 ก่อน จึงแนบใบส่งมอบได้</div>') + '</div></div>' +
+        : okHand ? handForm : '<div class="box small muted" id="pk-next"><span>' + pkNextTxt(kk) + '</span> — กล่องหาย / เสียหาย แจ้งบริษัท</div>') + '</div></div>' +
     '</div></div></div>' };
 });
 const HF = { files: [], id: '', busy: 0, date: '', note: '' };
@@ -3121,16 +3146,87 @@ on('stage', async (el) => {
   const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o.award || o.award.cid !== curCid()) return;
   const h = o.install.handover; if (h && !(h.review && h.review.ok === false)) return;
   await rpc('cn_set_stage', { p_order: o.id, p_stage: el.dataset.s });
-  await refresh(); toast('อัปเดตสถานะ: ' + STAGES[el.dataset.s]); rerender();
+  await refresh(); toast(el.dataset.s === 'in_progress' ? 'เริ่มงาน ' + o.id + ' แล้ว' : 'อัปเดตสถานะ: ' + STAGES[el.dataset.s]); rerender();
+});
+/* ---------- V7.16: ยิงรับงานที่หน้างาน — ผู้รับเหมาที่ได้งาน / ช่างโรงงาน ยิง Code Pack ใบเดียวกับที่คลังยิงรับเข้า ----------
+   ช่องเดียวใช้ได้ทั้งเครื่องยิงบาร์โค้ด (พิมพ์ + Enter ให้เอง) · พิมพ์เอง · สแกนด้วยกล้องมือถือ · Server ตรวจว่าเป็นกล่องของงานนี้ทุกครั้ง */
+const PK = { order: '', msg: null, q: [], busy: false };
+function packStat(o) { const p = (o && o.packs) || []; return { got: p.filter((x) => x.gotAt).length, total: p.length, wh: p.filter((x) => !x.site).length }; }
+const siteRecvOn = () => !!(DB && DB.settings && DB.settings.siteRecv);   /* V7.16.1: Admin เลือก — ผู้รับเหมา / ช่างยิงรับเองได้ ไม่ต้องรอคลัง */
+function packsLocked(o) { if (o.channel === 'inhouse') return !!(o.inhouse && o.inhouse.handover); const h = o.install && o.install.handover; return !!(h && !(h.review && h.review.ok === false)); }
+function pkTxt(o) { const k = packStat(o); return k.total ? (k.wh ? 'รับแล้ว ' + k.got + '/' + k.total + ' กล่อง' + (k.got >= k.total ? ' ✓' : '') : 'รับแล้ว ' + k.got + ' กล่อง (ยิงที่หน้างาน)') : '<span class="muted">คลังยังไม่ได้ยิงรับเข้า</span>'; }
+function recvDone(o) { const k = packStat(o); return k.total > 0 && k.got >= k.total; }
+/* V7.16: ไม่มีขั้น “ติดตั้งงาน” แล้ว — ยิงกล่องแรก = เริ่มงาน · แนบใบส่งมอบ = งานเสร็จ · ส่งใบส่งมอบได้เมื่อยิงครบ (หรืองานที่ไม่มีกล่องในระบบ) */
+function recvOk(o) { const k = packStat(o); return k.total === 0 || k.got >= k.total; }
+function jobStartedAt(o) { return o.channel === 'inhouse' ? (o.inhouse && o.inhouse.stage !== 'not_started' ? (o.inhouse.startedAt || o.inhouse.doneAt || '') : '') : (o.install && o.install.stage !== 'not_started' ? (o.install.startedAt || '') : ''); }
+function jobStarted(o) { return o.channel === 'inhouse' ? !!(o.inhouse && o.inhouse.stage !== 'not_started') : !!(o.install && o.install.stage !== 'not_started'); }
+function recvBox(o, can) {
+  const k = packStat(o), pct = k.total ? Math.round(k.got / k.total * 100) : 0, lock = packsLocked(o), m = PK.order === o.id ? PK.msg : null;
+  const ih = o.channel === 'inhouse', noTeam = ih && !(o.inhouse && o.inhouse.teamId), started = jobStarted(o), at = jobStartedAt(o);
+  const site = siteRecvOn(), canScan = (k.total || site) && can && !lock && !noTeam;
+  return '<div class="box" id="pk-box"><div class="barcode-ph"><span class="bc"></span><div style="flex:1">' + (k.total && k.wh
+      ? '<div class="small"><b>รับแล้ว ' + k.got + ' / ' + k.total + ' กล่อง</b> (' + pct + '%) <span class="xs muted">· งาน ' + num(o.cabinets) + ' ตู้</span></div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div>'
+      : k.total ? '<div class="small"><b>รับแล้ว ' + k.got + ' กล่อง</b> <span class="xs muted">· งาน ' + num(o.cabinets) + ' ตู้</span></div><div class="xs muted">ยิงรับที่หน้างาน — คลังไม่ได้ยิงรับเข้ากล่องของงานนี้</div>'
+      : '<div class="small"><b>ยังไม่มีรายการกล่อง</b></div><div class="xs muted">' + (site ? 'คลังยังไม่ได้ยิงรับเข้า — ยิงรับได้เลย ระบบเพิ่มกล่องเข้ารายการให้' : 'คลังยังไม่ได้ยิงรับเข้ากล่องของงานนี้ — คลังยิงรับเข้าแล้วรายการจะขึ้นที่นี่') + '</div>') + '</div></div>' +
+    (started ? '<div class="xs muted" style="margin-top:8px">' + icon('checkCircle', 'xs') + ' เริ่มงานแล้ว' + (at ? ' · ' + fmtDT(at) : '') + '</div>' : '') +
+    (noTeam && can && !lock ? '<div class="xs muted" style="margin-top:8px">หัวหน้าช่างจัดทีมก่อน จึงยิงรับของ / เริ่มงานได้</div>' : '') +
+    (!k.total && can && !lock && !started && !noTeam ? '<div class="row" style="margin-top:10px;gap:8px"><button class="btn sm' + (site ? '' : ' primary') + '" data-act="' + (ih ? 'ihStage' : 'stage') + '" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button><span class="xs muted">' + (site ? 'กล่องไม่มีบาร์โค้ด → กดเริ่มงานแทนการยิงรับ' : 'งานนี้ไม่มีกล่องในระบบคลัง — กดเริ่มงานแทนการยิงรับ') + '</span></div>' : '') +
+    (canScan ? '<div style="margin-top:10px">' + scanField('pk-code', 'pkRecv', 'ยิง / พิมพ์ Code Pack บนกล่อง', 'ยิงรับกล่องที่หน้างาน', false, true) + '</div>' : '') +
+    (m ? '<div class="wl ' + (m.ok ? (m.warn ? 'w' : 'ok') : 'no') + '" id="pk-msg" style="margin-top:8px">' + icon(m.ok ? (m.warn ? 'alert' : 'checkCircle') : 'ban', 'sm') + '<div><b class="mono">' + esc(m.code || '—') + '</b> <span class="small">' + esc(m.text) + '</span>' + (m.warn ? '<div class="xs">' + esc(m.warn) + '</div>' : '') + '</div></div>' : '') +
+    (k.total ? '<button class="btn sm" style="margin-top:10px" data-act="scanOpen" data-id="' + o.id + '">' + icon('list', 'sm') + ' รายการกล่อง (' + k.total + ')</button>' : '') +
+    (lock && k.total ? '<div class="xs muted" style="margin-top:6px">ส่งใบส่งมอบแล้ว — ยิงรับเพิ่ม / ยกเลิกไม่ได้</div>' : '') + '</div>';
+}
+function pkNextTxt(k) { return 'ยิงรับของให้ครบทุกกล่องก่อน (รับแล้ว ' + k.got + ' / ' + k.total + ' กล่อง) จึงแนบใบส่งมอบได้'; }
+function pkPaint(id) {
+  const b = $('#pk-box'), o = DB.orders.find((x) => x.id === id); if (!b || !o) return;
+  const wasFocus = document.activeElement && document.activeElement.id === 'pk-code';
+  if ($('#pk-next') && recvOk(o)) { rerender(); const n0 = $('#pk-code'); if (n0 && (wasFocus || !$('#overlay.on'))) n0.focus(); return; }   /* ครบแล้ว → แสดงฟอร์มส่งมอบ */
+  const nx = $('#pk-next span'); if (nx) nx.textContent = pkNextTxt(packStat(o));
+  b.outerHTML = recvBox(o, true);
+  const n = $('#pk-code'); if (n && (wasFocus || !$('#overlay.on'))) n.focus();
+}
+function pkMsg(id, ok, code, text, warn) { PK.order = id; PK.msg = { ok, code, text, warn: warn || '' }; whBeep(ok && !warn); pkPaint(id); }
+on('pkRecv', async (el) => {
+  const id = (curPath().match(/^\/(?:con|ins)\/job\/([^/]+)$/) || [])[1], code = scanVal(el);
+  if (!id || !code) return;
+  if (!WH_RE.test(code)) { pkMsg(id, false, code, 'รหัสไม่ถูกต้อง (ใช้ A-Z 0-9 . _ / - ยาว 3–60 ตัว)'); return; }
+  PK.q.push([id, code]); if (PK.busy) return;
+  PK.busy = true;
+  try {
+    while (PK.q.length) {
+      const [oid, c] = PK.q.shift();
+      try {
+        const r = await rpc('cn_pack_recv', { p_order: oid, p_code: c });
+        const o = DB.orders.find((x) => x.id === oid), pk = o && (o.packs || []).find((x) => x.code === r.code);
+        if (pk && !pk.gotAt) { pk.gotAt = r.gotAt; pk.gotBy = r.gotBy; }
+        if (!pk && o && r.site) { (o.packs = o.packs || []).push({ code: r.code, out: true, gotAt: r.gotAt, gotBy: r.gotBy, site: true }); }
+        if (o) o.install.scanned = r.got;
+        if (r.dup) pkMsg(oid, true, r.code, 'ยิงซ้ำ — กล่องนี้รับไปแล้ว (ไม่นับซ้ำ)', 'รับเมื่อ ' + fmtDT(r.gotAt) + (r.gotBy ? ' · ' + r.gotBy : ''));
+        else if (r.site) pkMsg(oid, true, r.code, 'รับแล้ว · ' + (r.whTotal ? r.got + ' / ' + r.total + ' กล่อง' : r.got + ' กล่อง'), 'คลังยังไม่ได้ยิงรับเข้ากล่องนี้ — เพิ่มเข้ารายการของงานนี้แล้ว');
+        else pkMsg(oid, true, r.code, 'รับแล้ว · ' + r.got + ' / ' + r.total + ' กล่อง' + (r.got >= r.total ? ' — ครบทุกกล่องแล้ว' : ''), r.notOut ? 'คลังยังไม่ได้ยิงจ่ายกล่องนี้ออก — แจ้งคลังด้วย' : '');
+      } catch (e) { pkMsg(oid, false, c, (e && e.message) || String(e)); }
+    }
+  } finally { PK.busy = false; }
+  if (recvDone(DB.orders.find((x) => x.id === id) || {})) { await refresh(); rerender(); const n = $('#pk-code'); if (n) n.focus(); }
 });
 on('scanOpen', (el) => {
-  const o = DB.orders.find((x) => x.id === el.dataset.id), n = o.cabinets, sc = o.install.scanned;
-  modal({ title: icon('barcode') + ' ยิงรับงาน · รายการ Barpack', sub: esc(o.id) + ' · ' + n + ' ตู้',
-    body: notice('info', '<b>รอเชื่อมต่อโปรแกรม Barcode</b> — รอบนี้เตรียมหน้าจอและโครงสร้างข้อมูลไว้ ยังสแกนจริงไม่ได้', 'barcode') +
-      '<div class="small strong" style="margin:14px 0 6px">รายการตู้ที่ต้องยิงรับ</div><div class="table-wrap" style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px"><table class="t"><thead><tr><th>ตู้</th><th>รหัส Barpack</th><th>สถานะ</th></tr></thead><tbody>' +
-      Array.from({ length: Math.min(n, 200) }, (_, k) => '<tr><td>C-' + pad(k + 1) + '</td><td class="mono xs">BP-' + o.id.slice(-4) + '-' + String(k + 1).padStart(3, '0') + '</td><td>' + (k < sc ? '<span class="badge t-green">มาถึงแล้ว</span>' : '<span class="badge t-gray">รอสแกน</span>') + '</td></tr>').join('') + '</tbody></table></div>' +
-      '<div class="xs muted" style="margin-top:8px">ข้อมูลที่จะรับจากโปรแกรม Barcode: รหัส Barpack · Order · หมายเลขตู้ · เวลาที่สแกน · ผู้สแกน</div>',
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o) return;
+  const k = packStat(o), lock = packsLocked(o), rows = (o.packs || []).slice().sort((a, b) => (!!a.gotAt - !!b.gotAt) || a.code.localeCompare(b.code));
+  modal({ title: icon('barcode') + ' รายการกล่อง · ' + esc(o.id), sub: 'รับแล้ว ' + k.got + ' / ' + k.total + ' กล่อง · งาน ' + num(o.cabinets) + ' ตู้',
+    body: k.total ? '<div class="table-wrap" style="max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:10px"><table class="t"><thead><tr><th>Code Pack</th><th>สถานะ</th><th></th></tr></thead><tbody>' +
+        rows.map((x) => '<tr><td class="mono small">' + esc(x.code) + '</td><td>' + (x.gotAt ? '<span class="badge t-green">รับแล้ว</span><div class="xs muted">' + fmtDT(x.gotAt) + (x.gotBy ? ' · ' + esc(x.gotBy) : '') + '</div>'
+          : '<span class="badge t-gray">รอยิงรับ</span>' + (x.out ? '' : '<div class="xs muted">คลังยังไม่ได้ยิงจ่ายออก</div>')) + (x.site ? '<div class="xs muted">ยิงที่หน้างาน (คลังไม่ได้ยิงรับเข้า)</div>' : '') + '</td><td class="r">' +
+          (x.gotAt && !lock ? '<button class="btn sm ghost" data-act="pkUndo" data-id="' + o.id + '" data-c="' + esc(x.code) + '" title="ยิงผิดกล่อง — ยกเลิกการรับ">' + icon('undo', 'sm') + ' ยกเลิก</button>' : '') + '</td></tr>').join('') + '</tbody></table></div>' +
+        '<div class="xs muted" style="margin-top:8px">กล่องที่ยังไม่ได้ยิงขึ้นก่อน · ยิงผิดกล่องกด “ยกเลิก” ได้จนกว่าจะส่งใบส่งมอบ</div>'
+      : empty('box', 'ยังไม่มีรายการกล่อง', 'คลังยังไม่ได้ยิงรับเข้ากล่องของงานนี้'),
     foot: '<button class="btn" data-act="closeOv">ปิด</button>' });
+});
+on('pkUndo', async (el) => {
+  const id = el.dataset.id, c = el.dataset.c;
+  await rpc('cn_pack_unrecv', { p_order: id, p_code: c });
+  const wasSite = !!(((DB.orders.find((x) => x.id === id) || {}).packs || []).find((x) => x.code === c && x.site));
+  await refresh(); rerender(); toast(wasSite ? 'ลบกล่อง ' + c + ' ออกจากรายการแล้ว' : 'ยกเลิกการรับกล่อง ' + c + ' แล้ว');
+  Acts.scanOpen({ dataset: { id } });
 });
 /* Tab 4: หน้ารอรับเงิน — เห็นเฉพาะของตนเอง */
 route(/^\/con\/pay$/, 'con', () => {
@@ -4167,7 +4263,7 @@ route(/^\/admin\/settings$/, 'admin', () => {
       /* V7.14: มัดจำ 30% เริ่มนับวันจาก — วันที่ผู้รับเหมาเข้าหน้างาน (กดเริ่มติดตั้ง) หรือ วันที่จัดซื้ออนุมัติ · จำนวนวันยังแก้ได้ที่ช่องด้านบน */
       '<div class="field c12"><label>มัดจำ 30% เริ่มนับวันจาก</label><select class="select" name="depWhen" aria-label="มัดจำ 30% เริ่มนับวันจาก">' +
         ['start', 'approve'].map((k) => '<option value="' + k + '"' + ((pc.depWhen === 'start' ? 'start' : 'approve') === k ? ' selected' : '') + '>' + DEP_WHEN[k] + '</option>').join('') +
-      '</select><div class="help">เข้าหน้างาน = ผู้รับเหมาเปลี่ยนสถานะเป็น “กำลังติดตั้ง” · ก่อนเข้าหน้างาน มัดจำยังไม่ถึงกำหนด บันทึกจ่ายไม่ได้</div></div></div>' +
+      '</select><div class="help">เริ่มงาน = ผู้รับเหมายิงรับกล่องแรก (งานที่ไม่มีกล่องในระบบคลัง = กดเริ่มงาน) · ก่อนเริ่มงาน มัดจำยังไม่ถึงกำหนด บันทึกจ่ายไม่ได้</div></div></div>' +
       '<div class="small" style="margin-top:10px">ผู้รับเหมาเลือก 1 แบบตอนเสนอราคา:<ul style="margin:4px 0 0;padding-left:18px">' + Object.keys(PAY_OPTS).map((k) => '<li><b>' + PAY_OPTS[k].label + '</b> — ' + esc(termsText(optTerms(k))) + '</li>').join('') + '</ul></div><div class="xs muted" style="margin-top:6px">มีผลกับงานที่อนุมัติหลังจากบันทึก</div></div>' +
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="paySet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     /* V7.11: ระยะเวลาเปิดรับราคา — Admin ตั้ง · ล็อกกับ Order ตอนยืนยัน */
@@ -4175,9 +4271,21 @@ route(/^\/admin\/settings$/, 'admin', () => {
       '<div class="field c6"><label>ค่าเริ่มต้นของ Order ใหม่</label><div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + bidDaysNow() + '" aria-label="ระยะเวลาเปิดรับราคา (วัน)"><span>วัน</span></div><div class="help">1–60 วัน · นับจากเวลาที่จัดซื้อกดยืนยันส่งให้ผู้รับเหมา (วันปฏิทิน รวมวันหยุด)</div></div></div>' +
       '<div class="small muted" style="margin-top:10px">Sale เลือกจำนวนวันรายงานได้ในฟอร์ม Sale Order (1–60 วัน · เริ่มที่ค่านี้) · จัดซื้อปรับได้อีกครั้งตอนส่งให้ผู้รับเหมา · แก้ได้จนกว่าจัดซื้อจะอนุมัติ (ต้องเหลือเวลาอย่างน้อย 1 วัน) · <b>เปลี่ยนค่านี้ไม่กระทบ Order ที่มีอยู่</b></div></div>' +
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="bidSet">' + icon('check', 'sm') + ' บันทึก</button></div></div></div>' +
+    /* V7.16.1: วิธียิงรับของที่หน้างาน — คลังต้องยิงรับเข้าก่อน (ค่าเริ่มต้น) / ผู้รับเหมา·ช่างยิงรับเองได้ */
+    '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('barcode') + ' ยิงรับของที่หน้างาน</h2><span class="xs muted">ผู้รับเหมา / ช่างโรงงาน · ขั้นที่ 1</span></div><div class="card-b" id="sr">' +
+      '<div class="pay-opts" role="radiogroup" aria-label="วิธียิงรับของที่หน้างาน">' +
+      [['0', 'คลังต้องยิงรับเข้าก่อน', 'กล่องที่คลังยังไม่ยิงรับเข้า → ผู้รับเหมา / ช่างยิงรับไม่ได้ ระบบแจ้งว่า “คลังยังไม่ได้ยิงรับเข้า” (เดินงานครบลูป: คลังรับเข้า → ช่างรับของ)'],
+       ['1', 'ผู้รับเหมา / ช่างยิงรับเองได้ ไม่ต้องรอคลัง', 'กล่องที่คลังยังไม่ยิงรับเข้า → ยิงรับได้เลย ระบบเพิ่มเข้ารายการของงานนั้น + แจ้งว่าคลังยังไม่ได้ยิงรับเข้า · ระบบคลังยังใช้ได้ตามปกติ']].map((x) =>
+        '<label class="pay-opt dp-opt' + ((DB.settings.siteRecv ? '1' : '0') === x[0] ? ' on' : '') + '"><input type="radio" name="siteRecv" value="' + x[0] + '"' + ((DB.settings.siteRecv ? '1' : '0') === x[0] ? ' checked' : '') + ' data-chg="srPick"><span class="po-dot"></span><span><b>' + x[1] + '</b>' + (x[0] === '0' ? ' <span class="badge t-gray plain">ค่าเริ่มต้น</span>' : '') + '<span class="xs">' + x[2] + '</span></span></label>').join('') + '</div>' +
+      '<div class="small muted" style="margin-top:10px">ทั้งสองแบบ: ตรวจว่ากล่องเป็นของงานนั้น · ยิงซ้ำไม่นับซ้ำ · บาร์โค้ดอ่านไม่ได้พิมพ์รหัสเองได้ · ต้องยิงครบทุกกล่องก่อนส่งใบส่งมอบ</div></div>' +
+      '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="siteRecvSet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     /* V7.15: แจ้งเตือนผ่านแอป — สถานะระบบ (กดตรวจ) */
-    '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('bell') + ' แจ้งเตือนผ่านแอป (ผู้รับเหมา / หัวหน้าช่าง)</h2><span class="xs muted">ฟรี · ไม่ใช้ LINE</span></div><div class="card-b">' +
-      '<div class="small">ผู้รับเหมา / หัวหน้าช่างเปิดลิงก์ผู้รับเหมาบนมือถือ → ติดตั้งเป็นแอป → กด “เปิดการแจ้งเตือน” ที่หน้าแรกของตัวเอง · Order ตัวอย่าง (เลข StarNexus ขึ้นต้น DEMO_) แจ้งเฉพาะบัญชีตัวอย่าง (.demo)</div>' +
+    '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('bell') + ' แจ้งเตือนผ่านแอป (ผู้รับเหมา / หัวหน้าช่าง / Admin)</h2><span class="xs muted">ฟรี · ไม่ใช้ LINE</span></div><div class="card-b">' +
+      '<div class="small">ผู้รับเหมา / หัวหน้าช่างเปิดลิงก์ผู้รับเหมาบนมือถือ → ติดตั้งเป็นแอป → กด “เปิดการแจ้งเตือน” ที่หน้าแรกของตัวเอง · Order ตัวอย่าง (เลข StarNexus ขึ้นต้น DEMO_) แจ้งเฉพาะบัญชีตัวอย่าง (.demo) — Admin ได้ทุก Order · Admin เปิดรับในเครื่องนี้ได้ที่กล่องด้านล่าง</div>' +
+      /* V7.16: Admin เปิดรับแจ้งเตือนในเครื่องนี้ + สวิตช์แจ้ง Admin ทุกขั้นตอน */
+      (FRAMED ? '<div class="small muted" style="margin-top:10px">' + icon('bell', 'sm') + ' Admin เปิดรับแจ้งเตือนในเครื่องได้เมื่อเปิดจากลิงก์ (GitHub) หรือแอปที่ติดตั้ง — ในแท็บของ Production เปิดไม่ได้</div>'
+        : '<div id="pushCard" data-slot="1" style="margin-top:12px"></div>') +
+      '<div id="pushAdm" style="margin-top:12px"></div>' +
       '<div id="pushInfo" class="small muted" style="margin-top:8px"></div>' +
       '<button class="btn" style="margin-top:12px" data-act="pushInfo">' + icon('refresh', 'sm') + ' ตรวจสถานะ</button></div></div>' +
     '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('download') + ' สำรองข้อมูล</h2></div><div class="card-b">' +
@@ -4201,6 +4309,13 @@ on('paySet', async () => {
   if (![days, depDays].every((v) => v >= 0 && v <= 365 && Math.floor(v) === v)) { toast('จำนวนวันต้องเป็นจำนวนเต็ม 0–365', 'err'); return; }
   await rpc('cn_save_settings', { p_rates: null, p_pay: { days, depDays, depWhen } });
   await refresh(); toast('บันทึกการชำระเงินแล้ว — มีผลกับงานที่อนุมัติหลังจากนี้'); rerender();
+});
+Acts.srPick = () => { $$('#sr .dp-opt').forEach((x) => x.classList.toggle('on', x.querySelector('input').checked)); };
+on('siteRecvSet', async () => {
+  const v = (($('#sr [name=siteRecv]:checked') || {}).value) === '1';
+  if (v === !!DB.settings.siteRecv) { toast('ไม่มีการเปลี่ยนแปลง'); return; }
+  await rpc('cn_save_site_recv', { p_on: v }); await refresh();
+  toast(v ? 'บันทึกแล้ว — ผู้รับเหมา / ช่างยิงรับเองได้ ไม่ต้องรอคลัง' : 'บันทึกแล้ว — คลังต้องยิงรับเข้าก่อน ผู้รับเหมา / ช่างจึงยิงรับได้'); rerender();
 });
 on('bidSet', () => {
   const v = parseNum($('#bd [name=bidDays]').value), cur = bidDaysNow();
@@ -4265,30 +4380,78 @@ document.addEventListener('keydown', (e) => {
   const el = e.target.closest && e.target.closest('[data-enter]'); if (!el || !Acts[el.dataset.enter]) return;
   e.preventDefault(); runAct(Acts[el.dataset.enter], el, e);
 });
-const camOk = () => typeof window.BarcodeDetector === 'function' && !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-function scanField(id, enter, ph, label, noCam) {
+/* V7.16: กล้องใช้ได้ทุกเครื่องที่มีกล้อง (เดิมเฉพาะเครื่องที่อ่านบาร์โค้ดเองได้ เช่น Android) — iPhone / คอมพิวเตอร์ใช้ตัวอ่าน ZXing (โหลดตอนกดกล้องครั้งแรก)
+   ในแท็บของ Production (กรอบแยก) เปิดกล้องไม่ได้ → ไม่แสดงปุ่มกล้อง */
+const camOk = () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) && !!window.isSecureContext && !SANDBOXED;
+function scanField(id, enter, ph, label, noCam, cont) {
   return '<div class="wh-scan"><label for="' + id + '" class="xs muted">' + label + '</label><div class="ws-row"><input class="input" id="' + id + '" data-enter="' + enter + '" placeholder="' + esc(ph) + '" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done">' +
     '<button type="button" class="btn primary" data-act="' + enter + '" data-t="' + id + '">' + icon('check', 'sm') + ' บันทึก</button>' +
-    (camOk() && !noCam ? '<button type="button" class="btn" data-act="whCam" data-t="' + id + '" data-go="' + enter + '" aria-label="สแกนด้วยกล้อง">' + icon('camera', 'sm') + '<span class="hide-sm"> สแกนด้วยกล้อง</span></button>' : '') + '</div>' +
+    (camOk() && !noCam ? '<button type="button" class="btn" data-act="whCam" data-t="' + id + '" data-go="' + enter + '"' + (cont ? ' data-cont="1"' : '') + ' aria-label="สแกนด้วยกล้อง">' + icon('camera', 'sm') + '<span class="hide-sm"> สแกนด้วยกล้อง</span></button>' : '') + '</div>' +
     '<div class="xs muted ws-hint">' + (camOk() && !noCam ? 'ยิงด้วยเครื่องยิงบาร์โค้ด · กดปุ่มกล้องเพื่อสแกนด้วยมือถือ · หรือพิมพ์รหัสแล้วกด Enter / บันทึก' : 'ยิงด้วยเครื่องยิงบาร์โค้ด หรือพิมพ์รหัสแล้วกด Enter / บันทึก — เครื่องนี้สแกนด้วยกล้องไม่ได้ ใช้การพิมพ์แทนได้เลย') + '</div></div>';
 }
 function scanVal(el) { const k = (el && el.dataset && el.dataset.t) || (el && el.id) || '', inp = (k && $('#' + k)) || el; const v = whNorm(inp && inp.value); if (inp && 'value' in inp) inp.value = ''; return v; }
 const CAM = { stream: null, timer: 0 };
 function camStop() { clearTimeout(CAM.timer); if (CAM.stream) { CAM.stream.getTracks().forEach((t) => t.stop()); CAM.stream = null; } }
+/* ตัวอ่านบาร์โค้ดจากภาพกล้อง: เครื่องที่อ่านเองได้ (BarcodeDetector) ใช้ของเครื่อง · ไม่ได้ → ZXing (Code 128 / 39 / EAN / QR ฯลฯ) */
+let ZX_P = null;
+function zxLoad() {
+  if (window.ZXing && window.ZXing.MultiFormatReader) return Promise.resolve();
+  return ZX_P || (ZX_P = new Promise((res, rej) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+    sc.integrity = 'sha384-BzBxP10ZE72aitqj5UMmUsbKFliP/DZqA8Wq+BNNhlIJDGoEd1tpkMYXOg9+n6sB'; sc.crossOrigin = 'anonymous'; sc.async = true;
+    sc.onload = () => (window.ZXing && window.ZXing.MultiFormatReader ? res() : rej(new Error('x')));
+    sc.onerror = () => { ZX_P = null; sc.remove(); rej(new Error('โหลดตัวอ่านบาร์โค้ดไม่ได้ (ต้องต่ออินเทอร์เน็ต) — พิมพ์รหัสในช่องแทน')); };
+    document.head.appendChild(sc);
+  }));
+}
+async function camReader() {
+  if (typeof window.BarcodeDetector === 'function') {
+    try { const d = new window.BarcodeDetector(); return (v) => d.detect(v).then((r) => (r && r[0] && r[0].rawValue) || ''); } catch (err) { /* ใช้ ZXing แทน */ }
+  }
+  await zxLoad();
+  const Z = window.ZXing, F = Z.BarcodeFormat, hints = new Map(), cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+  hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [F.CODE_128, F.CODE_39, F.CODE_93, F.EAN_13, F.EAN_8, F.UPC_A, F.ITF, F.CODABAR, F.QR_CODE, F.DATA_MATRIX]);
+  hints.set(Z.DecodeHintType.TRY_HARDER, true);
+  const rd = new Z.MultiFormatReader(); rd.setHints(hints);
+  return async (v) => {
+    const w = v.videoWidth, h = v.videoHeight; if (!w || !h) return '';
+    const k = Math.min(1, 1280 / w); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+    cx.drawImage(v, 0, 0, cv.width, cv.height);
+    try { return rd.decodeWithState(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv)))).getText(); } catch (err) { return ''; } finally { try { rd.reset(); } catch (e2) { /* ข้าม */ } }
+  };
+}
 on('whCam', async (el) => {
-  const t = el.dataset.t, go = el.dataset.go;
-  let det; try { det = new window.BarcodeDetector(); } catch (err) { toast('เปิดตัวสแกนไม่ได้ — พิมพ์รหัสในช่องแทน', 'err'); return; }
-  modal({ title: icon('camera') + ' สแกนด้วยกล้อง', sub: 'ส่องบาร์โค้ดให้อยู่ในกรอบ — อ่านได้แล้วบันทึกให้ทันที',
-    body: '<div class="cam-box"><video id="cam-v" playsinline muted></video><span class="cam-frame"></span></div><div class="xs muted" style="margin-top:8px">สแกนไม่ติด / ไม่มีกล้อง → กด "พิมพ์รหัสเอง" แล้วพิมพ์ในช่อง</div>',
-    foot: '<button class="btn" data-act="camClose" data-t="' + t + '">' + icon('edit', 'sm') + ' พิมพ์รหัสเอง</button>' });
-  try { CAM.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false }); }
-  catch (err) { closeOverlay(); toast('เปิดกล้องไม่ได้ (ไม่ได้อนุญาต / เบราว์เซอร์ไม่รองรับ) — พิมพ์รหัสในช่องแทน', 'err'); const i = $('#' + t); if (i) i.focus(); return; }
+  const t = el.dataset.t, go = el.dataset.go, cont = el.dataset.cont === '1';
+  modal({ title: icon('camera') + ' สแกนด้วยกล้อง', sub: cont ? 'ส่องบาร์โค้ดทีละกล่อง — อ่านได้แล้วบันทึกให้ทันที สแกนต่อได้เลย' : 'ส่องบาร์โค้ดให้อยู่ในกรอบ — อ่านได้แล้วบันทึกให้ทันที',
+    body: '<div class="cam-box"><video id="cam-v" playsinline muted></video><span class="cam-frame"></span></div><div id="cam-last" class="small" style="margin-top:8px;min-height:20px">กำลังเปิดกล้อง…</div>' +
+      '<div class="xs muted" style="margin-top:4px">สแกนไม่ติด / ไม่มีกล้อง → กด "พิมพ์รหัสเอง" แล้วพิมพ์ในช่อง</div>',
+    foot: '<button class="btn" data-act="camClose" data-t="' + t + '">' + icon('edit', 'sm') + ' พิมพ์รหัสเอง</button>' + (cont ? '<button class="btn primary" data-act="camClose" data-t="' + t + '">' + icon('check', 'sm') + ' เสร็จแล้ว</button>' : '') });
+  const fail = (msg) => { camStop(); if ($('#cam-v')) closeOverlay(); toast(msg, 'err'); const i = $('#' + t); if (i) i.focus(); };
+  let read;
+  try { read = await camReader(); } catch (err) { fail((err && err.message) || 'เปิดตัวสแกนไม่ได้ — พิมพ์รหัสในช่องแทน'); return; }
+  if (!$('#cam-v')) return;   /* ปิดหน้าต่างไปก่อนแล้ว */
+  try { CAM.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }); }
+  catch (err) { fail('เปิดกล้องไม่ได้ (ไม่ได้อนุญาต / เบราว์เซอร์ไม่รองรับ) — พิมพ์รหัสในช่องแทน'); return; }
   const v = $('#cam-v'); if (!v) { camStop(); return; }
   v.srcObject = CAM.stream; try { await v.play(); } catch (err) { /* บางเครื่องเล่นเองไม่ได้ */ }
+  const lastEl = () => $('#cam-last'); if (lastEl()) lastEl().textContent = 'ส่องบาร์โค้ดให้อยู่ในกรอบ';
+  const seen = new Set();   /* สแกนต่อเนื่อง: กล่องที่อ่านแล้วในรอบนี้ไม่อ่านซ้ำ (กล่องค้างหน้ากล้องไม่เด้งซ้ำ) */
   const tick = async () => {
     if (!$('#cam-v')) { camStop(); return; }
-    try { const r = await det.detect(v); if (r && r.length && r[0].rawValue) { camStop(); closeOverlay(); const inp = $('#' + t); if (inp) inp.value = r[0].rawValue; if (go && Acts[go]) runAct(Acts[go], inp || el); return; } } catch (err) { /* ลองเฟรมถัดไป */ }
-    CAM.timer = setTimeout(tick, 220);
+    let val = '';
+    try { val = await read(v); } catch (err) { /* ลองเฟรมถัดไป */ }
+    if (val && !seen.has(whNorm(val))) {
+      seen.add(whNorm(val));
+      const inp = $('#' + t);
+      if (!cont) { camStop(); closeOverlay(); if (inp) inp.value = val; if (go && Acts[go]) runAct(Acts[go], inp || el); return; }
+      if (inp) inp.value = val;
+      if (navigator.vibrate) { try { navigator.vibrate(60); } catch (err) { /* ข้าม */ } }
+      try { if (go && Acts[go]) await Acts[go](inp || el); } catch (err) { /* แสดงในช่องผลลัพธ์ */ }
+      const m = (typeof PK !== 'undefined' && PK.msg) || null, le = lastEl();
+      if (le) le.innerHTML = m ? '<span class="' + (m.ok ? (m.warn ? 'cam-w' : 'cam-ok') : 'cam-no') + '">' + icon(m.ok ? (m.warn ? 'alert' : 'checkCircle') : 'ban', 'sm') + ' <b class="mono">' + esc(m.code || val) + '</b> ' + esc(m.text) + '</span>' : esc(val);
+    }
+    CAM.timer = setTimeout(tick, 200);
   };
   tick();
 });
@@ -4682,8 +4845,8 @@ function whOrderHtml(o) {
    เปิดการแจ้งเตือน = ขออนุญาต → ขอกุญแจสาธารณะจาก Edge Function cn-push → สมัครกับบริการแจ้งเตือนของมือถือ → บันทึกเครื่อง (cn_push_subscribe)
    ผู้รับเหมา: งานใหม่ · ใกล้หมดเวลาเสนอราคา · ได้รับอนุมัติ / ปิดรับราคา · เปลี่ยนวันติดตั้ง · ใบส่งมอบต้องแก้ · บันทึกจ่ายเงิน · ยกเลิก
    หัวหน้าช่างโรงงาน: งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · ย้ายไปผู้รับเหมา / ยกเลิก */
-const PUSH = { reg: null, sub: null, perm: 'default', inst: null, busy: false, linked: '', tick: 0, ready: false };
-const PUSH_ROLES = { contractor: 1, installer: 1 };
+const PUSH = { reg: null, sub: null, perm: 'default', inst: null, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
+const PUSH_ROLES = { contractor: 1, installer: 1, admin: 1 };   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
 function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
 function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
 function pwaStandalone() { try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
@@ -4704,8 +4867,14 @@ function sameKey(sub, key) { try { const a = new Uint8Array(sub.options.applicat
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); PUSH.inst = e; pushCardRefresh(); });
   window.addEventListener('appinstalled', () => { PUSH.inst = null; pushCardRefresh(); });
   navigator.serviceWorker.addEventListener('message', (e) => { const d = e.data || {}; if (d.type === 'cn-nav' && typeof d.hash === 'string' && d.hash.charAt(0) === '#') location.hash = d.hash; });
-  navigator.serviceWorker.register('sw.js', { scope: './' }).then((reg) => { PUSH.reg = reg; PUSH.ready = true; return pushSync(); }).catch(() => { PUSH.ready = true; pushCardRefresh(); });
+  navigator.serviceWorker.register('sw.js', { scope: './' }).then(async (reg) => { PUSH.reg = reg; await soundLoad(); PUSH.ready = true; return pushSync(); }).catch(() => { PUSH.ready = true; pushCardRefresh(); });
 })();
+
+/* V7.16: เสียงแจ้งเตือน = เสียงมาตรฐานของเครื่อง · เปิด / ปิดแยกทีละเครื่อง (ค่าเริ่มต้น = มีเสียง)
+   เก็บในที่เก็บของแอปในเครื่อง (Cache Storage) — ตัวรับแจ้งเตือน (sw.js) อ่านค่าเดียวกันตอนแอปปิดอยู่ */
+function soundKey() { return (PUSH.reg ? PUSH.reg.scope : location.href.split('#')[0].replace(/[^/]*$/, '')) + 'cn-sound'; }
+async function soundLoad() { try { const r = await (await caches.open('cn-cfg')).match(soundKey()); PUSH.sound = !r || (await r.text()) !== '0'; } catch (e) { PUSH.sound = true; } }
+async function soundSave(v) { PUSH.sound = !!v; try { await (await caches.open('cn-cfg')).put(soundKey(), new Response(v ? '1' : '0')); } catch (e) { /* เครื่องไม่ให้เก็บ = มีเสียงตามค่าเริ่มต้น */ } }
 
 /* สถานะในเครื่อง + ผูกเครื่องกับผู้ใช้ที่ล็อกอินอยู่ (เปลี่ยนบัญชี / ล็อกอินใหม่ = ผูกให้เองเมื่อเคยอนุญาตแล้ว) */
 async function pushSync() {
@@ -4743,6 +4912,7 @@ function pushBadge() {
 const PUSH_WHAT = {
   contractor: 'งานใหม่ให้เสนอราคา · ใกล้หมดเวลาเสนอราคา · ได้รับอนุมัติ · เปลี่ยนวันติดตั้ง · ใบส่งมอบต้องแก้ · บันทึกจ่ายเงิน',
   installer: 'งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · งานย้ายไปผู้รับเหมา / ยกเลิก',
+  admin: 'ทุกขั้นตอนของทุกฝ่าย: Sale ยืนยัน Order · จัดซื้อส่งงาน · ผู้รับเหมาเสนอราคา / ได้งาน / เข้าหน้างาน / ส่งใบส่งมอบ · บัญชีตรวจ / จ่ายเงิน · ช่างโรงงานจัดทีม / เริ่ม / เสร็จ — บอกด้วยว่าแจ้งถึงใคร',
 };
 function pushCardHtml() {
   const u = S.user;
@@ -4758,16 +4928,20 @@ function pushCardHtml() {
   }
   const inst = PUSH.inst && !pwaStandalone() ? '<button class="btn sm" data-act="pwaInstall">' + icon('download', 'sm') + ' ติดตั้งแอปบนเครื่อง</button>' : '';
   if (pushOnFor()) {
-    return '<div class="pushcard on">' + icon('bell') + '<div class="pc-b"><b>แจ้งเตือนเปิดอยู่ในเครื่องนี้</b>' + what + '</div>' +
-      '<div class="pc-act">' + inst + '<button class="btn sm" data-act="pushTest">' + icon('send', 'sm') + ' ส่งทดสอบ</button><button class="btn sm ghost" data-act="pushOff">ปิด</button></div></div>';
+    return '<div class="pushcard on">' + icon('bell') + '<div class="pc-b"><b>แจ้งเตือนเปิดอยู่ในเครื่องนี้ · ' + (PUSH.sound ? 'มีเสียง' : 'ไม่มีเสียง') + '</b>' + what + '</div>' +
+      '<div class="pc-act">' + inst + '<button class="btn sm" data-act="pushTest">' + icon('send', 'sm') + ' ส่งทดสอบ</button>' +
+      '<button class="btn sm" data-act="pushSound" aria-pressed="' + (PUSH.sound ? 'true' : 'false') + '">' + (PUSH.sound ? 'ปิดเสียง' : 'เปิดเสียง') + '</button><button class="btn sm ghost" data-act="pushOff">ปิด</button></div></div>';
   }
-  return '<div class="pushcard">' + icon('bell') + '<div class="pc-b"><b>รับแจ้งเตือนในมือถือ</b><div class="pc-what">ไม่ต้องเปิดเว็บค้างไว้ · เด้งเตือนแบบไม่มีเสียง · เลขสีแดงบนไอคอน = งานที่รอท่าน</div>' + what + '</div>' +
+  return '<div class="pushcard">' + icon('bell') + '<div class="pc-b"><b>รับแจ้งเตือนในมือถือ</b><div class="pc-what">ไม่ต้องเปิดเว็บค้างไว้ · เด้งเตือนพร้อมเสียงของเครื่อง (ปิดเสียงได้) · เลขสีแดงบนไอคอน = งานที่รอท่าน</div>' + what + '</div>' +
     '<div class="pc-act">' + inst + '<button class="btn sm primary" data-act="pushOn"' + (PUSH.busy ? ' disabled' : '') + '>' + icon('bell', 'sm') + ' เปิดการแจ้งเตือน</button></div></div>';
 }
 const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue' };
 function pushAfter(path) {
   pushBadge();
   if (AUTH.s && PUSH.reg && S.user && PUSH_ROLES[S.user.role] && PUSH.linked !== S.user.id && Date.now() - PUSH.tick > 60000) { PUSH.tick = Date.now(); pushSync(); }
+  if (path === '/admin/settings' && S.user && S.user.role === 'admin') pushInfoFill(Date.now() - PUSH.infoAt > 60000);
+  const ph = document.getElementById('pushCard');
+  if (ph && ph.dataset.slot === '1') { ph.innerHTML = pushCardHtml(); return; }
   if (!S.user || PUSH_HOME[S.user.role] !== path) return;
   const h = pushCardHtml(), c = document.querySelector('#app .content');
   if (h && c) c.insertAdjacentHTML('afterbegin', '<div id="pushCard">' + h + '</div>');
@@ -4809,6 +4983,11 @@ on('pushOff', async () => {
   try { if (navigator.clearAppBadge) await navigator.clearAppBadge(); } catch (e) { /* ข้าม */ }
   toast('ปิดการแจ้งเตือนในเครื่องนี้แล้ว'); pushCardRefresh();
 });
+on('pushSound', async () => {
+  await soundSave(!PUSH.sound);
+  toast(PUSH.sound ? 'เปิดเสียงแจ้งเตือนในเครื่องนี้แล้ว' : 'ปิดเสียงในเครื่องนี้แล้ว — ยังเด้งเตือนตามปกติ แต่ไม่มีเสียง');
+  pushCardRefresh();
+});
 on('pwaInstall', async () => {
   const ev = PUSH.inst; if (!ev) return;
   PUSH.inst = null;
@@ -4826,17 +5005,44 @@ async function pushOnLogout() {
 /* รอบเตือนตามเวลา (ใกล้หมดเวลาเสนอราคา / พรุ่งนี้ติดตั้ง): แอปที่เปิดอยู่ช่วยปลุกตัวส่งทุก 10 นาที (สำรองถ้าไม่มี pg_cron) */
 setInterval(() => { if (AUTH.s && DB && document.visibilityState === 'visible') rpc('cn_push_tick', {}).catch(() => {}); }, 600000);
 
-/* Admin: สถานะระบบแจ้งเตือน (ตั้งค่าระบบ) */
-on('pushInfo', async () => {
-  const el = document.getElementById('pushInfo'); if (!el) return;
-  let d;
-  try { d = await rpc('cn_push_info', {}); } catch (e) { el.innerHTML = '<span style="color:var(--bad)">ยังไม่ได้รัน SQL V7.15 (แจ้งเตือนผ่านแอป) หรืออ่านสถานะไม่ได้: ' + esc((e && e.message) || e) + '</span>'; return; }
+/* Admin: สถานะระบบแจ้งเตือน + สวิตช์ “แจ้ง Admin ทุกขั้นตอน” (ตั้งค่าระบบ · อ่านให้เองตอนเปิดหน้า · กดตรวจซ้ำได้) */
+async function pushInfoFill(fetchNow) {
+  if (!document.getElementById('pushInfo')) return;
+  if (PUSH.info && !fetchNow) { pushInfoPaint(PUSH.info); return; }
+  if (PUSH.infoBusy) return;
+  PUSH.infoBusy = true;
+  try { PUSH.info = await rpc('cn_push_info', {}); PUSH.infoAt = Date.now(); }
+  catch (e) {
+    PUSH.info = null; const el = document.getElementById('pushInfo');
+    if (el) el.innerHTML = '<span style="color:var(--bad)">ยังไม่ได้รัน SQL V7.15 (แจ้งเตือนผ่านแอป) หรืออ่านสถานะไม่ได้: ' + esc((e && e.message) || e) + '</span>';
+    return;
+  } finally { PUSH.infoBusy = false; }
+  pushInfoPaint(PUSH.info);
+}
+function pushInfoPaint(d) {
+  const el = document.getElementById('pushInfo'), ad = document.getElementById('pushAdm'); if (!el || !d) return;
   const t = (x) => x ? fmtDT(x) : '—', late = d.pending > 0 && d.oldest && Date.now() - new Date(d.oldest).getTime() > 5 * 60000;
   const warn = !d.hooked ? 'ยังไม่ได้ตั้งที่อยู่ตัวส่ง (push_cfg.fn_url) — รัน SQL V7.15 ให้ครบ'
     : late ? 'มีข้อความค้างส่งเกิน 5 นาที — ตรวจ Edge Function cn-push (ต้องปิด Verify JWT) และส่วนขยาย pg_net'
     : !d.ready ? 'ยังไม่มีใครเปิดการแจ้งเตือน (กุญแจแจ้งเตือนจะสร้างเองตอนกดเปิดครั้งแรก)' : '';
-  el.innerHTML = 'เครื่องที่เปิดแจ้งเตือน <b>' + d.devices + '</b> เครื่อง (ผู้รับเหมา ' + d.contractors + ' ราย) · รอส่ง <b>' + d.pending + '</b> · ส่งล่าสุด ' + t(d.lastSent) + ' · ตัวส่งทำงานล่าสุด ' + t(d.lastDrain) +
+  el.innerHTML = 'เครื่องที่เปิดแจ้งเตือน <b>' + d.devices + '</b> เครื่อง (ผู้รับเหมา ' + d.contractors + ' ราย' +
+    ('admins' in d ? ' · หัวหน้าช่าง ' + d.installers + ' เครื่อง · Admin ' + d.admins + ' เครื่อง' : '') + ') · รอส่ง <b>' + d.pending + '</b> · ส่งล่าสุด ' + t(d.lastSent) + ' · ตัวส่งทำงานล่าสุด ' + t(d.lastDrain) +
     (warn ? '<div style="color:var(--warn-ink,#8A6420);margin-top:4px">⚠ ' + warn + '</div>' : '<div style="color:var(--ok,#1F7A4D);margin-top:4px">✓ พร้อมใช้งาน</div>');
+  if (!ad) return;
+  ad.innerHTML = 'adminAll' in d
+    ? '<label class="pushadm"><input type="checkbox" data-chg="pushAdmAll"' + (d.adminAll ? ' checked' : '') + '><span><b>ส่งแจ้งเตือนทุกขั้นตอนให้ Admin</b>' +
+      '<span class="xs muted">สำเนาทุกข้อความที่ส่งถึงผู้รับเหมา / หัวหน้าช่าง (บอกว่าส่งถึงใคร) + Sale ยืนยัน Order · ผู้รับเหมาเสนอราคา · หมดเวลาเสนอราคา · เข้าหน้างาน / ติดตั้งเสร็จ · ส่งใบส่งมอบ · บัญชีตรวจรับ · ช่างโรงงานจัดทีม / เริ่ม / เสร็จ / แนบใบส่งมอบ · ยกเลิก Order — ส่งเฉพาะเครื่องของ Admin</span></span></label>'
+    : '<div class="small" style="color:var(--warn-ink,#8A6420)">⚠ ยังไม่ได้รัน SQL V7.16 — Admin ยังไม่ได้รับแจ้งเตือนทุกขั้นตอน</div>';
+}
+on('pushInfo', () => pushInfoFill(true));
+on('pushAdmAll', async (el) => {
+  const v = !!el.checked; el.disabled = true;
+  try {
+    await rpc('cn_push_admin_set', { p_on: v });
+    if (PUSH.info) PUSH.info.adminAll = v;
+    toast(v ? 'เปิดแล้ว — Admin ได้แจ้งเตือนทุกขั้นตอน' : 'ปิดแล้ว — Admin ไม่ได้รับแจ้งเตือนทุกขั้นตอน (ผู้รับเหมา / หัวหน้าช่างยังได้ตามปกติ)');
+  } catch (e) { el.checked = !v; toast('บันทึกไม่สำเร็จ: ' + ((e && e.message) || e), 'err'); }
+  finally { el.disabled = false; }
 });
 
 })();
