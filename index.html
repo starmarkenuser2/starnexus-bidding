@@ -442,6 +442,9 @@ tr.hidden{display:none}
   .t.resp td::before{content:attr(data-l);color:var(--text-3);font-size:12.5px;text-align:left;flex:none}
   .t.resp td.main{display:block;text-align:left;padding-bottom:6px}
   .t.resp td.main::before{display:none}
+  /* V7.16.8: ช่องเต็มแถว (กล่อง “ยังไม่มีรายการ” / ข้อความเตือน) ไม่จัดแบบ ป้ายซ้าย–ค่าขวา → อยู่กลางการ์ด */
+  .t.resp td[colspan]{display:block;text-align:left;padding:0}
+  .t.resp td[colspan]::before{display:none}
   .modal{top:auto;bottom:0;left:0;transform:none;width:100%;max-height:92%;border-radius:18px 18px 0 0}
   .modal .mf{border-radius:0}
   .modal .mf .btn{flex:1}
@@ -928,6 +931,24 @@ body.slv-on{overflow:hidden}
 .imp-row:last-child{border-bottom:0}.imp-row .mono{flex:none}.imp-row .imp-t{flex:1;min-width:0}
 .imp-row.bad{background:#FFF6F6;cursor:not-allowed}
 
+/* V7.16.9: รายการห่อจากไลน์ผลิต */
+.pp-card .card-b{padding:12px 16px}.pp-card.on{border-color:#BFD9C7;background:#F6FBF7}
+.pp-miss{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pp-miss li{background:#FFF8EC;border:1px solid #F1D9A8;border-radius:8px;padding:6px 10px;font-size:13px;line-height:1.45}
+.pp-miss li .mono{font-size:12px;word-break:break-all}
+.pp-chk{margin-bottom:10px}.pp-chk.danger .notice{border-width:2px}
+.pp-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:6px 0}
+.pp-sum div{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;text-align:center}
+.pp-sum b{display:block;font-size:20px;line-height:1.2}.pp-sum span{font-size:12px;color:var(--text-3)}
+.pp-list{max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.pp-row{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;align-items:start}
+.pp-row:last-child{border-bottom:0}.pp-row.multi{background:#FFFBEA}
+.pp-row .pp-k{color:var(--text-3);font-variant-numeric:tabular-nums}.pp-row .pp-n{white-space:nowrap;color:var(--text-2)}
+.pp-codes{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:3px}.pp-codes .mono{font-size:11.5px;word-break:break-all}.pp-codes i{font-style:normal;color:#9A6A00;font-weight:700}
+.pk-i{color:var(--text-3);margin-left:6px}
+@media (max-width:760px){.pp-row{grid-template-columns:48px minmax(0,1fr)}.pp-row .pp-n{grid-column:2}}
+.box > .pk-short{margin-top:10px}.box > .pp-miss{margin-top:10px}
+
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
    · โลโก้ STARMARK (บริษัท · ภาพเวกเตอร์ คมทุกขนาด) อยู่ “ในโลโก้ StarNexus” มุมบนซ้าย — หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน (ไอคอนแอป + หน้าเปิดแอปฝังในภาพ pwa/icons) · บนสุดของเมนูข้าง */
@@ -1083,7 +1104,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.7';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.9';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -3826,12 +3847,15 @@ on('stage', async (el) => {
 const PK = { order: '', msg: null, q: [], busy: false, f: {} };
 function packStat(o) { const p = (o && o.packs) || []; return { got: p.filter((x) => x.gotAt).length, total: p.length, wh: p.filter((x) => !x.site).length }; }
 /* V7.16.4: ขาดส่ง — คลังรับเข้ายังไม่ถึงจำนวนตู้ใน Order (โรงงานส่งไม่ครบ / ส่งทีหลัง) · แค่เตือน ไม่บล็อกส่งมอบ (บางงานจำนวนห่อไม่เท่าจำนวนตู้) */
-function pkShort(o) { const k = packStat(o); return k.wh && +o.cabinets > k.total ? +o.cabinets - k.total : 0; }
+function pkShort(o) { const k = packStat(o); if (ppPlan(o)) return k.total ? pkMiss(o).length : 0;   /* V7.16.9: ตามรายการห่อจากไลน์ผลิต */
+  return k.wh && +o.cabinets > k.total ? +o.cabinets - k.total : 0; }
+function pkMiss(o) { return ppMissing(o, new Set((o.packs || []).map((p) => p.code))); }
+function pkJobTxt(o) { return ppPlan(o) ? '· รายการห่อ ' + o.plan.length + ' ห่อ' : '· งาน ' + num(o.cabinets) + ' ตู้'; }
 function pkShortNote(o, ctx) {
   const n = pkShort(o), k = packStat(o); if (!n) return '';
-  return '<div class="pk-short" role="note">' + icon('alert', 'sm') + '<div><b>ยังขาดส่ง ' + n + ' ห่อ</b> — งานนี้ ' + num(o.cabinets) + ' ตู้ · คลังส่งมาแล้ว ' + k.total + ' ห่อ' +
+  return '<div class="pk-short" role="note">' + icon('alert', 'sm') + '<div><b>ยังขาดส่ง ' + n + ' ห่อ</b> — ' + (ppPlan(o) ? 'รายการห่อ ' + o.plan.length + ' ห่อ' : 'งานนี้ ' + num(o.cabinets) + ' ตู้') + ' · คลังส่งมาแล้ว ' + k.total + ' ห่อ' +
     '<div class="xs">' + (ctx === 'hand' ? 'ถ้าติดตั้งครบทุกตู้แล้ว (บางงานจำนวนห่อไม่เท่าจำนวนตู้) ส่งมอบได้เลย · ถ้ายังรอของ ให้ส่งมอบหลังยิงรับห่อที่เหลือ'
-      : 'ห่อที่ยิงแล้วบันทึกไว้แล้ว ไม่ต้องกดบันทึก · ห่อที่เหลือมาถึงแล้วจะขึ้นในรายการ “ยังไม่ยิง” — ยิงต่อได้เลย') + '</div></div></div>';
+      : 'ห่อที่ยิงแล้วบันทึกไว้แล้ว ไม่ต้องกดบันทึก · ห่อที่เหลือมาถึงแล้วจะขึ้นในรายการ “ยังไม่ยิง” — ยิงต่อได้เลย') + '</div>' + (ppPlan(o) ? ppMissHtml(o, pkMiss(o), 6) : '') + '</div></div>';
 }
 const siteRecvOn = () => !!(DB && DB.settings && DB.settings.siteRecv);   /* V7.16.1: Admin เลือก — ผู้รับเหมา / ช่างยิงรับเองได้ ไม่ต้องรอคลัง */
 function packsLocked(o) { if (o.channel === 'inhouse') return !!(o.inhouse && o.inhouse.handover); const h = o.install && o.install.handover; return !!(h && !(h.review && h.review.ok === false)); }
@@ -3846,12 +3870,16 @@ function recvBox(o, can) {
   const ih = o.channel === 'inhouse', noTeam = ih && !(o.inhouse && o.inhouse.teamId), started = jobStarted(o), at = jobStartedAt(o);
   const site = siteRecvOn(), canScan = (k.total || site) && can && !lock && !noTeam;
   return '<div class="box" id="pk-box"><div class="barcode-ph"><span class="bc"></span><div style="flex:1">' + (k.total && k.wh
-      ? '<div class="small"><b>รับแล้ว ' + k.got + ' / ' + k.total + ' ห่อ</b> (' + pct + '%) <span class="xs muted">· งาน ' + num(o.cabinets) + ' ตู้</span></div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div>' + pkShortNote(o)
-      : k.total ? '<div class="small"><b>รับแล้ว ' + k.got + ' ห่อ</b> <span class="xs muted">· งาน ' + num(o.cabinets) + ' ตู้</span></div><div class="xs muted">ยิงรับเองที่หน้างาน (คลังไม่ได้ยิงรับเข้า) — ยิงทุกห่อที่ได้รับแล้วถือว่าครบ ไปขั้นส่งมอบงานได้</div>'
+      ? '<div class="small"><b>รับแล้ว ' + k.got + ' / ' + k.total + ' ห่อ</b> (' + pct + '%) <span class="xs muted">' + pkJobTxt(o) + '</span></div><div class="prog" style="margin-top:6px"><i style="width:' + pct + '%"></i></div>'
+      : k.total && ppPlan(o) ? '<div class="small"><b>รับแล้ว ' + k.got + ' / ' + o.plan.length + ' ห่อ</b> <span class="xs muted">ตามรายการห่อจากไลน์ผลิต · ยิงรับเองที่หน้างาน</span></div><div class="prog" style="margin-top:6px"><i style="width:' + Math.round(k.got / o.plan.length * 100) + '%"></i></div>' +
+        (pkMiss(o).length ? '<div class="xs muted" style="margin-top:6px">ยังไม่ได้ยิง ' + pkMiss(o).length + ' ห่อ</div>' : '')
+      : k.total ? '<div class="small"><b>รับแล้ว ' + k.got + ' ห่อ</b> <span class="xs muted">' + pkJobTxt(o) + '</span></div><div class="xs muted">ยิงรับเองที่หน้างาน (คลังไม่ได้ยิงรับเข้า) — ยิงทุกห่อที่ได้รับแล้วถือว่าครบ ไปขั้นส่งมอบงานได้</div>'
+      : ppPlan(o) ? '<div class="small"><b>รายการห่อจากไลน์ผลิต ' + o.plan.length + ' ห่อ</b> <span class="xs muted">(' + num(o.cabinets) + ' ตู้)</span></div><div class="xs muted">' + (site ? 'ยิงรับได้เลย — รับเฉพาะรหัสที่อยู่ในรายการ' : 'คลังยังไม่ได้ยิงรับเข้าห่อของงานนี้ — คลังยิงรับเข้าแล้วรายการจะขึ้นที่นี่') + '</div>'
       : '<div class="small"><b>ยังไม่มีรายการห่อ</b></div><div class="xs muted">' + (site ? 'คลังยังไม่ได้ยิงรับเข้า — ยิงรับได้เลย (ยิง / พิมพ์ / รูปบาร์โค้ดจากคลังภาพ) ระบบเพิ่มห่อเข้ารายการให้' : 'คลังยังไม่ได้ยิงรับเข้าห่อของงานนี้ — คลังยิงรับเข้าแล้วรายการจะขึ้นที่นี่') + '</div>' +
         (!site && can && !lock ? '<div class="xs" style="margin-top:4px">' + (S.user.role === 'admin'
           ? 'ไม่ต้องรอคลัง: <a href="#/admin/settings">ตั้งค่าระบบ → ยิงรับของที่หน้างาน</a> เลือก “ผู้รับเหมา / ช่างยิงรับเองได้” แล้วช่องยิงจะขึ้นที่นี่'
           : 'ของถึงหน้างานแล้วแต่คลังยังไม่ได้ยิงรับเข้า → แจ้ง Admin เปิดให้ “ยิงรับเองได้”') + '</div>' : '')) + '</div></div>' +
+    (k.total && k.wh ? pkShortNote(o) : k.total && ppPlan(o) && pkMiss(o).length ? ppMissHtml(o, pkMiss(o), 6) : '') +   /* V7.16.9: ห่อที่ขาด — เต็มความกว้าง (ไม่บีบข้างรูปบาร์โค้ดบนมือถือ) */
     (started ? '<div class="xs muted" style="margin-top:8px">' + icon('checkCircle', 'xs') + ' เริ่มงานแล้ว' + (at ? ' · ' + fmtDT(at) : '') + '</div>' : '') +
     (noTeam && can && !lock ? '<div class="xs muted" style="margin-top:8px">หัวหน้าช่างจัดทีมก่อน จึงยิงรับของ / เริ่มงานได้</div>' : '') +
     (!k.total && can && !lock && !started && !noTeam ? '<div class="row" style="margin-top:10px;gap:8px"><button class="btn sm' + (site ? '' : ' primary') + '" data-act="' + (ih ? 'ihStage' : 'stage') + '" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button><span class="xs muted">' + (site ? 'ห่อไม่มีบาร์โค้ด → กดเริ่มงานแทนการยิงรับ' : 'งานนี้ไม่มีห่อในระบบคลัง — กดเริ่มงานแทนการยิงรับ') + '</span></div>' : '') +
@@ -3871,7 +3899,7 @@ function pkListHtml(o, lock) {
   return '<div class="pk-list" id="pk-list"><div class="pk-lh"><b>' + icon('list', 'sm') + ' รายการห่อทั้ง Order (' + k.total + ')</b><span class="small">' + (left ? 'เหลือ <b>' + left + '</b> ห่อ' : '<b class="pk-ok">' + icon('checkCircle', 'xs') + (pkShort(o) ? ' ครบทุกห่อที่ส่งมาแล้ว</b> · <b class="pk-sh-t">ขาดส่ง ' + pkShort(o) + '</b>' : ' ครบทุกห่อแล้ว</b>')) + '</span></div>' +
     '<div class="pk-fs" role="group" aria-label="กรองรายการห่อ">' + [['all', 'ทั้งหมด', k.total], ['wait', 'ยังไม่ยิง', left], ['got', 'รับแล้ว', k.got]].map((x) => '<button type="button" class="fchip' + (f === x[0] ? ' on' : '') + (x[0] === 'wait' && left ? ' warn' : '') + '" data-act="pkF" data-id="' + o.id + '" data-f="' + x[0] + '" aria-pressed="' + (f === x[0]) + '">' + x[1] + ' <span class="n">' + x[2] + '</span></button>').join('') + '</div>' +
     (left && f !== 'wait' ? '<div class="pk-pend"><span class="xs">ยังไม่ยิง:</span>' + waitL.slice(0, 12).map((p) => '<button type="button" class="pk-chip mono" data-act="pkGo" data-id="' + o.id + '" data-c="' + esc(p.code) + '" title="เลื่อนไปที่ห่อนี้">' + esc(p.code) + '</button>').join('') + (left > 12 ? '<button type="button" class="pk-chip more" data-act="pkF" data-id="' + o.id + '" data-f="wait">+' + (left - 12) + ' ดูทั้งหมด</button>' : '') + '</div>' : '') +
-    '<ol class="pk-rows">' + (rows.length ? rows.map(({ p, n }) => '<li class="pk-r ' + (p.gotAt ? 'got' : 'wait') + (p.code === hl ? ' new' : '') + '" data-c="' + esc(p.code) + '"' + (p.gotBy ? ' title="ยิงรับโดย ' + esc(p.gotBy) + '"' : '') + '><span class="pk-n">' + n + '</span><span class="pk-c mono">' + esc(p.code) + '</span><span class="pk-s">' +
+    '<ol class="pk-rows">' + (rows.length ? rows.map(({ p, n }) => '<li class="pk-r ' + (p.gotAt ? 'got' : 'wait') + (p.code === hl ? ' new' : '') + '" data-c="' + esc(p.code) + '"' + (p.gotBy ? ' title="ยิงรับโดย ' + esc(p.gotBy) + '"' : '') + '><span class="pk-n">' + n + '</span><span class="pk-c mono">' + esc(p.code) + '</span>' + (ppInfoTxt(o, p.code) ? '<span class="pk-i xs">' + esc(ppInfoTxt(o, p.code)) + '</span>' : '') + '<span class="pk-s">' +
       (p.gotAt ? icon('checkCircle', 'xs') + ' รับแล้ว ' + tm(p.gotAt) : 'รอยิง') + (p.site ? ' · ยิงที่หน้างาน' : '') + (!p.gotAt && !p.out ? ' · คลังยังไม่จ่ายออก' : '') + '</span>' +
       (p.gotAt && !lock ? '<button type="button" class="btn xs ghost" data-act="pkUndo" data-id="' + o.id + '" data-c="' + esc(p.code) + '" title="ยิงผิดห่อ — ยกเลิกการรับ">ยกเลิก</button>' : '') + '</li>').join('')
       : '<li class="pk-r pk-empty">' + (f === 'wait' ? icon('checkCircle', 'xs') + (pkShort(o) ? ' ยิงครบทุกห่อที่ส่งมาแล้ว — ยังขาดส่ง ' + pkShort(o) + ' ห่อ' : ' ยิงครบทุกห่อแล้ว') : 'ยังไม่มีห่อที่รับแล้ว') + '</li>') + '</ol></div>';
@@ -3917,8 +3945,8 @@ on('pkRecv', async (el) => {
           else { o.install.stage = 'in_progress'; o.install.startedAt = o.install.startedAt || r.gotAt; }
         }
         if (r.dup) pkMsg(oid, true, r.code, 'ยิงซ้ำ — ห่อนี้รับไปแล้ว (ไม่นับซ้ำ)', 'รับเมื่อ ' + fmtDT(r.gotAt) + (r.gotBy ? ' · ' + r.gotBy : ''));
-        else if (r.site) pkMsg(oid, true, r.code, 'รับแล้ว · ' + (r.whTotal ? r.got + ' / ' + r.total + ' ห่อ' : r.got + ' ห่อ'), 'คลังยังไม่ได้ยิงรับเข้าห่อนี้ — เพิ่มเข้ารายการของงานนี้แล้ว');
-        else pkMsg(oid, true, r.code, 'รับแล้ว · ' + r.got + ' / ' + r.total + ' ห่อ' + (r.got >= r.total ? (o && pkShort(o) ? ' — ครบทุกห่อที่ส่งมา (ขาดส่ง ' + pkShort(o) + ')' : ' — ครบทุกห่อแล้ว') : ''), r.notOut ? 'คลังยังไม่ได้ยิงจ่ายห่อนี้ออก — แจ้งคลังด้วย' : '');
+        else if (r.site) pkMsg(oid, true, r.code, (o && ppInfoTxt(o, r.code) ? ppInfoTxt(o, r.code) + ' · ' : '') + 'รับแล้ว · ' + (r.whTotal ? r.got + ' / ' + r.total + ' ห่อ' : o && ppPlan(o) ? r.got + ' / ' + o.plan.length + ' ห่อ' : r.got + ' ห่อ'), 'คลังยังไม่ได้ยิงรับเข้าห่อนี้ — เพิ่มเข้ารายการของงานนี้แล้ว');
+        else pkMsg(oid, true, r.code, (o && ppInfoTxt(o, r.code) ? ppInfoTxt(o, r.code) + ' · ' : '') + 'รับแล้ว · ' + r.got + ' / ' + r.total + ' ห่อ' + (r.got >= r.total ? (o && pkShort(o) ? ' — ครบทุกห่อที่ส่งมา (ขาดส่ง ' + pkShort(o) + ')' : ' — ครบทุกห่อแล้ว') : ''), r.notOut ? 'คลังยังไม่ได้ยิงจ่ายห่อนี้ออก — แจ้งคลังด้วย' : '');
       } catch (e) { pkMsg(oid, false, c, (e && e.message) || String(e)); }
     }
   } finally { PK.busy = false; }
@@ -4070,22 +4098,27 @@ on('doLogin', async () => {
            · เมนู "หน้าเลือกโปรแกรม / Production Nexus" ในแถบซ้าย
    - คุยกับหน้าแม่ด้วย postMessage อย่างเดียว (อ่านอย่างเดียว · หน้าแม่ไม่ส่งราคาใด ๆ มา)
    - เปิดจากลิงก์ปกติ (ไม่มีหน้าแม่) = ใช้งานแบบเดิมทุกอย่าง
-   - V7.16.7: เปิดจากลิงก์ (มือถือ / คอม) — Admin / Sale / จัดซื้อ ค้น Order + เติมจาก StarNexus ได้เหมือนกัน ผ่าน Edge Function cn-sn
-             (Server อ่านฐานข้อมูล Production ให้ · ไม่มีคีย์ของ Production ในหน้าเว็บ · ยังไม่ได้ติดตั้ง cn-sn = กรอกเองตามเดิม)
+   - V7.16.8: Order จริงอยู่ใน “ไฟล์กลาง” ของบริษัท (อ่านได้เฉพาะคอมที่เปิด Production) → เปิด CN ในแท็บ Production = ซิงก์รายการ Order
+             + รายละเอียด (รายการตู้ · ลิงก์แบบผลิต · ไม่มีราคา) ขึ้นตาราง sn_orders ทุก 10 นาที (ผู้ใช้ภายใน ไม่ใช่ผู้รับเหมา)
+             · เปิดจากลิงก์ (มือถือ / คอม) — Admin / Sale / จัดซื้อ ค้น + เติมจากข้อมูลที่ซิงก์ (cn_sn_status / recent / search / order)
    ===================================================================== */
 const SNB = { on: false, hidden: false, app: '', ver: '', cur: '', seq: 0, wait: new Map(), q: '', list: null, pick: '', det: null, err: '', loading: false, t: 0, filled: '', home: false, recent: null, recentAt: 0, recentBusy: false, sumT: 0, sumLast: '' };
 const SNB_FRAMED = FRAMED;
-const SNL = { uid: '', at: 0, busy: false, err: '', cache: new Map() };   /* V7.16.7: โหมดลิงก์ */
+const SNL = { uid: '', at: 0, busy: false, err: '', cache: new Map(), st: null };   /* V7.16.7–7.16.8: โหมดลิงก์ */
 const SNL_ROLES = { admin: 1, sale: 1, purchasing: 1 };
 function snbLinkOk() { return !SNB_FRAMED && !!(AUTH.s && S.user && SNL_ROLES[S.user.role]); }
 async function snbLinkCall(op, args) {
   if (!snbLinkOk()) throw new Error('ไม่ได้เปิดผ่าน Production Nexus');
-  if (op === 'order') { const h = SNL.cache.get(args.oid); if (h && Date.now() - h.at < 120000) return h.d; }   /* ถามซ้ำภายใน 2 นาที = ใช้ผลเดิม */
-  if (op !== 'orders' && op !== 'order' && op !== 'hello') throw new Error('ไม่รองรับคำสั่ง ' + op);
-  let tm;
-  const d = await Promise.race([callFn('cn-sn', Object.assign({ op }, args || {})), new Promise((_r, rej) => { tm = setTimeout(() => rej(new Error('StarNexus ไม่ตอบ — ลองใหม่อีกครั้ง')), 25000); })]).finally(() => clearTimeout(tm));
-  if (op === 'order') { SNL.cache.set(args.oid, { at: Date.now(), d }); if (SNL.cache.size > 30) SNL.cache.delete(SNL.cache.keys().next().value); }
-  return d;
+  args = args || {};
+  if (op === 'hello') return rpc('cn_sn_status');
+  if (op === 'orders') return args.recent && !String(args.q || '').trim() ? rpc('cn_sn_recent', { p_limit: args.limit || 8 }) : rpc('cn_sn_search', { p_q: String(args.q || ''), p_limit: args.limit || 8 });
+  if (op === 'order') {
+    const h = SNL.cache.get(args.oid); if (h && Date.now() - h.at < 120000) return h.d;   /* ถามซ้ำภายใน 2 นาที = ใช้ผลเดิม */
+    const d = await rpc('cn_sn_order', { p_oid: String(args.oid || '') });
+    if (d && d.detailed) { SNL.cache.set(args.oid, { at: Date.now(), d }); if (SNL.cache.size > 30) SNL.cache.delete(SNL.cache.keys().next().value); }
+    return d;
+  }
+  throw new Error('ไม่รองรับคำสั่ง ' + op);
 }
 /* เปิดฟอร์ม Sale จากลิงก์ → ลองเชื่อมครั้งแรก (ไม่ได้ = ลองใหม่ได้หลัง 1 นาที / กดลองใหม่) · เปลี่ยนผู้ใช้ = เริ่มใหม่ */
 async function snbLinkInit(force) {
@@ -4094,15 +4127,51 @@ async function snbLinkInit(force) {
   if (!force && SNL.uid === S.user.id && Date.now() - SNL.at < 60000) return;
   SNL.busy = true; SNL.uid = S.user.id; SNL.at = Date.now(); SNL.err = ''; SNB.on = false; SNL.cache.clear();
   try {
-    await snbLinkCall('hello', {});
+    const st = await snbLinkCall('hello', {});
     if (SNL.uid !== (S.user && S.user.id)) return;
+    SNL.st = st;
+    if (!st || !st.n) { SNB.on = false; SNL.err = 'ยังไม่มีข้อมูล Order จาก Production — เปิด Contractor Nexus ในแท็บ Production (Odoo) ที่คอมออฟฟิศ 1 ครั้ง ระบบจะซิงก์ให้เอง'; return; }
     SNB.on = true; SNB.via = 'link'; SNB.app = 'StarNexus'; SNB.ver = ''; SNB.cur = ''; SNB.home = false;
   } catch (e) {
     SNB.on = false;
-    SNL.err = e && e.status === 404 ? 'Admin ยังไม่ได้ติดตั้งตัวเชื่อม StarNexus (Edge Function cn-sn) บน Supabase' : e && e.status === 403 ? '' : String((e && e.message) || e);
+    SNL.err = e && (e.code === 'PGRST202' || e.status === 404) ? 'ยังไม่ได้รัน SQL V7.16.8 ใน Supabase (Admin)' : e && e.status === 403 ? '' : String((e && e.message) || e);
   } finally { SNL.busy = false; if ($('#sf')) snbPaint(); }
 }
 on('snbLinkRetry', () => snbLinkInit(true));
+/* V7.16.8: เปิดในแท็บ Production → ซิงก์รายการ Order + รายละเอียดขึ้นระบบ ให้ฟอร์ม Sale ที่เปิดจากลิงก์ใช้ · ทุก 10 นาที · ผู้ใช้ภายใน (ไม่ใช่ผู้รับเหมา)
+   ส่งเฉพาะช่องที่ฟอร์มใช้ (ไม่มีราคา) · Server ตัดช่องอื่น / ความยาว / ลิงก์ที่ไม่ใช่ http(s) ซ้ำอีกชั้น · อ่านรายละเอียดทีละ Order (ล่าสุด / มีคนรอก่อน) ≤ 60 ต่อรอบ */
+const SNS = { busy: false, at: 0, last: null };
+const SNS_KEYS = ['oid', 'source', 'lot', 'lotFrom', 'cabinets', 'cabCount', 'partCount', 'itemIdSet', 'itemIdSetName', 'title', 'prodUrl', 'prodWhole', 'when'];
+function snsClean(d) {
+  const o = {}; SNS_KEYS.forEach((k) => { if (d && d[k] !== undefined) o[k] = d[k]; });
+  if (Array.isArray(o.cabinets)) o.cabinets = o.cabinets.slice(0, 200).map((c) => ({ name: c && c.name, pid: c && c.pid, parts: c && c.parts, url: c && c.url }));
+  return o;
+}
+function snsOk() { return SNB_FRAMED && SNB.on && !!(AUTH.s && S.user) && S.user.role !== 'contractor'; }
+async function snbSync(force) {
+  if (!snsOk() || SNS.busy || (!force && Date.now() - SNS.at < 600000)) return;
+  SNS.busy = true; SNS.at = Date.now();
+  try {
+    let list, full = true;
+    try { const r = await snbCall('index', {}, 30000); list = (r && r.rows) || []; }
+    catch (e) { full = false; const r = await snbCall('orders', { recent: true, limit: 20 }); list = (r && r.rows) || []; }   /* Production รุ่นก่อน V248 ยังไม่มีคำสั่งนี้ → 20 Order ล่าสุด */
+    list = list.filter((o) => o && o.oid).slice(0, 5000).map((o) => ({ oid: String(o.oid), origin: String(o.origin || ''), when: String(o.when || '') }));
+    if (!list.length) return;
+    let r = await rpc('cn_sn_sync', { p_list: list, p_full: full, p_details: [] });
+    let need = (r && r.need) || [], done = 0;
+    while (need.length && done < 60 && snsOk()) {
+      const batch = [];
+      for (const oid of need.slice(0, 6)) {
+        try { batch.push(snsClean(await snbCall('order', { oid }, 30000))); } catch (e) { batch.push({ oid, failed: true }); }   /* อ่านไม่ได้ = ไม่อ่านซ้ำจนกว่า Order จะอัปเดต */
+        done++; await new Promise((ok) => setTimeout(ok, 250));
+      }
+      r = await rpc('cn_sn_sync', { p_list: [], p_full: false, p_details: batch });
+      need = (r && r.need) || [];
+    }
+    SNS.last = { at: Date.now(), n: r && r.n };
+  } catch (e) { /* เงียบ — รอบหน้าลองใหม่ */ } finally { SNS.busy = false; }
+}
+if (SNB_FRAMED) setInterval(() => { snbSync(); }, 60000);
 function snbOriginOk(ev) { const o = location.origin; return !o || o === 'null' || ev.origin === o; }
 function snbCall(op, args, ms) {
   return new Promise((res, rej) => {
@@ -4169,6 +4238,7 @@ async function snbLoad(oid) {
     const d = await snbCall('order', { oid });
     if (SNB.pick !== oid) return;
     SNB.det = d; SNB.loading = false;
+    if (snsOk()) rpc('cn_sn_sync', { p_list: [], p_full: false, p_details: [snsClean(d)] }).catch(() => {});   /* V7.16.8 */
     snbAuto(d);   /* V7.10: เลือก Order แล้วเติมให้เลย */
   } catch (e) { if (SNB.pick !== oid) return; SNB.loading = false; SNB.err = e.message; }
   snbPaint();
@@ -4210,7 +4280,7 @@ function snbRecent() {
     .finally(() => { SNB.recentBusy = false; if (!SNB.list && !SNB.det && !SNB.loading && !SNB.err) snbPaint(); });
 }
 /* สรุปตัวเลขงานให้การ์ด Contractor Nexus บนหน้าเลือก (ไม่มีราคา) */
-function snbSumSoon() { if (!SNB_FRAMED || !SNB.on) return; clearTimeout(SNB.sumT); SNB.sumT = setTimeout(snbSumNow, 400); }
+function snbSumSoon() { if (!SNB_FRAMED || !SNB.on) return; snbSync(); clearTimeout(SNB.sumT); SNB.sumT = setTimeout(snbSumNow, 400); }
 function snbSumNow() {
   const data = { user: null, items: [] };
   try {
@@ -4264,6 +4334,7 @@ function snbDetHtml(d) {
   const short = (u) => { try { const x = new URL(u); return x.host + (x.search.length > 22 ? x.pathname + x.search.slice(0, 22) + '…' : x.pathname + x.search); } catch (e) { return u; } };
   return '<div class="snb-det">' +
     '<div class="snb-top"><b class="mono">' + esc(d.oid) + '</b>' + snbSrc(d.source) + (d.when ? '<span class="xs muted">อัปเดตใน Production ' + esc(d.when) + '</span>' : '') + '</div>' +
+    (d.detailed === false ? notice('info', 'Order นี้ยังไม่มีรายการตู้ / ลิงก์แบบผลิตในข้อมูลที่ซิงก์ — จะมาเองเมื่อมีคนเปิด Contractor Nexus ในแท็บ Production (Odoo) รอบถัดไป · ตอนนี้เติมเลข Order + ชื่องานให้ก่อน') : '') +
     (d.lot ? notice('warn', 'Order นี้เป็น Lot ที่รวมหลาย Order — ถ้าเป็นงานติดตั้ง 1 งาน ให้เลือก Order (Type) ต้นทางแทน' + (d.lotFrom ? ': ' + esc(d.lotFrom) : '')) : '') +
     '<dl class="snb-dl">' +
       (d.itemIdSet ? '<dt>Item Id Set</dt><dd><span class="mono">' + esc(d.itemIdSet) + '</span>' + (d.itemIdSetName ? '<div class="xs muted">' + esc(d.itemIdSetName) + '</div>' : '') + '</dd>' : '') +
@@ -4303,7 +4374,7 @@ function snbPaint() {
   else {
     snbRecent();
     const rec = (SNB.recent || []).filter((r) => r.oid && r.oid !== SNB.cur);
-    body = '<div class="small muted">พิมพ์หรือวางเลข Order ในช่องด้านบน (อย่างน้อย 3 ตัว) หรือเลือกจากรายการ — ' + (link ? 'อ่านข้อมูล Order จาก StarNexus (ฐานข้อมูลเดียวกับ Production Nexus)' : 'อ่านข้อมูลจาก Production Nexus ที่ต่อกับ StarNexus / Odoo') + '</div>' +
+    body = '<div class="small muted">พิมพ์หรือวางเลข Order ในช่องด้านบน (อย่างน้อย 3 ตัว) หรือเลือกจากรายการ — ' + (link ? 'ข้อมูล Order ซิงก์จาก Production' + (SNL.st && SNL.st.at ? ' ล่าสุด ' + fmtDT(SNL.st.at) : '') + (SNL.st && SNL.st.n ? ' (' + SNL.st.n.toLocaleString('th-TH') + ' Order)' : '') : 'อ่านข้อมูลจาก Production Nexus ที่ต่อกับ StarNexus / Odoo') + '</div>' +
       (SNB.cur ? '<button type="button" class="snb-it snb-cur" data-act="snbCur">' + icon('link', 'sm') + '<span>ใช้ Order ที่เปิดอยู่ใน Production: <b class="mono">' + esc(SNB.cur) + '</b></span></button>' : '') +
       (rec.length ? '<div class="xs muted" style="margin:10px 0 6px">Order ล่าสุดใน Production</div><div class="snb-list">' + rec.map((r) => '<button type="button" class="snb-it" data-act="snbRecent" data-oid="' + esc(r.oid) + '"><b class="mono">' + esc(r.oid) + '</b>' + snbSrc(r.origin) + (r.when ? '<span class="xs muted">' + esc(r.when) + '</span>' : '') + '</button>').join('') + '</div>' : SNB.recent ? '' : '<div class="xs muted" style="margin-top:8px">กำลังโหลดรายการ Order ล่าสุด…</div>');
   }
@@ -5417,18 +5488,18 @@ function whPaint() {
 /* ===================== ยิงรับเข้าคลัง ===================== */
 function whRecvOrders() {
   return DB.orders.filter((o) => o.confirmedAt && !o.cancelledAt).sort((a, b) => {
-    const fa = (a.wh ? a.wh.in + a.wh.out : 0) >= a.cabinets, fb = (b.wh ? b.wh.in + b.wh.out : 0) >= b.cabinets;
+    const fa = (a.wh ? a.wh.in + a.wh.out : 0) >= packNeed(a), fb = (b.wh ? b.wh.in + b.wh.out : 0) >= packNeed(b);   /* V7.16.9: รายการห่อ / จำนวนตู้ */
     return (fa - fb) || String(whInstDate(a) || '9').localeCompare(String(whInstDate(b) || '9')) || b.id.localeCompare(a.id);
   });
 }
 function whOrderOpt(o, cur) {
   const w = o.wh || { in: 0, out: 0 };
-  return '<option value="' + o.id + '"' + (o.id === cur ? ' selected' : '') + '>' + esc(o.id + ' · ' + o.title) + ' — ในคลัง ' + w.in + (w.out ? ' · ออกแล้ว ' + w.out : '') + ' / ' + o.cabinets + ' ตู้' + (w.in + w.out > 0 && w.in + w.out < o.cabinets ? ' · ขาดส่ง ' + (o.cabinets - w.in - w.out) : '') + (whInstDate(o) ? ' · ติดตั้ง ' + fmtDate(whInstDate(o)) : '') + '</option>';
+  return '<option value="' + o.id + '"' + (o.id === cur ? ' selected' : '') + '>' + esc(o.id + ' · ' + o.title) + ' — ในคลัง ' + w.in + (w.out ? ' · ออกแล้ว ' + w.out : '') + ' / ' + packNeed(o) + (ppPlan(o) ? ' ห่อ (รายการห่อ)' : ' ตู้') + (w.in + w.out > 0 && w.in + w.out < packNeed(o) ? ' · ขาดส่ง ' + (packNeed(o) - w.in - w.out) : '') + (whInstDate(o) ? ' · ติดตั้ง ' + fmtDate(whInstDate(o)) : '') + '</option>';
 }
 route(/^\/wh\/receive$/, 'wh', () => {
   const os = whRecvOrders(), o = os.find((x) => x.id === WH.order); if (!o) WH.order = '';
   const locs = whData().locs.filter((l) => l.active);
-  const pend = os.filter((x) => (x.wh ? x.wh.in + x.wh.out : 0) < x.cabinets), full = os.filter((x) => pend.indexOf(x) < 0);
+  const pend = os.filter((x) => (x.wh ? x.wh.in + x.wh.out : 0) < packNeed(x)), full = os.filter((x) => pend.indexOf(x) < 0);
   return { nav: '#/wh/receive', after: () => { const i = $(WH.order && WH.loc ? '#wh-code' : WH.order ? '#wh-loc' : '#wh-ord'); if (i && !('ontouchstart' in window)) i.focus(); },
     html: pageHead('ยิงรับเข้าคลัง', 'เลือก Order → เลือกโลเคชั่นที่จะวาง → ยิง Code Pack ทีละห่อ (เช่น PD69000013764-PD01) · ใช้เครื่องยิง / กล้องมือถือ / พิมพ์เองก็ได้') +
       (!locs.length ? '<div style="margin-bottom:12px">' + notice('warn', 'ยังไม่มีโลเคชั่นในคลัง — <a href="#/wh/locs">สร้างโลเคชั่นก่อน</a> (โซน-แถว-ชั้น + จำนวนห่อที่ลงได้)') + '</div>' : '') +
@@ -5441,14 +5512,15 @@ route(/^\/wh\/receive$/, 'wh', () => {
 function whRecvDyn() {
   const o = DB.orders.find((x) => x.id === WH.order);
   if (!o) return '<div class="card"><div class="card-b">' + empty('box', 'เลือก Order ที่จะรับเข้าคลัง', 'ห่อทุกห่อที่ยิงจะผูกกับ Order ที่เลือก') + '</div></div>' + whLogHtml(WH.log, 'ยิงรอบนี้');
-  const w = o.wh || { in: 0, out: 0, locs: [] }, got = w.in + w.out, pct = Math.min(100, Math.round(got / Math.max(1, o.cabinets) * 100)), l = WH.loc ? whLoc(WH.loc) : null, sg = whSuggest(o);
+  const w = o.wh || { in: 0, out: 0, locs: [] }, got = w.in + w.out, need = packNeed(o), pl = ppPlan(o), pct = Math.min(100, Math.round(got / Math.max(1, need) * 100)), l = WH.loc ? whLoc(WH.loc) : null, sg = whSuggest(o);
   const mine = whOrderIn(o.id).slice().sort((a, b) => String(b.inAt).localeCompare(String(a.inAt)));
   return '<div class="card wh-ordsum"><div class="card-b"><div class="row between" style="align-items:flex-start"><div style="min-width:0"><b class="mono">' + esc(o.id) + '</b> ' + badge(ost(o)) + snTag(o) + '<div class="strong" style="margin-top:2px">' + esc(o.title) + '</div><div class="xs muted">' + esc(o.customer) + ' · ' + esc(o.siteName) + ' จ.' + esc(o.province) + '</div><div class="xs muted">ติดตั้ง ' + (whInstDate(o) ? fmtDate(whInstDate(o)) : '—') + ' · ' + esc(whWho(o)) + '</div></div>' +
-      '<div class="wh-big"><div class="v">' + got + '<span>/' + o.cabinets + '</span></div><div class="xs">ห่อที่รับแล้ว</div></div></div>' +
+      '<div class="wh-big"><div class="v">' + got + '<span>/' + need + '</span></div><div class="xs">ห่อที่รับแล้ว' + (pl ? '<br>ตามรายการห่อ' : '') + '</div></div></div>' +
       '<div class="prog" style="margin-top:10px"><i style="width:' + pct + '%"></i></div>' +
-      (got > 0 && got < o.cabinets ? '<div style="margin-top:8px">' + whShortNote(o, got) + '</div>' : '') +
-      (got >= o.cabinets ? '<div style="margin-top:8px">' + notice('ok', 'รับครบ ' + o.cabinets + ' ห่อตามจำนวนตู้ใน Order แล้ว' + (got > o.cabinets ? ' (เกิน ' + (got - o.cabinets) + ' ห่อ — ตรวจว่าเป็นของ Order นี้จริง)' : '')) + '</div>' : '') +
+      (got > 0 && got < need ? '<div style="margin-top:8px">' + (pl ? ppShortNote(o, got) : whShortNote(o, got)) + '</div>' : '') +
+      (got >= need ? '<div style="margin-top:8px">' + notice('ok', pl ? 'รับครบ ' + need + ' ห่อตามรายการห่อจากไลน์ผลิตแล้ว' : 'รับครบ ' + o.cabinets + ' ห่อตามจำนวนตู้ใน Order แล้ว' + (got > o.cabinets ? ' (เกิน ' + (got - o.cabinets) + ' ห่อ — ตรวจว่าเป็นของ Order นี้จริง)' : '')) + '</div>' : '') +
       (w.locs.length ? '<div class="row" style="gap:6px;margin-top:10px"><span class="xs muted">อยู่ที่</span>' + w.locs.map((x) => locChip(x.loc, x.n)).join('') + '</div>' : '') + '</div></div>' +
+    ppCard(o) +   /* V7.16.9: รายการห่อจากไลน์ผลิต */
     '<div class="card wh-step"><div class="card-b"><div class="ws-n">2</div><div class="ws-b"><h3>โลเคชั่นที่จะวาง</h3>' +
       (l ? '<div class="wh-cur ' + whFillCls(l) + '"><div><span class="xs muted">วางที่</span><div class="lc mono">' + esc(l.code) + '</div></div><div style="flex:1;min-width:120px">' + locFill(l) + (l.note ? '<div class="xs muted">' + esc(l.note) + '</div>' : '') + '</div><button class="btn sm" data-act="whLocClear">' + icon('refresh', 'sm') + ' เปลี่ยนโลเคชั่น</button></div>' +
           (l.n >= l.cap ? '<div style="margin-top:8px">' + notice('danger', '<b>' + esc(l.code) + ' เต็มแล้ว</b> — เลือกโลเคชั่นถัดไป') + '</div>' : '')
@@ -5493,7 +5565,7 @@ function whOrdSet(id) { if (WH.order !== id) { WH.order = id; WH.log = []; WH.fu
 Acts.whOrdPick = (el) => { if (el.value) whOrdSet(el.value); };
 on('whOrdFind', (el) => {
   const v = whNorm(el.value); el.value = ''; if (!v) return;
-  const os = whRecvOrders(), o = os.find((x) => x.id.toUpperCase() === v) || os.find((x) => x.snOrder && (whNorm(x.snOrder) === v || snKey(x.snOrder) === snKey(v))) || os.find((x) => x.id.toUpperCase().endsWith(v));
+  const os = whRecvOrders(), o = os.find((x) => x.id.toUpperCase() === v) || os.find((x) => x.snOrder && (whNorm(x.snOrder) === v || snKey(x.snOrder) === snKey(v))) || os.find((x) => x.id.toUpperCase().endsWith(v)) || os.find((x) => ppIdx(x) && ppIdx(x).has(v));   /* V7.16.9: ยิงรหัสห่อ = เปิด Order ของห่อนั้น */
   if (!o) { whBeep(false); toast('ไม่พบ Order ' + v + ' (ต้องเป็น Order ที่ยืนยันแล้ว ไม่ถูกยกเลิก)', 'err'); return; }
   whOrdSet(o.id);
 });
@@ -5524,13 +5596,17 @@ async function whRecvOne(code) {
   const had = whData().packs.find((p) => p.code === code);
   if (had && had.st === 'in') { whLogAdd(WH.log, false, code, 'ยิงซ้ำ — อยู่ที่ ' + had.loc + ' แล้ว (Order ' + had.order + ')'); whPaint(); return; }
   if (!WH.loc) { whLogAdd(WH.log, false, code, 'เลือกโลเคชั่นก่อน'); whPaint(); return; }
+  { const own = ppOrderOf(code);   /* V7.16.9: มีรายการห่อ → รับเฉพาะรหัสในรายการ (Server ตรวจซ้ำ) */
+    if (own && own.id !== o.id) { whLogAdd(WH.log, false, code, 'ห่อนี้เป็นของ ' + own.id + ' ตามรายการห่อจากไลน์ผลิต' + (ppInfoTxt(own, code) ? ' (' + ppInfoTxt(own, code) + ')' : '') + ' — ไม่ใช่ Order นี้'); whBeep(false); whPaint(); return; }
+    if (!own && ppPlan(o)) { whLogAdd(WH.log, false, code, 'ไม่มีในรายการห่อของ Order นี้ (นำเข้าจากไลน์ผลิต) — ตรวจรหัสอีกครั้ง'); whBeep(false); whPaint(); return; } }
   const others = whData().packs.filter((p) => p.order === o.id), pre = code.split('-')[0];
   const warn = others.length && !others.some((p) => p.code.split('-')[0] === pre) ? 'เลข ' + pre + ' ต่างจากห่ออื่นของ Order นี้ — ตรวจว่าเป็นของ Order นี้จริง' : '';
   try {
     const r = await rpc('cn_wh_receive', { p_order: o.id, p_loc: WH.loc, p_code: code });
     whApply(o.id, () => { whData().packs.push({ code: r.code, order: r.order, loc: r.loc, st: 'in', inAt: new Date(nowMs()).toISOString(), inBy: S.user.name, movedAt: null, outAt: null, outBy: '' }); });
-    const over = r.orderIn + ((o.wh && o.wh.out) || 0) > r.cabinets ? 'เกินจำนวนตู้ใน Order (' + r.cabinets + ' ตู้)' : '';
-    whLogAdd(WH.log, true, r.code, '→ ' + r.loc + ' (' + r.locN + '/' + r.cap + ') · ' + o.id + ' ' + (r.orderIn + ((o.wh && o.wh.out) || 0)) + '/' + r.cabinets, [warn, over].filter(Boolean).join(' · '));
+    const need = packNeed(o), info = ppInfoTxt(o, r.code);
+    const over = !ppPlan(o) && r.orderIn + ((o.wh && o.wh.out) || 0) > r.cabinets ? 'เกินจำนวนตู้ใน Order (' + r.cabinets + ' ตู้)' : '';
+    whLogAdd(WH.log, true, r.code, (info ? info + ' ' : '') + '→ ' + r.loc + ' (' + r.locN + '/' + r.cap + ') · ' + o.id + ' ' + (r.orderIn + ((o.wh && o.wh.out) || 0)) + '/' + need, [ppPlan(o) ? '' : warn, over].filter(Boolean).join(' · '));
     if (r.locN >= r.cap) { toast(r.loc + ' เต็มแล้ว — เลือกโลเคชั่นถัดไป', 'err'); WH.full = r.loc; WH.loc = ''; }   /* เต็ม → กลับไปช่องโลเคชั่น (ยิงป้ายโลเคชั่นถัดไปได้เลย) */
   } catch (err) {
     if (err && err.code === 'session') { actError(err); return; }
@@ -5567,7 +5643,7 @@ route(/^\/wh\/issue$/, 'wh', () => {
       '<div class="sec-t">' + icon('box') + ' Order ที่มีห่อในคลัง <span class="n">' + os.length + '</span></div><div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ติดตั้ง</th><th class="r">ในคลัง</th><th>โลเคชั่น</th><th></th></tr></thead><tbody>' +
         (os.length ? os.map((o) => { const d = whInstDate(o), late = d && d < todayStr();
           return '<tr' + (dueIds.indexOf(o.id) >= 0 ? ' class="need' + (late ? ' over' : '') + '"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
-            '<td data-l="ติดตั้ง" class="small">' + (d ? fmtDate(d) : '—') + (late ? ' <span class="badge t-red">เลยวันติดตั้ง</span>' : '') + '<div class="sub">' + esc(whWho(o)) + '</div></td><td data-l="ในคลัง" class="r"><b>' + o.wh.in + '</b><span class="xs muted"> / ' + o.cabinets + '</span></td>' +
+            '<td data-l="ติดตั้ง" class="small">' + (d ? fmtDate(d) : '—') + (late ? ' <span class="badge t-red">เลยวันติดตั้ง</span>' : '') + '<div class="sub">' + esc(whWho(o)) + '</div></td><td data-l="ในคลัง" class="r"><b>' + o.wh.in + '</b><span class="xs muted"> / ' + packNeed(o) + '</span></td>' +
             '<td data-l="โลเคชั่น"><div class="row" style="gap:4px">' + o.wh.locs.map((x) => locChip(x.loc, x.n)).join('') + '</div></td><td class="r"><button class="btn sm' + (o.id === WH.iorder ? ' primary' : '') + '" data-act="whIssSel" data-id="' + o.id + '">' + icon('truck', 'sm') + ' จ่ายออก</button></td></tr>'; }).join('')
           : '<tr><td colspan="5">' + empty('box', 'ไม่มีห่อในคลัง', 'ห่อที่ยิงรับเข้าแล้วจะมาอยู่ที่นี่') + '</td></tr>') + '</tbody></table></div></div>' };
 });
@@ -5631,7 +5707,7 @@ route(/^\/wh\/stock$/, 'wh', () => {
           : '<div class="card">' + empty('shelf', 'ยังไม่มีโลเคชั่น', 'สร้างโลเคชั่นแบบ โซน-แถว-ชั้น แล้วตั้งจำนวนห่อที่ลงได้', canWh() ? '<a class="btn primary" href="#/wh/locs">' + icon('plus', 'sm') + ' สร้างโลเคชั่น</a>' : '') + '</div>')
         : '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th class="r">ในคลัง</th><th>โลเคชั่น</th><th>ติดตั้ง</th><th></th></tr></thead><tbody>' +
           (ords.length ? ords.map((o) => '<tr data-wq="' + esc([o.id, o.snOrder, o.title, o.customer].concat(whOrderIn(o.id).map((p) => p.code)).join(' ').toUpperCase()) + '"><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td>' +
-            '<td data-l="ในคลัง" class="r"><b>' + o.wh.in + '</b><span class="xs muted"> / ' + o.cabinets + '</span>' + (o.wh.out ? '<div class="sub">ออกแล้ว ' + o.wh.out + '</div>' : '') + '</td><td data-l="โลเคชั่น"><div class="row" style="gap:4px">' + o.wh.locs.map((x) => locChip(x.loc, x.n)).join('') + '</div></td>' +
+            '<td data-l="ในคลัง" class="r"><b>' + o.wh.in + '</b><span class="xs muted"> / ' + packNeed(o) + '</span>' + (o.wh.out ? '<div class="sub">ออกแล้ว ' + o.wh.out + '</div>' : '') + '</td><td data-l="โลเคชั่น"><div class="row" style="gap:4px">' + o.wh.locs.map((x) => locChip(x.loc, x.n)).join('') + '</div></td>' +
             '<td data-l="ติดตั้ง" class="small">' + (whInstDate(o) ? fmtDate(whInstDate(o)) : '—') + '<div class="sub">' + esc(whWho(o)) + '</div></td><td class="r"><button class="btn sm" data-act="whHist" data-q="' + esc(o.id) + '">' + icon('clock', 'sm') + ' ประวัติ</button></td></tr>').join('')
             : '<tr><td colspan="5">' + empty('box', 'ไม่มีห่อในคลัง') + '</td></tr>') + '</tbody></table></div></div>') };
 });
@@ -5839,9 +5915,275 @@ function whOrderHtml(o) {
   const w = o.wh; if (!w || !S.user || S.user.role === 'contractor') return '';
   if (!w.in && !w.out && !canWh()) return '';
   return '<div class="divider"></div><div class="row between"><h3>คลังสินค้า</h3>' + (w.in ? '<span class="badge t-teal">ในคลัง ' + w.in + ' ห่อ</span>' : w.out ? '<span class="badge t-orange">จ่ายออกครบแล้ว</span>' : '<span class="badge t-gray">ยังไม่เข้าคลัง</span>') + '</div>' +
-    '<dl class="dl" style="margin-top:8px"><dt>รับเข้าแล้ว</dt><dd>' + (w.in + w.out) + ' / ' + o.cabinets + ' ห่อ</dd><dt>จ่ายออกแล้ว</dt><dd>' + w.out + ' ห่อ</dd>' +
+    '<dl class="dl" style="margin-top:8px"><dt>รับเข้าแล้ว</dt><dd>' + (w.in + w.out) + ' / ' + packNeed(o) + ' ห่อ' + (ppPlan(o) ? ' <span class="xs muted">(รายการห่อ)</span>' : '') + '</dd><dt>จ่ายออกแล้ว</dt><dd>' + w.out + ' ห่อ</dd>' +
     (w.locs.length ? '<dt>อยู่ที่</dt><dd><div class="row" style="gap:4px">' + w.locs.map((x) => canWh() ? locChip(x.loc, x.n) : '<span class="loc-chip"><b class="mono">' + esc(x.loc) + '</b> <span>×' + x.n + '</span></span>').join('') + '</div></dd>' : '') + '</dl>' +
     (canWh() ? '<div class="row" style="gap:6px;margin-top:8px">' + (!o.cancelledAt ? '<button class="btn sm" data-act="whRecvGo" data-id="' + o.id + '">' + icon('barcode', 'sm') + ' ยิงรับเข้า</button>' : '') + (w.in ? '<button class="btn sm" data-act="whFind" data-q="' + esc(o.id) + '">' + icon('shelf', 'sm') + ' ดูในผังคลัง</button>' : '') + '<button class="btn sm" data-act="whHist" data-q="' + esc(o.id) + '">' + icon('clock', 'sm') + ' ประวัติ</button></div>' : '');
+}
+
+
+/* =====================================================================
+   V7.16.9 · อ่านไฟล์ Excel (.xlsx) / CSV แบบเบา (ไม่ใช้ไลบรารีภายนอก · ไม่ส่งไฟล์ออกจากเครื่อง)
+   - .xlsx = ไฟล์ zip → แตกด้วย DecompressionStream('deflate-raw') ของเบราว์เซอร์ → อ่าน sharedStrings + ชีตแรก
+   - ppParsePacks: ไฟล์ export แบ่งห่อของไลน์ผลิต (หัวคอลัมน์ Code Pack · Pack Seq Total · Product Article · Shelf No · Item Id · Room / Lot Id …)
+     → รายการห่อ (1 แถวต่อ Code Pack) + ข้อมูลไฟล์ (เลข BO · Item Id · เลขสั่งผลิต · โปรเจกต์) · ไม่มีราคาในไฟล์ / ไม่ส่งช่องอื่น
+   ===================================================================== */
+function xlU16(b, o) { return b[o] | (b[o + 1] << 8); }
+function xlU32(b, o) { return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0; }
+async function xlInflate(u8) {
+  if (typeof DecompressionStream !== 'function') throw new Error('เบราว์เซอร์นี้อ่านไฟล์ Excel ไม่ได้ — ใช้ Chrome / Edge / Safari รุ่นใหม่ หรือบันทึกไฟล์เป็น CSV');
+  const s = new Blob([u8]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(s).arrayBuffer());
+}
+/* แตก zip เฉพาะไฟล์ที่ต้องการ (want = ฟังก์ชันรับชื่อไฟล์) */
+async function xlUnzip(buf, want) {
+  const b = new Uint8Array(buf), out = {};
+  let e = -1;
+  for (let i = b.length - 22; i >= Math.max(0, b.length - 65557); i--) if (xlU32(b, i) === 0x06054b50) { e = i; break; }
+  if (e < 0) throw new Error('ไม่ใช่ไฟล์ Excel (.xlsx)');
+  const n = xlU16(b, e + 10); let p = xlU32(b, e + 16);
+  const dec = new TextDecoder();
+  for (let k = 0; k < n; k++) {
+    if (xlU32(b, p) !== 0x02014b50) break;
+    const meth = xlU16(b, p + 10), csz = xlU32(b, p + 20), nl = xlU16(b, p + 28), xl = xlU16(b, p + 30), cl = xlU16(b, p + 32), lo = xlU32(b, p + 42);
+    const name = dec.decode(b.subarray(p + 46, p + 46 + nl));
+    p += 46 + nl + xl + cl;
+    if (!want(name)) continue;
+    const ds = lo + 30 + xlU16(b, lo + 26) + xlU16(b, lo + 28), raw = b.subarray(ds, ds + csz);
+    out[name] = meth === 0 ? raw : meth === 8 ? await xlInflate(raw) : null;
+    if (!out[name]) throw new Error('ไฟล์ Excel บีบอัดแบบที่อ่านไม่ได้');
+  }
+  return out;
+}
+function xlEnt(s) { return String(s).replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (m, c) => c[0] === '#' ? String.fromCodePoint(c[1] === 'x' || c[1] === 'X' ? parseInt(c.slice(2), 16) : +c.slice(1)) : { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" }[c.toLowerCase()]); }
+function xlTexts(x) { const out = []; const re = /<t(?:\s[^>]*)?>([\s\S]*?)<\/t>|<t(?:\s[^>]*)?\/>/g; let m; while ((m = re.exec(x))) out.push(m[1] ? xlEnt(m[1]) : ''); return out.join(''); }
+function xlCol(ref) { let n = 0; const m = /^([A-Z]+)/.exec(ref || ''); if (!m) return -1; for (const ch of m[1]) n = n * 26 + ch.charCodeAt(0) - 64; return n - 1; }
+/* ชีตแรกของไฟล์ .xlsx → แถว (ช่องว่าง = '') */
+async function xlsxRows(buf) {
+  const files = await xlUnzip(buf, (n) => n === 'xl/sharedStrings.xml' || n === 'xl/workbook.xml' || n === 'xl/_rels/workbook.xml.rels' || /^xl\/worksheets\/sheet\d+\.xml$/.test(n));
+  const dec = new TextDecoder(), txt = (n) => (files[n] ? dec.decode(files[n]) : '');
+  const ss = []; { const x = txt('xl/sharedStrings.xml'); const re = /<si>([\s\S]*?)<\/si>/g; let m; while ((m = re.exec(x))) ss.push(xlTexts(m[1])); }
+  let sheet = '';
+  { const wb = txt('xl/workbook.xml'), rel = txt('xl/_rels/workbook.xml.rels');
+    const s1 = /<sheet\b[^>]*\br:id="([^"]+)"/.exec(wb) || /<sheet\b[^>]*\bid="([^"]+)"/.exec(wb);
+    if (s1) { const r = new RegExp('<Relationship\\b[^>]*\\bId="' + s1[1] + '"[^>]*\\bTarget="([^"]+)"').exec(rel) || new RegExp('<Relationship\\b[^>]*\\bTarget="([^"]+)"[^>]*\\bId="' + s1[1] + '"').exec(rel); if (r) sheet = 'xl/' + r[1].replace(/^\/?xl\//, '').replace(/^\//, ''); }
+    if (!files[sheet]) sheet = Object.keys(files).filter((n) => /^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort()[0] || ''; }
+  if (!sheet) throw new Error('ไม่พบชีตในไฟล์ Excel');
+  const x = txt(sheet), rows = [];
+  const rre = /<row\b([^>]*)>([\s\S]*?)<\/row>|<row\b([^>]*)\/>/g; let rm;
+  while ((rm = rre.exec(x))) {
+    const ra = rm[1] || rm[3] || '', ri = /\br="(\d+)"/.exec(ra), body = rm[2] || '', row = [];
+    const cre = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g; let cm;
+    while ((cm = cre.exec(body))) {
+      const at = cm[1], inner = cm[2] || '', ref = (/\br="([A-Z]+\d+)"/.exec(at) || [])[1], t = (/\bt="([^"]+)"/.exec(at) || [])[1] || 'n';
+      const vm = /<v>([\s\S]*?)<\/v>/.exec(inner), v = vm ? xlEnt(vm[1]) : '';
+      let val = '';
+      if (t === 's') val = ss[+v] != null ? ss[+v] : '';
+      else if (t === 'inlineStr') val = xlTexts(inner);
+      else if (t === 'b') val = v === '1';
+      else if (t === 'str' || t === 'e') val = v;
+      else val = v === '' ? '' : (isNaN(+v) ? v : +v);
+      const ci = ref ? xlCol(ref) : row.length;
+      while (row.length < ci) row.push('');
+      row[ci] = val;
+    }
+    const at = ri ? +ri[1] - 1 : rows.length;
+    while (rows.length < at) rows.push([]);
+    rows[at] = row;
+  }
+  return rows;
+}
+/* CSV (คั่นด้วย , หรือ ; หรือ Tab · มีเครื่องหมายคำพูดได้) */
+function csvRows(text) {
+  const t = String(text || '').replace(/^﻿/, ''), first = t.split(/\r?\n/, 1)[0] || '';
+  const sep = (first.match(/\t/g) || []).length > (first.match(/,/g) || []).length ? '\t' : (first.match(/;/g) || []).length > (first.match(/,/g) || []).length ? ';' : ',';
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (q) { if (ch === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; continue; }
+    if (ch === '"') q = true; else if (ch === sep) { row.push(cur); cur = ''; } else if (ch === '\n' || ch === '\r') { if (ch === '\r' && t[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; } else cur += ch;
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows;
+}
+const PP_COLS = { code: ['code pack', 'codepack', 'pack code'], pk: ['pack seq total', 'pack seq', 'packseqtotal'], article: ['product article', 'article'], pname: ['product name'],
+  shelf: ['shelf no', 'shelf'], itemFg: ['item fg'], itemId: ['item id', 'itemid', 'item id set'], room: ['room'], lot: ['lot id', 'lot'], prod: ['ordernumber', 'order number'],
+  proj: ['proj name', 'project name'], pack: ['pack'], pseq: ['product seq total'] };
+const PP_RE = /^[A-Z0-9][A-Z0-9._/-]{2,59}$/;
+function ppNorm(v) { return String(v == null ? '' : v).replace(/\s+/g, '').toUpperCase(); }
+function ppBO(...vs) { for (const v of vs) { const m = /\bBO\s*[-_ ]?\s*(\d{2})\s*[-_ ]\s*(\d{3,5})/i.exec(String(v || '')); if (m) return 'BO' + m[1] + '-' + m[2]; } return ''; }
+function ppTop(a) { const c = {}; a.forEach((v) => { v = String(v == null ? '' : v).trim(); if (v) c[v] = (c[v] || 0) + 1; }); return Object.keys(c).sort((x, y) => c[y] - c[x])[0] || ''; }
+/* แถวจากไฟล์ → { meta, packs, stats, warn } */
+function ppParsePacks(rows, fileName) {
+  const hi = rows.findIndex((r) => (r || []).some((c) => PP_COLS.code.includes(String(c || '').trim().toLowerCase())));
+  if (hi < 0) throw new Error('ไม่พบคอลัมน์ “Code Pack” ในไฟล์ — ใช้ไฟล์ export แบ่งห่อจากไลน์ผลิต');
+  const hdr = rows[hi].map((c) => String(c || '').trim().toLowerCase()), col = {};
+  Object.keys(PP_COLS).forEach((k) => { col[k] = hdr.findIndex((h) => PP_COLS[k].includes(h)); });
+  const g = (r, k) => (col[k] >= 0 ? r[col[k]] : '');
+  const by = new Map(), warn = [], all = { room: [], lot: [], itemId: [], prod: [], proj: [] };
+  let bad = 0;
+  rows.slice(hi + 1).forEach((r) => {
+    if (!r || !r.length) return;
+    const code = ppNorm(g(r, 'code')); if (!code) return;
+    if (!PP_RE.test(code)) { bad++; return; }
+    Object.keys(all).forEach((k) => all[k].push(g(r, k)));
+    let p = by.get(code);
+    if (!p) {
+      const m = /^(\d+)\s*\/\s*(\d+)$/.exec(String(g(r, 'pk') || '').trim());
+      const art = String(g(r, 'article') || '').trim();
+      p = { code, seq: by.size, shelf: String(g(r, 'shelf') || '').trim(), article: art, pname: String(g(r, 'pname') || '').trim() || art, itemFg: String(g(r, 'itemFg') || '').trim(),
+        kind: /fitting|accessory/i.test(art) || /^FIT/i.test(art) ? 'fit' : 'cab', i: m ? +m[1] : 0, n: m ? +m[2] : 0, parts: 0, packed: false };
+      by.set(code, p);
+    }
+    p.parts++;
+    const pk = g(r, 'pack'); if (col.pack < 0 || pk === true || /^(true|1|yes|y)$/i.test(String(pk))) p.packed = true;
+  });
+  const packs = Array.from(by.values());
+  if (!packs.length) throw new Error('ไฟล์ไม่มีรหัสห่อ (Code Pack)');
+  /* ไม่มีคอลัมน์ห่อที่ x/n → นับจากรหัสที่ลงท้าย _1, _2 … ของตู้เดียวกัน */
+  const base = (c) => c.replace(/_(\d+)$/, '');
+  const grp = {}; packs.forEach((p) => { (grp[base(p.code)] = grp[base(p.code)] || []).push(p); });
+  packs.forEach((p) => { if (!p.n) { const gg = grp[base(p.code)]; p.n = gg.length; p.i = gg.indexOf(p) + 1; } });
+  const items = new Set(packs.map((p) => p.shelf || p.article || base(p.code)));
+  const multi = Object.values(packs.reduce((m, p) => { const k = p.shelf || p.article || base(p.code); (m[k] = m[k] || []).push(p); return m; }, {})).filter((a) => a.length > 1);
+  if (bad) warn.push('ข้ามรหัสที่อ่านไม่ได้ ' + bad + ' แถว');
+  const notPacked = packs.filter((p) => !p.packed).length;
+  return {
+    meta: { file: String(fileName || '').slice(0, 120), bo: ppBO(ppTop(all.room), ppTop(all.lot), fileName), itemId: ppTop(all.itemId), prod: ppTop(all.prod), proj: ppTop(all.proj) },
+    packs, warn,
+    stats: { packs: packs.length, items: items.size, fit: packs.filter((p) => p.kind === 'fit').length, multi: multi.length, maxN: Math.max.apply(null, packs.map((p) => p.n)), notPacked },
+  };
+}
+async function ppReadFile(file) {
+  const name = String(file && file.name || '');
+  if (/\.csv$|\.txt$/i.test(name)) return ppParsePacks(csvRows(await file.text()), name);
+  if (/\.xls$/i.test(name)) throw new Error('ไฟล์ .xls รุ่นเก่าอ่านไม่ได้ — เปิดใน Excel แล้วบันทึกเป็น .xlsx หรือ CSV');
+  return ppParsePacks(await xlsxRows(await file.arrayBuffer()), name);
+}
+
+
+/* =====================================================================
+   V7.16.9 · รายการห่อจากไลน์ผลิต (นำเข้า Excel export แบ่งห่อ)
+   - 1 ตู้มีได้หลายห่อ (…-49161_1 ถึง _5) → รายการห่อในไฟล์ = ตัวตั้งของการยิงทุกขั้น (คลังรับเข้า · จ่ายออก · ช่าง / ผู้รับเหมาที่หน้างาน)
+   - คลังสินค้า / Admin: หน้า “ยิงรับเข้าคลัง” → เลือก Order → นำเข้ารายการห่อ (Excel / CSV)
+     ระบบตรวจ Item Id ในไฟล์กับ Item Id Set ของ Order (ข้อมูลที่ซิงก์จาก Production) + เลข BO กับเลข Order StarNexus
+     ไม่ตรง → ป๊อปอัปเตือนสีแดง ต้องกด “นำเข้าต่อ (ยืนยันว่าถูก Order)” · Server ตรวจซ้ำ (cn_pack_check / cn_pack_import)
+   - Order ที่ไม่ได้นำเข้า = นับตามจำนวนตู้แบบเดิมทุกอย่าง
+   o.plan = [[รหัสห่อ, ลำดับสินค้า, รหัสสินค้า, ห่อที่, จากทั้งหมด, cab/fit]] · o.planNames = {รหัสสินค้า: ชื่อ} · o.planMeta
+   ===================================================================== */
+const canPP = () => !!S.user && (S.user.role === 'admin' || S.user.role === 'warehouse');
+const ppPlan = (o) => (o && Array.isArray(o.plan) && o.plan.length ? o.plan : null);
+const packNeed = (o) => (ppPlan(o) ? o.plan.length : +(o && o.cabinets) || 0);   /* จำนวนห่อที่ต้องรับ: รายการห่อ / จำนวนตู้ (แบบเดิม) */
+const PPX = new WeakMap();
+function ppIdx(o) {
+  const pl = ppPlan(o); if (!pl) return null;
+  let m = PPX.get(pl); if (m) return m;
+  m = new Map(); pl.forEach((p) => m.set(p[0], { code: p[0], shelf: p[1], article: p[2], i: p[3], n: p[4], kind: p[5] }));
+  PPX.set(pl, m); return m;
+}
+function ppName(o, art) { return (o && o.planNames && o.planNames[art]) || ''; }
+/* “TAL031 · ห่อ 3/5” ของรหัสนี้ (ไม่อยู่ในรายการ = '') */
+function ppInfoTxt(o, code) {
+  const x = ppIdx(o) && ppIdx(o).get(code); if (!x) return '';
+  return (x.shelf ? x.shelf + ' ' : '') + (x.article || '') + (x.kind === 'fit' ? ' (อุปกรณ์)' : '') + (x.n > 1 ? ' · ห่อ ' + x.i + '/' + x.n : '');
+}
+/* Order ที่รายการห่อมีรหัสนี้ (คลังเห็นทุก Order) */
+function ppOrderOf(code) { return ((DB && DB.orders) || []).find((o) => ppIdx(o) && ppIdx(o).has(code)) || null; }
+/* ห่อที่ยังไม่มี (have = Set ของรหัสที่มีแล้ว) */
+function ppMissing(o, have) { return (ppPlan(o) || []).filter((p) => !have.has(p[0])); }
+/* ห่อที่ขาด จัดเป็นรายสินค้า: “P0002 TAL031 TallUnit… — ขาด ห่อ 3/5 · 5/5” */
+function ppMissHtml(o, miss, max) {
+  if (!miss.length) return '';
+  const g = new Map();
+  miss.forEach((p) => { const k = p[1] + '|' + p[2]; if (!g.has(k)) g.set(k, []); g.get(k).push(p); });
+  const rows = Array.from(g.values()), lim = max || 8;
+  return '<ul class="pp-miss">' + rows.slice(0, lim).map((a) => { const p = a[0], nm = ppName(o, p[2]);
+    return '<li><b>' + esc((p[1] ? p[1] + ' ' : '') + p[2]) + '</b>' + (p[5] === 'fit' ? ' <span class="badge t-gray">อุปกรณ์</span>' : '') + (nm && nm !== p[2] ? ' <span class="xs muted">' + esc(nm) + '</span>' : '') +
+      '<div class="xs">ขาด ' + a.map((x) => (x[4] > 1 ? 'ห่อ ' + x[3] + '/' + x[4] + ' ' : '') + '<span class="mono">' + esc(x[0]) + '</span>').join(' · ') + '</div></li>'; }).join('') +
+    (rows.length > lim ? '<li class="xs muted">และอีก ' + (rows.length - lim) + ' รายการ</li>' : '') + '</ul>';
+}
+/* การ์ดรายการห่อในหน้า “ยิงรับเข้าคลัง” (หลังเลือก Order) */
+function ppCard(o) {
+  const pl = ppPlan(o), m = o.planMeta || {};
+  const btn = canPP() ? '<label class="btn sm' + (pl ? '' : ' primary') + '">' + icon('upload', 'sm') + (pl ? ' นำเข้าไฟล์ใหม่' : ' นำเข้ารายการห่อ (Excel)') +
+    '<input type="file" accept=".xlsx,.csv,.txt" data-chg="ppPick" data-id="' + esc(o.id) + '" hidden></label>' : '';
+  if (!pl) return '<div class="card pp-card"><div class="card-b row between" style="gap:10px;flex-wrap:wrap"><div style="min-width:0;flex:1"><b>' + icon('list', 'sm') + ' รายการห่อจากไลน์ผลิต</b>' +
+    '<div class="xs muted">ยังไม่ได้นำเข้า — ตอนนี้นับตามจำนวนตู้ (' + num(o.cabinets) + ' ตู้ = ' + num(o.cabinets) + ' ห่อ) · ตู้ที่แบ่งหลายห่อ ให้นำเข้าไฟล์ export แบ่งห่อของไลน์ผลิตก่อนยิง</div></div>' + btn + '</div></div>';
+  const fit = pl.filter((p) => p[5] === 'fit').length, multi = new Set(pl.filter((p) => p[4] > 1).map((p) => p[1] + '|' + p[2])).size;
+  return '<div class="card pp-card on"><div class="card-b row between" style="gap:10px;flex-wrap:wrap"><div style="min-width:0;flex:1"><b>' + icon('list', 'sm') + ' รายการห่อจากไลน์ผลิต · ' + pl.length + ' ห่อ</b>' +
+    (m.items ? ' <span class="xs muted">(' + m.items + ' รายการ)</span>' : '') +
+    '<div class="xs muted">' + [m.bo, m.itemId, multi ? 'ตู้ที่มีหลายห่อ ' + multi : '', fit ? 'อุปกรณ์ ' + fit + ' ห่อ' : ''].filter(Boolean).map(esc).join(' · ') + '</div>' +
+    (m.at ? '<div class="xs muted">นำเข้าเมื่อ ' + fmtDT(m.at) + (m.by ? ' · โดย ' + esc(m.by) : '') + (m.file ? ' · ' + esc(m.file) : '') + '</div>' : '') + '</div>' +
+    '<div class="row" style="gap:6px">' + '<button type="button" class="btn sm ghost" data-act="ppView" data-id="' + esc(o.id) + '">' + icon('eye', 'sm') + ' ดูรายการ</button>' + btn +
+    (canPP() ? '<button type="button" class="btn sm ghost danger" data-act="ppClear" data-id="' + esc(o.id) + '">' + icon('trash', 'sm') + ' ล้าง</button>' : '') + '</div></div></div>';
+}
+/* ---------- นำเข้า ---------- */
+const PPI = { order: '', res: null, chk: null };
+Acts.ppPick = async (el) => {
+  const f = el.files && el.files[0], id = el.dataset.id; el.value = ''; if (!f) return;
+  if (f.size > 20 * 1048576) { toast('ไฟล์ใหญ่เกินไป (เกิน 20 MB)', 'err'); return; }
+  const o = DB.orders.find((x) => x.id === id); if (!o) return;
+  let res;
+  try { res = await ppReadFile(f); } catch (e) { toast((e && e.message) || 'อ่านไฟล์ไม่ได้', 'err'); return; }
+  const chk = await rpc('cn_pack_check', { p_order: o.id, p_bo: res.meta.bo, p_item: res.meta.itemId });
+  PPI.order = o.id; PPI.res = res; PPI.chk = chk;
+  ppPreview(o, res, chk);
+};
+function ppDiff(chk) { return chk.item === 'diff' || (chk.item === 'unknown' && chk.bo === 'diff'); }
+function ppCheckHtml(res, chk) {
+  const fi = res.meta.itemId || '-', fb = res.meta.bo || '-';
+  const iTxt = chk.item === 'ok' ? 'Item Id ตรงกัน: <b class="mono">' + esc(fi) + '</b>'
+    : chk.item === 'diff' ? '<b>Item Id ไม่ตรงกัน</b> — ในไฟล์ <b class="mono">' + esc(fi) + '</b> · Order นี้ <b class="mono">' + esc(chk.itemIdSet) + '</b>'
+    : 'ตรวจ Item Id ไม่ได้ — ' + (res.meta.itemId ? 'Order นี้ยังไม่มี Item Id Set จาก Production (ในไฟล์ <b class="mono">' + esc(fi) + '</b>)' : 'ไฟล์ไม่มีคอลัมน์ Item Id');
+  const bTxt = chk.bo === 'ok' ? 'เลข BO ตรงกัน: <b class="mono">' + esc(fb) + '</b>'
+    : chk.bo === 'diff' ? '<b>เลข BO ไม่ตรงกัน</b> — ในไฟล์ <b class="mono">' + esc(fb) + '</b> · เลข Order StarNexus <b class="mono">' + esc(chk.snOrder) + '</b>'
+    : 'ตรวจเลข BO ไม่ได้ — ' + (chk.snOrder ? 'ไฟล์ไม่มีเลข BO' : 'Order นี้ไม่มีเลข Order StarNexus');
+  const kind = ppDiff(chk) ? 'danger' : chk.item === 'ok' ? 'ok' : 'warn';
+  return '<div class="pp-chk ' + kind + '">' + notice(kind, (ppDiff(chk) ? '<b style="font-size:15px">ไฟล์นี้อาจไม่ใช่ของ Order ' + esc(chk.order) + '</b><br>' : '') + iTxt + '<br>' + bTxt +
+    (ppDiff(chk) ? '<br><span class="small">ตรวจว่าเลือก Order / ไฟล์ถูกต้อง — ถ้าแน่ใจว่าถูก กด “นำเข้าต่อ (ยืนยันว่าถูก Order)”</span>' : chk.item !== 'ok' ? '<br><span class="small">ตรวจชื่อโปรเจกต์ / เลข BO ด้วยตาก่อนนำเข้า</span>' : '')) + '</div>';
+}
+function ppPreview(o, res, chk) {
+  const s = res.stats, m = res.meta, diff = ppDiff(chk);
+  const g = new Map(); res.packs.forEach((p) => { const k = p.shelf + '|' + p.article; if (!g.has(k)) g.set(k, []); g.get(k).push(p); });
+  const rows = Array.from(g.values());
+  modal({ title: icon('upload') + ' นำเข้ารายการห่อ · ' + esc(o.id), sub: esc(m.file) + (m.proj ? ' · ' + esc(m.proj) : '') + (m.prod ? ' · เลขสั่งผลิต ' + esc(m.prod) : ''), size: 'lg',
+    body: ppCheckHtml(res, chk) +
+      '<div class="pp-sum"><div><b>' + s.items + '</b><span>รายการ</span></div><div><b>' + s.packs + '</b><span>ห่อ</span></div><div><b>' + s.multi + '</b><span>ตู้ที่มีหลายห่อ</span></div>' + (s.fit ? '<div><b>' + s.fit + '</b><span>ห่ออุปกรณ์</span></div>' : '') + '</div>' +
+      '<div class="xs muted" style="margin:4px 0 8px">Order: <b>' + esc(o.title) + '</b> · ' + num(o.cabinets) + ' ตู้ในใบสั่ง' + (chk.plan ? ' · มีรายการห่อเดิม ' + chk.plan + ' ห่อ (นำเข้าใหม่ = อัปเดต · ห่อที่ยิงแล้วไม่หาย)' : '') + (chk.scanned ? ' · ยิงแล้ว ' + chk.scanned + ' ห่อ' : '') +
+        (s.notPacked ? ' · ในไฟล์ยังไม่ติ๊ก “แพ็คแล้ว” ' + s.notPacked + ' ห่อ (นับรวมให้ยิงด้วย)' : '') + (res.warn.length ? ' · ' + res.warn.map(esc).join(' · ') : '') + '</div>' +
+      '<div class="pp-list">' + rows.map((a) => '<div class="pp-row' + (a.length > 1 ? ' multi' : '') + '"><span class="pp-k">' + esc(a[0].shelf || '') + '</span><span class="pp-t"><b>' + esc(a[0].article) + '</b>' +
+          (a[0].kind === 'fit' ? ' <span class="badge t-gray">อุปกรณ์</span>' : '') + ' <span class="xs muted">' + esc(a[0].pname !== a[0].article ? a[0].pname : '') + '</span>' +
+          '<span class="pp-codes">' + a.map((p) => '<span class="mono">' + esc(p.code) + (p.n > 1 ? ' <i>' + p.i + '/' + p.n + '</i>' : '') + '</span>').join('') + '</span></span><span class="pp-n">' + a.length + ' ห่อ</span></div>').join('') + '</div>',
+    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button>' + (diff
+      ? '<button class="btn danger" data-act="ppGo" data-force="1" id="ppBtn">' + icon('alert', 'sm') + ' นำเข้าต่อ (ยืนยันว่าถูก Order)</button>'
+      : '<button class="btn primary" data-act="ppGo" id="ppBtn">' + icon('upload', 'sm') + ' นำเข้า ' + s.packs + ' ห่อ</button>') });
+}
+on('ppGo', async (el) => {
+  const o = DB.orders.find((x) => x.id === PPI.order), res = PPI.res; if (!o || !res) return;
+  const r = await rpc('cn_pack_import', { p_order: o.id, p_meta: res.meta, p_packs: res.packs.map((p) => ({ code: p.code, shelf: p.shelf, article: p.article, pname: p.pname, itemFg: p.itemFg, kind: p.kind, i: p.i, n: p.n, parts: p.parts, packed: p.packed })), p_force: el.dataset.force === '1' });
+  PPI.res = null; await refresh(); closeOverlay(); rerender();
+  toast('นำเข้ารายการห่อแล้ว ' + r.packs + ' ห่อ (' + r.items + ' รายการ)' + (r.removed ? ' · ลบห่อที่ไม่อยู่ในไฟล์ใหม่ ' + r.removed : '') + (r.kept ? ' · เก็บห่อที่ยิงแล้ว ' + r.kept : '') + ' — ยิงห่อเทียบกับรายการนี้ได้เลย');
+});
+on('ppClear', (el) => {
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o) return;
+  modal({ title: icon('trash') + ' ล้างรายการห่อของ ' + esc(o.id), body: '<p class="small" style="margin-top:0">ใช้เมื่อนำเข้าไฟล์ผิด Order — ห่อที่ยิงแล้วยังอยู่ · กลับไปนับตามจำนวนตู้ (' + num(o.cabinets) + ' ตู้) จนกว่าจะนำเข้าใหม่</p>',
+    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn danger" data-act="ppClearOk" data-id="' + esc(o.id) + '">' + icon('trash', 'sm') + ' ล้างรายการห่อ</button>' });
+});
+on('ppClearOk', async (el) => { const n = await rpc('cn_pack_plan_clear', { p_order: el.dataset.id }); await refresh(); closeOverlay(); rerender(); toast('ล้างรายการห่อแล้ว ' + n + ' ห่อ'); });
+/* ดูรายการห่อทั้งหมด + สถานะ (คลังรับแล้ว / จ่ายออก / ช่างรับแล้ว) */
+on('ppView', (el) => {
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o || !ppPlan(o)) return;
+  const st = new Map(); whData().packs.filter((p) => p.order === o.id).forEach((p) => st.set(p.code, p.st === 'out' ? 'ออกแล้ว' : 'ในคลัง ' + (p.loc || '')));
+  (o.packs || []).forEach((p) => { if (p.gotAt) st.set(p.code, 'ช่างรับแล้ว'); else if (!st.has(p.code)) st.set(p.code, p.out ? 'ออกแล้ว' : 'ในคลัง'); });
+  const got = o.plan.filter((p) => st.has(p[0])).length;
+  modal({ title: icon('list') + ' รายการห่อ · ' + esc(o.id), sub: 'มีในระบบแล้ว ' + got + ' / ' + o.plan.length + ' ห่อ', size: 'lg',
+    body: '<div class="table-wrap" style="max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:10px"><table class="t"><thead><tr><th>Code Pack</th><th>สินค้า</th><th>ห่อ</th><th>สถานะ</th></tr></thead><tbody>' +
+      o.plan.map((p) => '<tr' + (st.has(p[0]) ? '' : ' class="need"') + '><td class="mono">' + esc(p[0]) + '</td><td>' + esc((p[1] ? p[1] + ' ' : '') + p[2]) + (p[5] === 'fit' ? ' <span class="badge t-gray">อุปกรณ์</span>' : '') + '<div class="xs muted">' + esc(ppName(o, p[2])) + '</div></td><td>' + (p[4] > 1 ? p[3] + '/' + p[4] : '1') + '</td><td>' + (st.has(p[0]) ? '<span class="badge t-green">' + esc(st.get(p[0])) + '</span>' : '<span class="badge t-amber">ยังไม่มา</span>') + '</td></tr>').join('') + '</tbody></table></div>',
+    foot: '<button class="btn primary" data-act="closeOv">ปิด</button>' });
+});
+/* คลังรับเข้ายังไม่ครบตามรายการห่อ → บอกห่อที่ขาดเป็นรายสินค้า (ไม่ต้องเดาเลข) */
+function ppShortNote(o, got) {
+  const have = new Set(whData().packs.filter((p) => p.order === o.id).map((p) => p.code)), miss = ppMissing(o, have);
+  return notice('warn', '<b>ยังขาด ' + miss.length + ' ห่อ</b> (รับแล้ว ' + got + ' / ' + o.plan.length + ' ห่อตามรายการห่อ) — ห่อที่ยิงแล้วบันทึกไว้แล้ว ไม่ต้องกดบันทึก · ของมาเพิ่มเลือก Order เดิมแล้วยิงต่อ') + ppMissHtml(o, miss, 8);
 }
 
 /* ---------- V7.15: ติดตั้งเป็นแอปบนมือถือ + แจ้งเตือนผ่านแอป (Web Push · ฟรี) + เลขบนไอคอนแอป ----------
