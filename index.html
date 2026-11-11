@@ -534,6 +534,9 @@ a.sn-chip{text-decoration:none;color:var(--action)}a.sn-chip:hover{border-color:
 @keyframes drspin{to{transform:rotate(360deg)}}
 .field.dr-auto > label::after{content:'จากแบบงาน';margin-left:6px;padding:0 6px;border-radius:999px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:600;vertical-align:1px}
 .field.dr-auto .input,.field.dr-auto .select{border-color:#9FD3B4;background:#F7FBF8}
+.field.dr-calc > label::after{content:'คำนวณจากแบบงาน';margin-left:6px;padding:0 6px;border-radius:999px;background:var(--blue-bg);color:var(--blue);font-size:11px;font-weight:600;vertical-align:1px}
+.field.dr-calc .input{border-color:#C3D5EF;background:#F7FAFE}
+.map-nav .map-addr + .xs{flex-basis:100%;margin-top:-2px}
 @container app (max-width:640px){.drb-dl{grid-template-columns:minmax(0,1fr)}.drb-dl dt{margin-top:4px}}
 /* V7.9: มือถือ / แท็บเล็ต */
 .ctabs .ct-menu{display:none}
@@ -1114,7 +1117,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.12';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.13';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -1410,6 +1413,18 @@ function mapNavHtml(v) {
   const n = mapNavHref(v), h = mapHref(v); if (!n) return '';
   return '<span class="map-nav"><a class="btn sm ok map-go" href="' + esc(n) + '" target="_blank" rel="noopener noreferrer">' + icon('nav', 'sm') + ' นำทางไปหน้างาน</a>' +
     (h && h !== n ? '<a class="map-link" href="' + esc(h) + '" target="_blank" rel="noopener noreferrer">' + icon('pin', 'sm') + ' ดูแผนที่</a>' : '') + '</span>';
+}
+/* V7.16.13: ยังไม่มีพิกัด แต่มีที่อยู่ → ปุ่ม "นำทางตามที่อยู่" (Google Maps หาปลายทางจากข้อความที่อยู่ตอนเปิด)
+   แสดงเฉพาะจุดที่แสดงที่อยู่อยู่แล้ว (ผู้รับเหมาเห็นหลังได้รับอนุมัติ — เหมือนที่อยู่) · ไม่มีการส่งที่อยู่ไปที่ใดจนกว่าผู้ใช้กดเอง */
+function mapAddrQ(o) {
+  const a = String((o && o.address) || '').replace(/\s+/g, ' ').trim(), p = String((o && o.province) || '').trim();
+  return a.length >= 6 ? (a + (p && a.indexOf(p) < 0 ? ' ' + p : '')).slice(0, 300) : '';
+}
+function siteNavHtml(o, pre, post) {
+  const nav = o && o.mapUrl ? mapNavHtml(o.mapUrl) : '';
+  if (nav) return (pre || '') + nav + (post || '');
+  const q = mapAddrQ(o); if (!q) return '';
+  return (pre || '') + '<span class="map-nav"><a class="btn sm map-go map-addr" href="https://www.google.com/maps/dir/?api=1&amp;destination=' + esc(encodeURIComponent(q)) + '" target="_blank" rel="noopener noreferrer">' + icon('nav', 'sm') + ' นำทางตามที่อยู่</a><span class="xs muted">ยังไม่มีพิกัด — Google หาจากที่อยู่ ดูปลายทางให้ถูกก่อนออกเดินทาง</span></span>' + (post || '');
 }
 function mapLink(v, cls) { const h = mapHref(v); return h ? '<a class="map-link ' + (cls || '') + '" href="' + esc(h) + '" target="_blank" rel="noopener noreferrer">' + icon('pin', 'sm') + ' เปิดแผนที่ Google Maps</a>' : ''; }
 
@@ -2089,7 +2104,7 @@ function openOrder(id) {
       (st === 'open' || st === 'expired' ? '<div style="margin-bottom:12px">' + cdHtml(o) + '</div>' : '') +
       '<div class="dw-grid"><div class="dw-main"><h3 class="dw-h">รายละเอียดงาน</h3><dl class="dl">' + [o.snOrder ? ['เลขที่ Order StarNexus', '<span class="mono strong">' + esc(o.snOrder) + '</span>'] : null, ['ประเภทงาน', sw(o.type)], seeSalePrice() ? ['ราคาขาย', '<b>' + money(saleTotal(o), 0) + '</b> ' + icon('lock', 'xs') + ' <span class="xs muted">เฉพาะภายใน</span>'] : null,
         role !== 'sale' && ref != null ? ['ราคาตั้งต้นผู้รับเหมา', '<b style="color:var(--teal)">' + money(ref) + '</b>' + (isAdmin() && rateOf(o) != null ? ' <span class="xs muted">= ราคาขาย × ' + rateOf(o) + '%' + (o.confirmedAt ? '' : ' (อัตราปัจจุบัน)') + '</span>' : '') + (o.refChangedAt ? '<div class="xs" style="color:#8A5A00">แก้ไขราคาตั้งต้นเมื่อ ' + fmtDT(o.refChangedAt) + '</div>' : '')] : null,
-        ['ลูกค้า', esc(o.customer)], ['สถานที่', esc(o.siteName) + '<div class="xs muted">' + esc(o.address) + ' จ.' + esc(o.province) + '</div>' + (o.mapUrl ? '<div style="margin-top:6px">' + mapNavHtml(o.mapUrl) + '</div>' : '')], ['ผู้ติดต่อหน้างาน', esc(o.contactName) + (o.contactPhone ? ' · ' + esc(o.contactPhone) : '')],
+        ['ลูกค้า', esc(o.customer)], ['สถานที่', esc(o.siteName) + '<div class="xs muted">' + esc(o.address) + ' จ.' + esc(o.province) + '</div>' + siteNavHtml(o, '<div style="margin-top:6px">', '</div>')], ['ผู้ติดต่อหน้างาน', esc(o.contactName) + (o.contactPhone ? ' · ' + esc(o.contactPhone) : '')],
         ['ลูกค้าต้องการติดตั้ง', fmtRange(o.wantFrom, o.wantTo)], ['จำนวนตู้ (Barpack)', num(o.cabinets) + ' ตู้'], ['Sale', esc(userById(o.saleId).name)], o.note ? ['หมายเหตุ', esc(o.note)] : null, o.editedAt ? ['แก้ไขล่าสุด', fmtDT(o.editedAt)] : null]
         .filter(Boolean).map((r) => '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>').join('') + '</dl></div><div class="dw-side">' +
       chanHtml(o) + whOrderHtml(o) +
@@ -2697,7 +2712,7 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       F('address', 'ที่อยู่', d.address, 'c8') + F('province', 'จังหวัด <span class="req">*</span>', d.province, 'c4', '<select class="select" name="province"><option value="">— เลือก —</option><optgroup label="ใช้บ่อย">' + PROV.map(provOpt).join('') + '</optgroup><optgroup label="จังหวัดอื่น">' + PROV_REST.map(provOpt).join('') + '</optgroup>' + (d.province === 'จังหวัดอื่น ๆ' ? provOpt('จังหวัดอื่น ๆ') : '') + '</select>') +
       F('mapUrl', icon('pin', 'sm') + ' พิกัด / ลิงก์ Google Maps', d.mapUrl || '', 'c12', '<div class="map-in"><input class="input" name="mapUrl" value="' + esc(d.mapUrl || '') + '" placeholder="วางลิงก์จาก Google Maps หรือพิกัด เช่น 13.7563, 100.5018" autocomplete="off" spellcheck="false" data-inp="mapChk">' +
         '<button type="button" class="btn" data-act="mapFind" title="เปิด Google Maps ค้นจากชื่อสถานที่ / ที่อยู่ / จังหวัด">' + icon('search', 'sm') + ' หาใน Google Maps</button></div>' +
-        '<div class="help">ใน Google Maps กดค้างที่ตำแหน่ง (หรือ แชร์ → คัดลอกลิงก์) แล้ววางที่นี่ · ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น (เหมือนที่อยู่)</div><div id="map-prev"></div>') +
+        '<div class="help">ใน Google Maps กดค้างที่ตำแหน่ง (หรือ แชร์ → คัดลอกลิงก์) แล้ววางที่นี่ · ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น (เหมือนที่อยู่) · ไม่ใส่พิกัด = ผู้รับเหมา / ช่างได้ปุ่ม “นำทางตามที่อยู่” แทน (Google หาจากที่อยู่ — ใส่พิกัดแม่นกว่า)</div><div id="map-prev"></div>') +
       F('contactName', 'ผู้ติดต่อหน้างาน', d.contactName, 'c6') + F('contactPhone', 'เบอร์ผู้ติดต่อ', d.contactPhone, 'c6', '<input class="input" name="contactPhone" value="' + esc(d.contactPhone) + '"><div class="help">ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น</div>') +
       /* V7.16.12: ลูกค้าพร้อมให้ติดตั้ง = “กำหนดติดตั้ง” ในแบบ (อ่านให้เอง) · ต้องเสร็จภายใน = + N วัน (Admin ตั้ง) ตามให้จนกว่าจะแก้เอง */
       F('wantFrom', 'ลูกค้าพร้อมให้ติดตั้งตั้งแต่ (กำหนดติดตั้ง) <span class="req">*</span>', d.wantFrom, 'c6', '<input class="input" type="date" name="wantFrom" value="' + esc(d.wantFrom) + '" data-chg="wantChg"' + (o ? '' : ' data-def="1"') + '>') +
@@ -2712,12 +2727,18 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
 });
 /* V7.16.12: ต้องเสร็จภายใน = ลูกค้าพร้อมให้ติดตั้ง + N วัน (finishDaysNow) — ตามวันเริ่มให้เอง จนกว่า Sale จะแก้ช่อง “ต้องเสร็จภายใน” เอง */
 function wantStd(from) { return from ? addDays(from, finishDaysNow()) : ''; }
-function wantHelpHtml(from, to, auto) {
+function wantHelpHtml(from, to, auto, draw) {
   const n = finishDaysNow(), std = wantStd(from);
-  return (auto ? 'คำนวณให้: ลูกค้าพร้อมให้ติดตั้ง + ' + n + ' วัน' : 'กำหนดเอง') +
+  /* V7.16.13: วันจากแบบ = กำหนดติดตั้ง · วันเสร็จไม่มีในแบบ → บอกชัดว่าโปรแกรมคำนวณ */
+  return (auto ? (draw ? 'คำนวณให้: กำหนดติดตั้งในแบบงาน ' + fmtDate(from) + ' + ' + n + ' วัน (ในแบบงานไม่มีวันเสร็จ)' : 'คำนวณให้: ลูกค้าพร้อมให้ติดตั้ง + ' + n + ' วัน') : 'กำหนดเอง') +
     (std && to !== std ? ' · <button type="button" class="linkbtn" data-act="wantStdUse">ใช้ค่ามาตรฐาน ' + fmtDate(std) + ' (+' + n + ' วัน)</button>' : '') + ' · แก้วันเองได้ · ค่ามาตรฐานตั้งที่ ตั้งค่าระบบ (Admin)';
 }
-function wantHelp() { const f = $('#sf'), h = $('#wt-help'); if (!f || !h) return; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]'); if (wf && wt) h.innerHTML = wantHelpHtml(wf.value, wt.value, wt.dataset.auto === '1'); }
+function wantHelp() {
+  const f = $('#sf'), h = $('#wt-help'); if (!f || !h) return; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]'); if (!wf || !wt) return;
+  const ff = wf.closest('.field'), tf = wt.closest('.field'), draw = !!(ff && ff.classList.contains('dr-auto')) && !!wf.value, auto = wt.dataset.auto === '1';
+  if (tf) { tf.classList.toggle('dr-calc', draw && auto); if (draw && auto) tf.classList.remove('dr-auto', 'invalid'); }   /* ป้าย "คำนวณจากแบบงาน" (ไม่ใช่ "จากแบบงาน") */
+  h.innerHTML = wantHelpHtml(wf.value, wt.value, auto, draw && auto);
+}
 /* ตั้งวันลูกค้าพร้อม (จากแบบงาน / Odoo) → ต้องเสร็จภายในตามค่ามาตรฐาน ถ้ายังไม่ได้แก้เอง (force = ใช้ค่ามาตรฐานเลย) */
 function wantSet(from, force) {
   const f = $('#sf'); if (!f) return false; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]'); if (!wf || !from) return false;
@@ -2747,7 +2768,7 @@ Acts.mapChk = mapChk;
 on('mapFind', () => {
   const f = $('#sf'); if (!f) return;
   const g = (n) => ((f.querySelector('[name=' + n + ']') || {}).value || '').trim(), m = mapNorm(g('mapUrl'));
-  const q = [g('siteName'), g('address'), g('province')].filter(Boolean).join(' ');
+  const q = mapAddrQ({ address: g('address'), province: g('province') }) || [g('siteName'), g('province')].filter(Boolean).join(' ');   /* V7.16.13: ค้นจากที่อยู่ก่อน */
   const url = m ? mapHref(m) : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q || 'ประเทศไทย');
   window.open(url, '_blank', 'noopener');
 });
@@ -3120,7 +3141,7 @@ route(/^\/ins\/job\/([^/]+)$/, 'ins', (m) => {
     '<dl class="dl small" style="margin-top:10px">' + (o.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(o.snOrder) + '</dd>' : '') +
       '<dt>ทีมช่าง</dt><dd>' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' · ' + tm.size + ' คน' : '') + (tm.lead ? ' · ' + esc(tm.lead) : '') : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</dd>' +
       (tm ? '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(x.start, x.end) + '</b> (' + x.days + ' วัน)</dd>' : '<dt>ลูกค้าพร้อมให้ติดตั้ง</dt><dd>' + fmtRange(o.wantFrom, o.wantTo) + '</dd>') +
-      '<dt>สถานที่</dt><dd>' + esc(o.siteName) + '<br>' + esc(o.address) + ' จ.' + esc(o.province) + (o.mapUrl ? '<br>' + mapNavHtml(o.mapUrl) : '') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(o.contactName) + (o.contactPhone ? ' · <a href="tel:' + esc(o.contactPhone) + '">' + esc(o.contactPhone) + '</a>' : '') + '</dd>' +
+      '<dt>สถานที่</dt><dd>' + esc(o.siteName) + '<br>' + esc(o.address) + ' จ.' + esc(o.province) + siteNavHtml(o, '<br>') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(o.contactName) + (o.contactPhone ? ' · <a href="tel:' + esc(o.contactPhone) + '">' + esc(o.contactPhone) + '</a>' : '') + '</dd>' +
       '<dt>จำนวนตู้</dt><dd>' + num(o.cabinets) + ' ตู้</dd>' + (x.note ? '<dt>หมายเหตุหัวหน้าช่าง</dt><dd>' + esc(x.note) + '</dd>' : '') + (o.note ? '<dt>หมายเหตุ Order</dt><dd>' + esc(o.note) + '</dd>' : '') + '</dl></div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
     '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนห่อทุกห่อตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงห่อแรก = เริ่มงาน</div>' +
@@ -3615,7 +3636,7 @@ route(/^\/con\/work$/, 'con', () => {
     const tag = ackPending(x.o) ? '<span class="badge t-amber">รอคุณยืนยันเงื่อนไข</span>' : s === 'booked' ? '<span class="badge t-teal">รอเข้าติดตั้ง</span>' : s === 'installing' ? '<span class="badge t-violet">' + STAGES[i.stage] + '</span>' : s === 'check' ? '<span class="badge t-orange">รอตรวจใบส่งมอบ</span>' : '<span class="badge t-green">ตรวจรับแล้ว</span>';
     return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + tag + lateTag(x.o) + '</div><div class="jmeta">' + esc(x.p.title) + '</div></div>' +
       '<div class="ref" style="background:var(--teal-bg);border-color:#9FD5CB"><div class="k" style="color:var(--teal)">ติดตั้ง</div><div class="v" style="color:var(--teal);font-size:15px">' + fmtRange(a.start, a.end) + '</div><div class="s" style="color:var(--teal)">' + a.days + ' วัน</div></div></div>' +
-      '<div class="jb"><div class="ln">' + icon('pin', 'sm') + '<span>' + esc(x.p.siteName) + '<br><span class="xs">' + esc(x.p.address) + ' จ.' + esc(x.p.province) + '</span>' + (x.p.mapUrl ? '<br>' + mapNavHtml(x.p.mapUrl) : '') + '</span></div><div class="ln">' + icon('phone', 'sm') + '<span>' + esc(x.p.contactName) + ' · <a href="tel:' + esc(x.p.contactPhone) + '">' + esc(x.p.contactPhone) + '</a></span></div>' +
+      '<div class="jb"><div class="ln">' + icon('pin', 'sm') + '<span>' + esc(x.p.siteName) + '<br><span class="xs">' + esc(x.p.address) + ' จ.' + esc(x.p.province) + '</span>' + siteNavHtml(x.p, '<br>') + '</span></div><div class="ln">' + icon('phone', 'sm') + '<span>' + esc(x.p.contactName) + ' · <a href="tel:' + esc(x.p.contactPhone) + '">' + esc(x.p.contactPhone) + '</a></span></div>' +
       '<div class="ln">' + icon('barcode', 'sm') + '<span>ยิงรับงาน: ' + pkTxt(x.o) + '</span></div>' + conDraw(x.p) + '</div>' +
       '<div class="jf"><span class="small muted">ราคางาน ' + money(a.price, 0) + '</span><a class="btn primary sm" href="#/con/job/' + x.p.id + '">' + (ackPending(x.o) ? icon('check', 'sm') + ' ยืนยันเงื่อนไข' : icon('hammer', 'sm') + ' เปิดงาน') + '</a></div></div>'; };
   const nAck = act.filter((x) => ackPending(x.o)).length, lateJ = act.filter((x) => lateDays(x.o)).sort((a, b) => lateDays(b.o) - lateDays(a.o));
@@ -3645,7 +3666,7 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
     '<button class="btn primary block" style="margin-top:12px" data-act="hfSend" data-id="' + o.id + '">' + icon('send', 'sm') + (returned ? ' ส่งเอกสารใหม่' : ' ส่งยืนยันติดตั้งเสร็จ') + '</button></div>';
   return { nav: '#/con/work', after: renderHfFiles, html: '<div class="crumb"><a href="#/con/work">สถานะการทำงาน</a> › ' + esc(o.id) + '</div>' +
     '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + lateTag(o) + '<h2 style="margin-top:4px">' + esc(p.title) + '</h2></div></div>' +
-    '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + (p.mapUrl ? '<br>' + mapNavHtml(p.mapUrl) : '') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
+    '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + siteNavHtml(p, '<br>') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
     (ack ? ackCard(o) : '') +
     (lateDays(o) ? alertBar(1, 'เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน (ต้องเสร็จภายใน ' + fmtDate(dueEnd(o)) + ')', 'ติดตั้งเสร็จแล้ว — ส่งใบส่งมอบด้านล่าง · ยังไม่เสร็จ — แจ้งจัดซื้อเพื่อเลื่อนวัน', '', 'red') : '') +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
@@ -4573,6 +4594,16 @@ function drNorm(s) {
     .normalize('NFC').replace(/[ \t 　]+/g, ' ').trim();
 }
 function drPart(s) { return String(s || '').replace(/[\uF700-\uF71A]/g, (c) => TH_PUA[c.charCodeAt(0)] || '').replace(/\u0E4D\u0E32/g, 'ำ').replace(/[\u200B-\u200D\uFEFF\u00AD]/g, '').normalize('NFC').replace(/[\t\u00A0\u3000]/g, ' '); }
+/* V7.16.13: ข้อความไทยเพี้ยน — ฟอนต์ในไฟล์ (มักเป็นหน้าที่ส่งออกจากโปรแกรมเขียนแบบ) แปลงรหัสตัวอักษรผิด
+   เช่น "บ้( านกลางเมี- องศ�รี" → ไม่เอาไปเติมฟอร์ม (หน้าอื่นที่อ่านได้ปกติจะเติมแทน · ไม่มีเลยให้กรอกเอง) */
+const DR_BAD_CH = /[\u0001-\u0008\u000b\u000c\u000e-\u001f\u007f�-]/;
+const DR_BAD_TH = [
+  /[ก-๎][^\s¦]{0,2}[Ͱ-ԯ]|[Ͱ-ԯ][^\s¦]{0,2}[ก-๎]/,      /* อักษรกรีก / รัสเซียปนในคำไทย */
+  /(?:^|[^ก-ฮัิ-ฺ็-๎])[ัำ-ฺ็-๎]/,  /* สระบน-ล่าง / วรรณยุกต์ ไม่มีพยัญชนะนำ */
+  /(?:^|[^ก-ฮั-ฺ็-๎])[ะาๅ]/,                       /* ะ า ๅ ไม่มีพยัญชนะนำ */
+  /[เ-ไ](?![ก-ฮเ])/                                                    /* เ แ โ ใ ไ ไม่มีพยัญชนะตาม */
+];
+function drBad(s) { s = String(s || ''); return DR_BAD_CH.test(s) || (/[ก-๎]/.test(s) && DR_BAD_TH.some((re) => re.test(s))); }
 function drPhone(s) {
   const m = /(?:^|[^\d])((?:\+66[\s-]?|0)(?:\d[\s.-]?){7,9}\d)(?!\d)/.exec(String(s || '')); if (!m) return '';   /* ไม่ใช้ lookbehind — iPhone รุ่นเก่า (iOS < 16.4) อ่านไม่ออกทั้งไฟล์ */
   let d = m[1].replace(/\D/g, ''); if (d.startsWith('66')) d = '0' + d.slice(2);
@@ -4660,12 +4691,14 @@ function drParse(lines) {
   const ISS = drIssuer(L.map((l) => l.t));
   const L2 = L.filter((l, i) => !ISS.has(i)), T = L2.map((l) => l.t), H = T.map(drHits), out = {}; let custTel = '';
   for (let i = 0; i < L2.length; i++) L[i] = L2[i]; L.length = L2.length;
+  const same = (i, j) => !L[i] || !L[j] || L[i].pg === L[j].pg;   /* V7.16.13: ค่าไม่ต่อข้ามหน้า (หัวข้อท้ายหน้า ≠ บรรทัดแรกของหน้าถัดไป) */
   /* pri: ค่าที่มั่นใจกว่าแทนค่าเดิมได้ (เช่น เบอร์บรรทัดผู้ติดต่อ > เบอร์ทั่วไป) */
-  const put = (k, v, src, pri) => { v = String(v || '').replace(/^[\s:：=\-|¦.]+|[\s:：=|¦,]+$/g, '').trim(); pri = pri || 1; if (!v || v.length > 600 || (k !== 'mapUrl' && (v.length > 200 || drMoney(v)))) return; if (!out[k] || out[k].pri < pri) out[k] = { v, src: src || v, pri }; };
+  const put = (k, v, src, pri) => { v = String(v || '').replace(/^[\s:：=\-|¦.]+|[\s:：=|¦,]+$/g, '').trim(); pri = pri || 1; if (!v || v.length > 600 || (k !== 'mapUrl' && (v.length > 200 || drMoney(v)))) return;
+    if (k !== 'mapUrl' && (drBad(v) || !/[0-9A-Za-z\u0e01-\u0e2e]/.test(v) || (/^(customer|siteName|address|contactName|project)$/.test(k) && /(?:https?:\/\/|www\.)\S|(?:^|\s)@\w|\.(?:co\.th|com|net|org)(?:\/|\s|$)/i.test(v)))) return;   /* V7.16.13: ข้อความเพี้ยน / มีแต่จุดไข่ปลา / เว็บไซต์ ไม่ใช่ข้อมูลลูกค้า */ if (!out[k] || out[k].pri < pri) out[k] = { v, src: src || v, pri }; };
   const labelOnly = (j) => H[j].length && H[j][0].at === 0 && !T[j].slice(H[j][0].end).replace(/[¦\s]/g, '');
   /* บรรทัด j ต่อจากค่าในบรรทัด i ไหม → คืนส่วนที่ต่อ (หรือ null) */
   function next(i, x0, lx, j) {
-    if (j >= L.length) return null;
+    if (j >= L.length || !same(i, j)) return null;
     const a = L[i], b = L[j];
     if (a.x && b.x) {
       const tol = Math.max(3, (a.fs || 10) * 0.6);
@@ -4701,14 +4734,14 @@ function drParse(lines) {
       let v = raw.split('¦').map((q) => q.trim()).filter(Boolean)[0] || '', vi = i, vs = v ? x.end + raw.indexOf(v) : -1;
       if (!v && nx > h + 1) { v = raw.replace(/¦/g, ' ').trim(); vs = x.end + raw.indexOf(v.split(' ')[0]); }
       /* หัวข้ออยู่บรรทัดบน ค่าอยู่บรรทัดล่าง: บรรทัดนี้ไม่มีค่าเลย หรือค่าไปอยู่ช่องไกล (คนละคอลัมน์) แต่บรรทัดล่างตรงแนวหัวข้อ */
-      const below = i + 1 < L.length && !labelOnly(i + 1) && !(H[i + 1][0] && H[i + 1][0].at === 0);
+      const below = i + 1 < L.length && same(i, i + 1) && !labelOnly(i + 1) && !(H[i + 1][0] && H[i + 1][0].at === 0);
       const vx = raw.search(/[^\s¦]/), far = L[i].x && vx >= 0 && L[i].x[x.end + vx] - L[i].x[x.le - 1] > 15 * (L[i].fs || 10);   /* ค่าทางขวาอยู่ไกลมาก = คนละกล่อง */
       const under = below && far && L[i + 1].x && /^\s*¦/.test(raw) && Math.abs(L[i + 1].x[0] - L[i].x[x.at]) <= Math.max(3, (L[i].fs || 10) * 0.6);
       if ((!v && h + 1 === hits.length && below) || under) {
         v = T[i + 1].split('¦')[0].trim(); vi = i + 1; vs = T[i + 1].indexOf(v);
         if (under && x.k === 'customer') {   /* กล่องลูกค้า (ใบเสนอราคา StarNexus): ชื่อ / ที่อยู่ / โทร / โครงการ เรียงลงมาแนวเดียวกัน */
           const ad = [];
-          for (let j = i + 2; j < L.length && j <= i + 5; j++) {
+          for (let j = i + 2; j < L.length && j <= i + 5 && same(i, j); j++) {
             if (!L[j].x || Math.abs(L[j].x[0] - L[i].x[x.at]) > Math.max(3, (L[i].fs || 10) * 0.6)) break;
             const seg = T[j].split('¦')[0].trim();
             if (seg && drPhone(seg) && !/ผู้ติดต่อ|ติดต่อ|contact/i.test(seg)) { custTel = v; break; }   /* เบอร์ในกล่องลูกค้า = เบอร์ลูกค้า → ผู้ติดต่อ = ลูกค้า */
@@ -4743,9 +4776,9 @@ function drParse(lines) {
   if (!out.address) {   /* ไม่มีหัวข้อ "ที่อยู่" → บรรทัดที่หน้าตาเป็นที่อยู่ไทย (คำบอกที่อยู่ ≥ 3 คำ) */
     for (let i = 0; i < L.length; i++) {
       const seg = T[i].split('¦').find((q) => (q.match(ADDR_TOK) || []).length >= 3); if (!seg) continue;
-      let a = seg.trim(); const nx = T[i + 1] && T[i + 1].split('¦')[0];
+      let a = seg.trim(); const nx = T[i + 1] && same(i, i + 1) && T[i + 1].split('¦')[0];
       if (!/\b[1-9]\d{4}\b/.test(a) && nx && (nx.match(ADDR_TOK) || []).length >= 1 && !labelOnly(i + 1) && !(H[i + 1][0] && H[i + 1][0].at === 0)) a += ' ' + nx.trim();
-      put('address', a, T[i]); break;
+      put('address', a, T[i]); if (out.address) break;   /* V7.16.13: บรรทัดที่เพี้ยนถูกปัดทิ้ง → หาบรรทัดถัดไป */
     }
   }
   if (!out.province) {
@@ -5170,7 +5203,7 @@ async function drOne(f, gen) {
   const price = [], keep = [], blind = [], masked = [], cutp = [];
   r.pages.forEach((pg, i) => { if (pg.price) { price.push(i); if (pg.mask) { masked.push(i); keep.push(i); } else cutp.push(i); } else { keep.push(i); if (pg.blind) blind.push(i); } });
   /* ข้อมูลลูกค้า: ทุกหน้า (หน้าราคาเฉพาะส่วนบนก่อนตาราง) — ไม่เอาราคา */
-  const lines = []; r.pages.forEach((pg) => { for (const l of pg.parse) lines.push(l); });
+  const lines = []; r.pages.forEach((pg, pi) => { for (const l of pg.parse) lines.push(Object.assign({}, l, { pg: pi })); });   /* V7.16.13: จำหน้า — ค่าไม่ต่อข้ามหน้า */
   const shown = []; r.pages.forEach((pg) => { if (!pg.price) for (const l of pg.lines) shown.push(l.t); });
   DR.text.push({ name: f.name, lines: shown });
   if (!r.pages.some((pg) => pg.lines.length)) DR.err.push(f.name + ': ไม่มีตัวอักษรในไฟล์ (เป็นภาพ / สแกน) — กรอกข้อมูลลูกค้าเอง');
@@ -5233,7 +5266,7 @@ function drApply() {
     const r = DR.res[k]; if (!r) continue;
     if (k === 'wantFrom') {   /* V7.16.12: ยังเป็นค่าเริ่มต้นของฟอร์มใหม่ / ว่าง → ใส่ + ต้องเสร็จภายใน = + N วัน · กรอกเองไว้แล้วไม่ตรง → เสนอ */
       const el = drField(k); if (!el || el.readOnly || el.disabled) continue;
-      if (!el.value || el.dataset.def === '1') { const mv = wantSet(r.v, false); done.push(k); [el, mv ? drField('wantTo') : null].forEach((x) => { const fd = x && x.closest('.field'); if (fd) { fd.classList.add('dr-auto'); fd.classList.remove('invalid'); } }); }
+      if (!el.value || el.dataset.def === '1') { wantSet(r.v, false); done.push(k); const fd = el.closest('.field'); if (fd) { fd.classList.add('dr-auto'); fd.classList.remove('invalid'); } wantHelp(); }   /* V7.16.13: ต้องเสร็จภายใน = ป้าย "คำนวณจากแบบงาน" (wantHelp) */
       else if (el.value !== r.v) conf.push(k);
       continue;
     }
@@ -5286,14 +5319,14 @@ function drPaint() {
 on('drUse', (el) => {
   const k = el.dataset.k, r = DR.res[k]; if (!r) return;
   if (k === 'snOrder') { const s = $('#sf-sn'); if (s) { s.value = r.v; snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } }
-  else if (k === 'wantFrom') { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } wantSet(r.v, true); [f, drField('wantTo')].forEach((x) => { const fd = x && x.closest('.field'); if (fd) fd.classList.add('dr-auto'); }); toast('ลูกค้าพร้อมให้ติดตั้ง ' + fmtDate(r.v) + ' · ต้องเสร็จภายใน ' + fmtDate(wantStd(r.v)) + ' (+' + finishDaysNow() + ' วัน)'); }   /* V7.16.12 */
+  else if (k === 'wantFrom') { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } wantSet(r.v, true); { const fd = f.closest('.field'); if (fd) fd.classList.add('dr-auto'); } wantHelp(); toast('ลูกค้าพร้อมให้ติดตั้ง ' + fmtDate(r.v) + ' · ต้องเสร็จภายใน ' + fmtDate(wantStd(r.v)) + ' (+' + finishDaysNow() + ' วัน)'); }   /* V7.16.12 */
   else { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } f.value = r.v; const fd = f.closest('.field'); if (fd) fd.classList.add('dr-auto'); }
   if (k === 'mapUrl') mapChk();
   if (DR.filled.indexOf(k) < 0) DR.filled.push(k);
   DR.conf = DR.conf.filter((x) => x !== k); drPaint();
 });
 /* แก้ช่องที่เติมจากแบบเอง → เอาป้าย "จากแบบงาน" ออก */
-document.addEventListener('input', (e) => { const fd = e.target.closest && e.target.closest('#sf .field.dr-auto, #sf .field.sn-auto'); if (fd && !(e.target.id === 'sf-sn')) fd.classList.remove('dr-auto', 'sn-auto'); if (e.target.closest && e.target.closest('#sf .field.dr-miss, #sf .field[data-f]')) drMark(); }, true);
+document.addEventListener('input', (e) => { const fd = e.target.closest && e.target.closest('#sf .field.dr-auto, #sf .field.sn-auto, #sf .field.dr-calc'); if (fd && !(e.target.id === 'sf-sn')) fd.classList.remove('dr-auto', 'sn-auto', 'dr-calc'); if (e.target.closest && e.target.closest('#sf .field.dr-miss, #sf .field[data-f]')) drMark(); }, true);
 document.addEventListener('change', (e) => { const fd = e.target.closest && e.target.closest('#sf .field.dr-auto'); if (fd && e.isTrusted) fd.classList.remove('dr-auto'); if (e.target.closest && e.target.closest('#sf .field[data-f]')) drMark(); }, true);
 window.CN_drParse = drParse; window.CN_drMaskPlan = drMaskPlan; window.CN_drSafeName = drSafeName;   /* ไว้ตรวจใน Console / ชุดทดสอบ (ฟังก์ชันอ่านข้อความล้วน ไม่มีข้อมูล) */
 
