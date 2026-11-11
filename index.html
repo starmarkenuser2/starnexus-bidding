@@ -541,6 +541,7 @@ a.sn-chip{text-decoration:none;color:var(--action)}a.sn-chip:hover{border-color:
 .drb-ed{color:var(--amber);font-weight:600}
 .dr-hint{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:5px;color:var(--amber)}.dr-hint b{color:var(--ink)}
 #drs:empty,#drb:empty{display:none}
+#pu-open[hidden]{display:none}
 .drs{display:flex;gap:8px;align-items:flex-start;padding:8px 11px;border:1px solid #CFE6D7;border-radius:var(--r-sm);background:#F5FBF7;font-size:13px;color:var(--ink)}
 .drs > svg{flex:none;margin-top:2px;color:var(--green)}.drs-b{min-width:0;flex:1}.drs .drb-raw{margin-top:4px}
 @container app (max-width:640px){.drb-dl{grid-template-columns:minmax(0,1fr)}.drb-dl dt{margin-top:4px}}
@@ -1123,7 +1124,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.15';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.16';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -2671,6 +2672,13 @@ route(/^\/sale\/orders$/, 'sale', () => {
     (gone.length ? '<div class="sec-t">' + icon('ban') + ' ยกเลิกแล้ว <span class="n">' + gone.length + '</span> <span class="xs muted" style="font-weight:400">เก็บไว้เป็นประวัติ · ผู้รับเหมาไม่เห็น</span></div><div class="card"><div class="table-wrap"><table class="t resp">' + head + '<tbody>' + gone.map(row).join('') + '</tbody></table></div></div>' : '') };
 });
 /* V7.16.6: ช่องแบบงาน (แนบแบบติดตั้ง + ลิงก์แบบผลิต) — ใช้ทั้งฟอร์ม Sale Order และหน้า “แก้ไขแบบงาน” (แก้ได้ตลอด แม้อนุมัติแล้ว) */
+/* V7.16.16: ปุ่มเปิดลิงก์แบบงานผลิต (ขึ้นเฉพาะเมื่อเป็นลิงก์ https:// ที่ใช้ได้) */
+function puChk() {
+  const i = $('#sf [name=prodUrl]'), a = $('#pu-open'); if (!i || !a) return;
+  const u = String(i.value || '').trim(), okU = /^https?:\/\/[^\s<>"]+\.[^\s<>"]+$/.test(u) && u.length <= 2000;
+  a.hidden = !okU; if (okU) a.href = u; else a.removeAttribute('href');
+}
+Acts.puChk = puChk;
 function sfDrawFields(prodUrl) {
   const d = { prodUrl: prodUrl || '' };
   return '<div class="field c6" data-f="drawings"><label>แนบแบบงานติดตั้ง (Installation Drawing) <span class="req">*</span></label><label class="upl">' + icon('upload', 'lg') + '<div class="upl-t1"><b>เลือกไฟล์ PDF หรือรูปภาพ</b><div class="xs">แนบได้หลายไฟล์</div></div><div class="upl-t2"><b>+ แนบไฟล์เพิ่ม</b></div><input type="file" accept="application/pdf,image/*" multiple hidden data-chg="sfFiles"></label>' +
@@ -2680,9 +2688,22 @@ function sfDrawFields(prodUrl) {
         '<li>△ รูปภาพ / PDF สแกน — ตรวจราคาไม่ได้: ระบบถามให้ยืนยันว่าไม่มีราคาก่อนแนบ · อ่านข้อมูลไม่ได้ ต้องกรอกเอง</li>' +
         '<li>✕ ห้ามแนบรูปถ่ายใบเสนอราคา / ต้นทุน (ระบบตรวจราคาในรูปไม่ได้) · ไฟล์ละไม่เกิน 25 MB</li></ul></div>' +
         '<div id="sf-files"></div><div class="err"></div></div>' +
-      '<div class="field c6" data-f="prodUrl"><label>ลิงก์ดูแบบงานผลิต (Production Drawing) <span class="xs muted">ไม่บังคับ</span></label><input class="input" name="prodUrl" type="url" value="' + esc(d.prodUrl) + '" placeholder="https://drive.google.com/…"><div class="help">เลือก Order จาก StarNexus ด้านบน = เติมให้เอง · พิมพ์เลข Order เองแล้วไม่มีลิงก์ เว้นว่างได้ · ผู้รับเหมากดเปิดได้จากทุกหน้าที่เกี่ยวกับ Order นี้</div><div class="err"></div></div><div class="c12" id="drb"></div>';
+      '<div class="field c6" data-f="prodUrl"><label>ลิงก์ดูแบบงานผลิต (Production Drawing) <span class="xs muted">ไม่บังคับ</span></label><div class="map-in"><input class="input" name="prodUrl" type="url" value="' + esc(d.prodUrl) + '" placeholder="https://drive.google.com/…" data-inp="puChk"><a class="btn" id="pu-open" target="_blank" rel="noopener noreferrer" hidden>' + icon('external', 'sm') + ' เปิดลิงก์</a></div><div class="help">เลือก Order จาก StarNexus ด้านบน = เติมให้เอง · พิมพ์เลข Order เองแล้วไม่มีลิงก์ เว้นว่างได้ · ผู้รับเหมากดเปิดได้จากทุกหน้าที่เกี่ยวกับ Order นี้</div><div class="err"></div></div><div class="c12" id="drb"></div>';
 }
 const SF = { files: [] };
+/* V7.16.16: Sale ผู้รับผิดชอบ — Sale = ตัวเอง (แก้ไม่ได้) · Admin เลือกบัญชี Sale ได้ (Order ขึ้นในหน้า Sale คนนั้น · ชื่อนี้ขึ้นในหน้าจัดซื้อ / ผู้รับเหมา) */
+function saleOwnerField(o) {
+  const cur = o ? o.saleId : S.user.id;
+  if (S.user.role !== 'admin') return '<div class="field c6" data-f="saleOwner"><label>Sale ผู้รับผิดชอบ</label><input class="input" value="' + esc(userById(cur).name) + '" readonly tabindex="-1" aria-readonly="true"><div class="help">Order ที่คุณสร้างเป็นของคุณ · ชื่อนี้ขึ้นในหน้าจัดซื้อและผู้รับเหมา</div><div class="err"></div></div>';
+  const us = (DB.users || []).filter((u) => (u.role === 'sale' && u.active !== false && !u.deleted) || u.id === S.user.id || u.id === cur)
+    .sort((a, b) => (a.role === 'sale' ? 0 : 1) - (b.role === 'sale' ? 0 : 1) || String(a.name).localeCompare(String(b.name), 'th'));
+  const opt = (u) => '<option value="' + esc(u.id) + '"' + (u.id === cur ? ' selected' : '') + '>' + esc(u.name) + (u.role === 'admin' ? ' (Admin)' : '') + (u.id === S.user.id ? ' — ฉัน' : '') + (u.active === false || u.deleted ? ' (ปิดใช้งาน)' : '') + '</option>';
+  return '<div class="field c6" data-f="saleId"><label for="sf-owner">Sale ผู้รับผิดชอบ</label><select class="select" id="sf-owner" name="saleId" data-def="' + (o ? '0' : '1') + '" data-chg="saleOwnerChg">' + us.map(opt).join('') + '</select>' +
+    '<div class="help">Admin สร้าง / แก้แทน Sale ได้ — Order ขึ้นในหน้า Sale คนนั้น · ชื่อนี้ขึ้นในหน้าจัดซื้อและผู้รับเหมา</div><div class="err"></div></div>';
+}
+/* ฐานข้อมูลยังไม่ได้รัน SQL V7.16.16 → Sale ผู้รับผิดชอบยังเป็นผู้สร้าง — บอก Admin (ไม่เงียบ) */
+function saleOwnerWarn(id, p) { const o = DB.orders.find((x) => x.id === id); if (p && p.saleId && o && o.saleId !== p.saleId) toast('ยังเปลี่ยน Sale ผู้รับผิดชอบไม่ได้ — ต้องรัน SQL V7.16.16 ใน Supabase ก่อน (Order นี้ยังเป็นของ ' + userById(o.saleId).name + ')', 'err'); }
+Acts.saleOwnerChg = (el) => { delete el.dataset.def; const fd = el.closest('.field'); if (fd) fd.classList.remove('dr-auto'); drMark(); };
 route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
   const o = m[1] ? DB.orders.find((x) => x.id === m[1]) : null;
   if (m[1] && (!o || !canEditOrder(o))) return { nav: '#/sale/orders', html: empty('lock', 'แก้ไขไม่ได้', !o ? 'ไม่พบ Order นี้' : o.cancelledAt ? 'Order นี้ถูกยกเลิกแล้ว' : o.award ? 'จัดซื้ออนุมัติผู้รับเหมาแล้ว — แก้ไข Order ไม่ได้ (ถ้าต้องยกเลิก ติดต่อ Admin)' : 'ไม่ใช่ Order ของคุณ', '<a class="btn" href="#/sale/orders">กลับ</a>') };
@@ -2714,6 +2735,7 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       sfDrawFields(d.prodUrl) + '</div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('building') + ' ลูกค้าและสถานที่ติดตั้ง</h2></div><div class="card-b form-grid">' +
       '<div class="c12" id="drs"></div>' +   /* V7.16.15: สรุปที่อ่านจากแบบงาน (ค่าอยู่ในช่องด้านล่าง) */
+      saleOwnerField(o) +   /* V7.16.16 */
       F('title', 'ชื่องาน <span class="req">*</span>', d.title, 'c8', '<input class="input" name="title" value="' + esc(d.title) + '" placeholder="เช่น ตู้เสื้อผ้า Built-in 3 ห้องนอน">') + F('cabinets', 'จำนวนตู้ที่ติดตั้ง <span class="req">*</span>', d.cabinets, 'c4', '<div class="addon"><input class="input" name="cabinets" inputmode="numeric" value="' + esc(d.cabinets) + '"><span>ตู้</span></div><div class="help">ใช้นับการยิงรับงาน (Barpack)</div>') +
       F('customer', 'ชื่อลูกค้า / โครงการ <span class="req">*</span>', d.customer, 'c6') + F('siteName', 'สถานที่ติดตั้ง <span class="req">*</span>', d.siteName, 'c6') +
       F('address', 'ที่อยู่', d.address, 'c8') + F('province', 'จังหวัด <span class="req">*</span>', d.province, 'c4', '<select class="select" name="province"><option value="">— เลือก —</option><optgroup label="ใช้บ่อย">' + PROV.map(provOpt).join('') + '</optgroup><optgroup label="จังหวัดอื่น">' + PROV_REST.map(provOpt).join('') + '</optgroup>' + (d.province === 'จังหวัดอื่น ๆ' ? provOpt('จังหวัดอื่น ๆ') : '') + '</select>') +
@@ -2931,6 +2953,7 @@ on('saleSave', async (el) => {
   const d = { snOrder: v('snOrder').trim(), title: v('title').trim(), customer: v('customer').trim(), siteName: v('siteName').trim(), address: v('address').trim(), province: v('province'), contactName: v('contactName').trim(), contactPhone: v('contactPhone').trim(),
     type: (f.querySelector('[name=type]:checked') || {}).value || '', sale: parseNum(v('sale')), cabinets: parseNum(v('cabinets')), wantFrom: v('wantFrom'), wantTo: v('wantTo'), note: v('note').trim(), prodUrl: v('prodUrl').trim() };
   d.bidDays = parseNum(v('bidDays'));
+  if (admin && v('saleId')) d.saleId = v('saleId');   /* V7.16.16: Sale ผู้รับผิดชอบ (Admin) */
   const errs = {}, mp = mapNorm(v('mapUrl'));
   if (!(d.bidDays >= 1 && d.bidDays <= 60 && Math.floor(d.bidDays) === d.bidDays)) errs.bidDays = 'ใส่จำนวนวัน 1–60';
   else if (SF.live) { const o0 = DB.orders.find((x) => x.id === SF.id); if (o0 && d.bidDays !== bidDaysOf(o0) && d.bidDays < bdMin()) errs.bidDays = 'ลดได้แต่ต้องเหลือเวลาอย่างน้อย 1 วัน — ใส่อย่างน้อย ' + bdMin() + ' วัน'; }
@@ -2951,7 +2974,7 @@ on('saleSave', async (el) => {
   if (SF.busy) { toast('รอบันทึกไฟล์แนบให้เสร็จก่อน', 'err'); return; }
   const payload = Object.assign({}, d, { id: SF.id || '', sale: d.sale || 0, cabinets: d.cabinets || 0, drawings: SF.files.slice() });
   if (SF.live) {
-    const doSave = async () => { const id = await rpc('cn_save_order', { p: payload, p_confirm: false }); await refresh(); closeOverlay(); toast('บันทึกการแก้ไข ' + id + ' แล้ว' + (bdChg ? ' — เปิดรับราคา ' + d.bidDays + ' วัน' : '') + (priceChg ? ' — ผู้รับเหมาเห็นว่าราคาตั้งต้นมีการแก้ไข' : '')); go('#/sale/orders'); };
+    const doSave = async () => { const id = await rpc('cn_save_order', { p: payload, p_confirm: false }); await refresh(); closeOverlay(); saleOwnerWarn(id, payload); toast('บันทึกการแก้ไข ' + id + ' แล้ว' + (bdChg ? ' — เปิดรับราคา ' + d.bidDays + ' วัน' : '') + (priceChg ? ' — ผู้รับเหมาเห็นว่าราคาตั้งต้นมีการแก้ไข' : '')); go('#/sale/orders'); };
     const priceChg = SF.orig && (SF.orig.sale !== d.sale || SF.orig.type !== d.type);
     const o = DB.orders.find((x) => x.id === SF.id), bdChg = !!o && d.bidDays !== bidDaysOf(o);
     if (!priceChg && !bdChg) { await doSave(); return; }
@@ -2967,7 +2990,7 @@ on('saleSave', async (el) => {
   }
   if (!confirmIt) {
     const id = await rpc('cn_save_order', { p: payload, p_confirm: false }); SF.id = id;
-    await refresh(); toast('บันทึกร่าง ' + id + ' แล้ว — ผู้รับเหมายังไม่เห็น'); go('#/sale/orders'); return;
+    await refresh(); toast('บันทึกร่าง ' + id + ' แล้ว — ผู้รับเหมายังไม่เห็น'); saleOwnerWarn(id, payload); go('#/sale/orders'); return;
   }
   const nd = d.bidDays, fv = admin ? feeOf(d.type, d.sale) : null;
   modal({ title: icon('send') + ' ยืนยัน Order?', body: '<p>เมื่อยืนยันแล้ว:</p><ul style="margin:0 0 12px;padding-left:20px;line-height:1.9"><li>Order <b>ส่งให้จัดซื้อ</b> เลือกช่องทางติดตั้ง: <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b></li><li>ถ้าจัดซื้อเลือกผู้รับเหมา: ผู้รับเหมา<b>ทุกคน</b>เห็นงานและเสนอราคาได้ <b>' + nd + ' วัน</b> นับจากจัดซื้อกดยืนยัน (นับรวมวันอาทิตย์และวันหยุด · จัดซื้อปรับวันได้)</li>' +
@@ -2976,7 +2999,7 @@ on('saleSave', async (el) => {
     foot: '<button class="btn" data-act="closeOv">กลับไปตรวจ</button><button class="btn primary" data-act="saleConfirmOk">' + icon('send', 'sm') + ' ยืนยัน Order</button>' });
   Acts.saleConfirmOk = async () => {
     const id = await rpc('cn_save_order', { p: payload, p_confirm: true }); SF.id = id;
-    await refresh(); closeOverlay(); toast('ยืนยัน ' + id + ' แล้ว — ส่งให้จัดซื้อเลือกช่องทางติดตั้ง'); go('#/sale/orders');
+    await refresh(); closeOverlay(); toast('ยืนยัน ' + id + ' แล้ว — ส่งให้จัดซื้อเลือกช่องทางติดตั้ง'); saleOwnerWarn(id, payload); go('#/sale/orders');
   };
 });
 
@@ -4592,6 +4615,7 @@ const DR_LABELS = [
 const DR_FIELD = { customer: 'ชื่อลูกค้า / โครงการ', siteName: 'สถานที่ติดตั้ง', address: 'ที่อยู่', province: 'จังหวัด', mapUrl: 'พิกัด Google Maps', contactName: 'ผู้ติดต่อหน้างาน', contactPhone: 'เบอร์ผู้ติดต่อ', title: 'ชื่องาน', cabinets: 'จำนวนตู้', snOrder: 'เลขที่ Order StarNexus' };
 const DR_ORDER = ['snOrder', 'title', 'cabinets', 'customer', 'siteName', 'address', 'province', 'mapUrl', 'contactName', 'contactPhone', 'wantFrom'];
 DR_FIELD.wantFrom = 'กำหนดติดตั้ง (ลูกค้าพร้อมให้ติดตั้ง)';   /* V7.16.12 */
+DR_FIELD.saleName = 'Sale ผู้รับผิดชอบ';   /* V7.16.16 */
 const DR_RE = new RegExp('(' + DR_LABELS.map((x) => x[1]).join('|') + ')\\s*[:：=]?', 'gi');
 const DR_KEY = (lab) => { const l = lab.toLowerCase(); for (const [k, re] of DR_LABELS) if (new RegExp('^(?:' + re + ')$', 'i').test(l)) return k; return ''; };
 
@@ -4613,6 +4637,27 @@ const DR_BAD_TH = [
   /[เ-ไ](?![ก-ฮเ])/                                                    /* เ แ โ ใ ไ ไม่มีพยัญชนะตาม */
 ];
 function drBad(s) { s = String(s || ''); return DR_BAD_CH.test(s) || (/[ก-๎]/.test(s) && DR_BAD_TH.some((re) => re.test(s))); }
+/* V7.16.16: ชื่อ Sale ในแบบ — “ชื่อ Sales ¦ คุณ…” / “Sales : ……คุณ…” / “ชื่อเซลล์ : …” (ต้องมีหัวข้อชัด — ไม่เอาแถวลายเซ็น “Sales Designer”) */
+const DR_SALE_RE = [/(?:^|¦)\s*ชื่อ\s*(?:sales?|เซลล์|เซลส์|เซล|พนักงานขาย|ผู้ขาย)\s*(?:[:：]\s*)?¦\s*([^¦]+)/i,
+  /(?:^|¦|\s)(?:ชื่อ\s*)?(?:sales?|เซลล์|เซลส์|เซล|พนักงานขาย|ผู้ขาย)(?:\s*name)?\s*[:：]\s*([^¦]+)/i];
+function drSaleName(T) {
+  for (const re of DR_SALE_RE) for (const t of T) {
+    const m = re.exec(t); if (!m) continue;
+    const v = m[1].replace(/^[\s.…:_\-]+|[\s.…_\-]+$/g, '').replace(/\s{2,}/g, ' ').trim();
+    if (v.length < 2 || v.length > 60 || drBad(v) || /\d{3,}|designer|manager|foreman|customer|approve|ผู้ทำเอกสาร|ตรวจสอบ|อนุมัติ/i.test(v) || !/[ก-ฮA-Za-z]{2}/.test(v)) continue;
+    return { v, src: t };
+  }
+  return null;
+}
+/* ชื่อในแบบ ↔ บัญชี Sale (ตัด คุณ / นาย / (ตัวอย่าง) · ชื่อเต็มตรงกัน หรือชื่อต้นตรงกันคนเดียว) */
+const drNameKey = (s) => String(s || '').replace(/\([^)]*\)/g, ' ').replace(/^\s*(?:คุณ|นางสาว|นาง|นาย|น\.ส\.|k\.|khun|mrs?\.?|ms\.?)\s*/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+function drSaleMatch(name) {
+  const k = drNameKey(name), first = k.split(' ')[0]; if (!k) return null;
+  const cs = ((typeof DB !== 'undefined' && DB && DB.users) || []).filter((u) => u.role === 'sale' && u.active !== false && !u.deleted);
+  let m = cs.filter((u) => drNameKey(u.name) === k);
+  if (!m.length && first.length >= 2) m = cs.filter((u) => drNameKey(u.name).split(' ')[0] === first);
+  return m.length === 1 ? m[0] : null;
+}
 function drPhone(s) {
   const m = /(?:^|[^\d])((?:\+66[\s-]?|0)(?:\d[\s.-]?){7,9}\d)(?!\d)/.exec(String(s || '')); if (!m) return '';   /* ไม่ใช้ lookbehind — iPhone รุ่นเก่า (iOS < 16.4) อ่านไม่ออกทั้งไฟล์ */
   let d = m[1].replace(/\D/g, ''); if (d.startsWith('66')) d = '0' + d.slice(2);
@@ -4804,7 +4849,8 @@ function drParse(lines) {
     if (!out.customer) out.customer = out.project; else if (!out.siteName) out.siteName = out.project;
     delete out.project;
   }
-  { const w = drInstDate(T); if (w) out.wantFrom = { v: w.v, src: w.src, pri: 2 }; }   /* V7.16.12: กำหนดติดตั้ง → ลูกค้าพร้อมให้ติดตั้ง */
+  { const w = drInstDate(T); if (w) out.wantFrom = { v: w.v, src: w.src, pri: 2 }; }
+  { const sn = drSaleName(T); if (sn) out.saleName = { v: sn.v, src: sn.src, pri: 2 }; }   /* V7.16.16 */   /* V7.16.12: กำหนดติดตั้ง → ลูกค้าพร้อมให้ติดตั้ง */
   if (custTel && !out.contactName && out.contactPhone) put('contactName', custTel, '', 1);
   if (!out.contactPhone) {   /* เบอร์ที่อยู่บรรทัดเดียวกับชื่อผู้ติดต่อ / คุณ… */
     const ln = T.find((q) => /ผู้ติดต่อ|ติดต่อ|คุณ/.test(q) && drPhone(q)); if (ln) put('contactPhone', drPhone(ln), ln);
@@ -5218,7 +5264,7 @@ async function drOne(f, gen) {
   if (!r.pages.some((pg) => pg.lines.length)) DR.err.push(f.name + ': ไม่มีตัวอักษรในไฟล์ (เป็นภาพ / สแกน) — กรอกข้อมูลลูกค้าเอง');
   const res = drParse(lines);
   drMapFull(res, r.links);
-  for (const k of DR_ORDER) if (res[k] && !DR.res[k]) DR.res[k] = Object.assign({ file: f.name }, res[k]);
+  for (const k of DR_ORDER.concat('saleName')) if (res[k] && !DR.res[k]) DR.res[k] = Object.assign({ file: f.name }, res[k]);
   if (!keep.length) { DR.err.push(f.name + ': มีแต่หน้าราคา (ใบเสนอราคา) ที่ปิดราคาไม่ได้ (' + (r.pages.map((pg) => pg.maskWhy).filter(Boolean)[0] || 'ตรวจไม่ผ่าน') + ') — ไม่แนบ เพราะผู้รับเหมาเห็นไฟล์แบบงาน'); return null; }
   /* สร้างไฟล์ใหม่ทุกครั้ง (ตัดหน้าราคา · ไม่เอา annotation/ฟอร์ม/ประวัติเดิม) แล้วตรวจซ้ำ */
   const nm = f.name;   /* V7.10.6: ไม่ต่อท้ายชื่อ — ผู้รับเหมาต้องไม่รู้ว่ามีราคา (ชื่อที่มีคำเกี่ยวกับราคาเปลี่ยนตอนอัปโหลด) */
@@ -5288,6 +5334,10 @@ function drApply() {
       const fd = el.closest('.field'); if (fd) { fd.classList.add('dr-auto'); fd.classList.remove('invalid'); const er = fd.querySelector('.err'); if (er) er.textContent = ''; }
     } else if (cur.replace(/\s+/g, ' ').toLowerCase() !== r.v.replace(/\s+/g, ' ').toLowerCase()) conf.push(k);
   }
+  if (DR.res.saleName) {   /* V7.16.16: Sale ในแบบ = บัญชี Sale ในระบบ → Admin: เลือกให้ (ยังไม่ได้เลือกเอง) */
+    const sel = drField('saleId'), u = drSaleMatch(DR.res.saleName.v);
+    if (sel && u && sel.dataset.def === '1' && sel.value !== u.id && !sel.disabled) { sel.value = u.id; done.push('saleName'); const fd = sel.closest('.field'); if (fd) fd.classList.add('dr-auto'); }
+  }
   if (done.indexOf('mapUrl') >= 0 || conf.indexOf('mapUrl') >= 0) { try { mapChk(); } catch (e) { /* ไม่เป็นไร */ } }
   if (done.length) { DR.filled = DR.filled.concat(done.filter((k) => DR.filled.indexOf(k) < 0)); toast('อ่านจากแบบงาน: เติม ' + done.map((k) => DR_FIELD[k]).join(' · ') + ' แล้ว — ตรวจอีกครั้งก่อนบันทึก'); }
   DR.conf = conf; drPaint();
@@ -5331,7 +5381,7 @@ function drPaint() {
 /* V7.16.15: ข้อมูลที่อ่านจากแบบอยู่ในฟอร์มที่เดียว (ไม่ซ้ำในกล่อง) — กล่องเหลือสรุป + ตรวจราคา
    ช่องที่ค่าในฟอร์มต่างจากแบบ → ใต้ช่อง “ในแบบ: … · ใช้ค่าจากแบบ” · กำหนดติดตั้งจากแบบเป็นวันที่ผ่านมาแล้ว → เตือนใต้ช่อง */
 const drTrim = (v) => String(v == null ? '' : v).trim();
-function drDiff() { return SF.drawOnly ? [] : DR_ORDER.filter((k) => drHintHtml(k).indexOf('drUse') >= 0); }
+function drDiff() { return SF.drawOnly ? [] : DR_ORDER.filter((k) => drHintHtml(k).indexOf('drUse') >= 0).concat(drSaleHint().indexOf('drUse') >= 0 ? ['saleName'] : []); }
 function drSumHtml() {
   const n = DR.filled.length, d = drDiff().length;
   return (n ? 'เติมให้ ' + n + ' ช่อง (ป้าย <b>จากแบบงาน</b>)' : 'ไม่ได้เติมช่องไหน (ในฟอร์มมีข้อมูลแล้ว หรือไม่พบในแบบ)') +
@@ -5345,6 +5395,14 @@ function drHintHtml(k) {
   if (k === 'wantFrom' && rv < todayStr()) return '<span class="badge t-amber">กำหนดติดตั้งในแบบเป็นวันที่ผ่านมาแล้ว — ตรวจอีกครั้ง</span>';
   return '';
 }
+/* V7.16.16: ใต้ช่อง Sale ผู้รับผิดชอบ — ชื่อ Sale ในแบบไม่ตรงกับที่เลือก / ไม่มีบัญชีชื่อนี้ */
+function drSaleHint() {
+  const r = DR.res.saleName; if (!r) return '';
+  const sel = drField('saleId'), u = drSaleMatch(r.v), cur = sel ? sel.value : (S.user && S.user.id);
+  if (u && u.id === cur) return '';
+  if (u) return '<span class="xs">ในแบบ: Sales <b>' + esc(r.v) + '</b></span>' + (sel && !sel.disabled ? '<button type="button" class="btn xs" data-act="drUse" data-k="saleName">ใช้ค่าจากแบบ (' + esc(u.name) + ')</button>' : '<span class="xs muted">— ไม่ใช่บัญชีคุณ ถ้าเป็น Order ของ Sale คนนั้น แจ้ง Admin เปลี่ยน Sale ผู้รับผิดชอบ</span>');
+  return '<span class="xs">ในแบบ: Sales <b>' + esc(r.v) + '</b></span><span class="xs muted">— ยังไม่มีบัญชี Sale ชื่อนี้ในระบบ' + (sel ? ' (เพิ่มบัญชีได้ที่หน้าผู้ใช้งาน แล้วเลือกที่ช่องนี้)' : '') + '</span>';
+}
 /* เรียกจาก drMark / wantHelp / drPaint ทุกครั้งที่ช่องในฟอร์มเปลี่ยน */
 function drSyncAll() {
   const f = $('#sf'); if (!f) return;
@@ -5355,11 +5413,14 @@ function drSyncAll() {
     if (!x) { x = document.createElement('div'); x.className = 'dr-hint'; x.dataset.drh = k; fd.appendChild(x); }
     if (x.innerHTML !== h) x.innerHTML = h;
   }
+  { const fd = f.querySelector('.field[data-f=saleId], .field[data-f=saleOwner]'); if (fd) { const h = SF.drawOnly ? '' : drSaleHint(); let x = fd.querySelector(':scope > .dr-hint'); if (!h) { if (x) x.remove(); } else { if (!x) { x = document.createElement('div'); x.className = 'dr-hint'; fd.appendChild(x); } if (x.innerHTML !== h) x.innerHTML = h; } } }
   const sm = $('#drs .drb-sum'); if (sm) { const h = drSumHtml(); if (sm.innerHTML !== h) sm.innerHTML = h; }
+  puChk();   /* V7.16.16: ปุ่มเปิดลิงก์แบบงานผลิตตามค่าในช่อง (เติมจาก StarNexus / แก้เอง) */
 }
 on('drUse', (el) => {
   const k = el.dataset.k, r = DR.res[k]; if (!r) return;
-  if (k === 'snOrder') { const s = $('#sf-sn'); if (s) { s.value = r.v; snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } }
+  if (k === 'saleName') { const sel = drField('saleId'), u = drSaleMatch(r.v); if (!sel || !u || sel.disabled) return; sel.value = u.id; delete sel.dataset.def; const fd = sel.closest('.field'); if (fd) fd.classList.add('dr-auto'); }   /* V7.16.16 */
+  else if (k === 'snOrder') { const s = $('#sf-sn'); if (s) { s.value = r.v; snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } }
   else if (k === 'wantFrom') { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } wantSet(r.v, true); { const fd = f.closest('.field'); if (fd) fd.classList.add('dr-auto'); } wantHelp(); toast('ลูกค้าพร้อมให้ติดตั้ง ' + fmtDate(r.v) + ' · ต้องเสร็จภายใน ' + fmtDate(wantStd(r.v)) + ' (+' + finishDaysNow() + ' วัน)'); }   /* V7.16.12 */
   else { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } f.value = r.v; const fd = f.closest('.field'); if (fd) fd.classList.add('dr-auto'); }
   if (k === 'mapUrl') mapChk();
