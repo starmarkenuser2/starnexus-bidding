@@ -948,6 +948,10 @@ body.slv-on{overflow:hidden}
 .pk-i{color:var(--text-3);margin-left:6px}
 @media (max-width:760px){.pp-row{grid-template-columns:48px minmax(0,1fr)}.pp-row .pp-n{grid-column:2}}
 .box > .pk-short{margin-top:10px}.box > .pp-miss{margin-top:10px}
+/* V7.16.11: เลยกำหนดเสร็จงานติดตั้ง — แถบในปฏิทิน Booking / คิวผู้รับเหมา มีกรอบแดง (ป้าย “เลยกำหนดเสร็จ N วัน” ในรายการ) */
+.cb.late{box-shadow:inset 0 0 0 2px var(--red)}
+.gb.late{box-shadow:0 0 0 2px var(--red)}
+.late-tag{white-space:nowrap}
 
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
@@ -1104,7 +1108,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.9';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.11';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -1299,6 +1303,19 @@ function ost(o) {
 /* V7.16.2: จัดซื้ออนุมัติการชำระเงินต่างจากที่ผู้รับเหมาเสนอ → รอผู้รับเหมายืนยันเงื่อนไข (ยังเริ่มงาน / ยิงรับของไม่ได้) */
 const ackPending = (o) => !!(o && o.award && o.award.needAck && !o.cancelledAt && o.channel === 'contractor');
 const ackTag = (o) => ackPending(o) ? ' <span class="badge t-amber">รอผู้รับเหมายืนยันเงื่อนไข</span>' : '';
+/* V7.16.11: เลยกำหนดเสร็จงานติดตั้ง — วันนี้เลยวัน “ต้องเสร็จภายใน” แล้ว ยังไม่จบ (Server นับแบบเดียวกัน: cn_due_end)
+   ผู้รับเหมา: รอเข้าติดตั้ง / กำลังติดตั้ง (รวมใบส่งมอบถูกส่งกลับให้แก้) · ส่งใบส่งมอบแล้วรอตรวจ = ไม่นับ
+   ช่างโรงงาน: จัดทีมแล้ว ยังไม่กดติดตั้งเสร็จ */
+function dueEnd(o) {
+  if (!o || o.cancelledAt) return '';
+  const s = ost(o);
+  if (s === 'booked' || s === 'installing') return (o.award && o.award.end) || '';
+  if (s === 'ih_booked' || s === 'ih_installing') return (o.inhouse && o.inhouse.end) || '';
+  return '';
+}
+function lateDays(o) { const e = dueEnd(o), t = todayStr(); return e && e < t ? daysIncl(e, t) - 1 : 0; }
+const lateTag = (o) => { const n = lateDays(o); return n ? ' <span class="badge t-red late-tag">เลยกำหนดเสร็จ ' + n + ' วัน</span>' : ''; };
+const lateWho = (o) => (o.channel === 'inhouse' ? 'ช่างโรงงาน ' + ((o.inhouse && o.inhouse.teamId && typeof teamById === 'function') ? teamById(o.inhouse.teamId).name : '') : (o.award && typeof conById === 'function' ? shortCo(conById(o.award.cid).company) : ''));
 const finished = (o) => ['check', 'done', 'cancelled', 'ih_done'].indexOf(ost(o)) >= 0;
 function busyOf(cid, exceptId) {
   return DB.orders.filter((o) => o.award && o.award.cid === cid && o.id !== exceptId && !finished(o))
@@ -1349,20 +1366,34 @@ const liveUsers = () => DB.users.filter((u) => !u.deleted);
 
 /* V7.10: พิกัด / ลิงก์ Google Maps ของสถานที่ติดตั้ง — "ละติจูด,ลองจิจูด" หรือลิงก์ https ของ Google Maps เท่านั้น (Server ตรวจซ้ำ) */
 const MAP_URL_RE = /^https:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|g\.co\/kgs|(www\.)?google\.[a-z.]{2,8}\/maps|maps\.google\.[a-z.]{2,8})([/?#]|$)/i;
+/* V7.16.10: ลิงก์ Google Maps ที่ถูกตัดท้าย (มี … เช่น คัดลอกจากแบบงาน / แชต ที่แสดงลิงก์ไม่เต็ม) → ตัดส่วนที่ขาดออก เหลือ ชื่อสถานที่ + พิกัด
+   ไม่มีพิกัดครบก่อนจุดที่ถูกตัด = '' (ใช้ไม่ได้ ต้องคัดลอกลิงก์เต็มมาใหม่) · ลิงก์ปกติ = ค่าเดิม */
+function mapTrunc(v) { return /…|\.{3,}\s*$/.test(String(v || '')); }
+function mapFix(v) {
+  v = String(v || '').trim(); if (!mapTrunc(v)) return v;
+  const u = v.replace(/\.{3,}\s*$/, '').split('…')[0];
+  let m = /^(https:\/\/[^\s@]*?@-?\d{1,2}\.\d+,-?\d{1,3}\.\d+)(,\d+(?:\.\d+)?[zm])?(?=[,/?!]|$)/.exec(u);
+  if (m && (m[2] || u.length > m[1].length)) return m[1] + (m[2] || '');
+  m = /!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)(?=!)/.exec(u) || /[?&](?:q|query|destination|ll|daddr)=(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)(?=&)/.exec(u);
+  return m && Math.abs(+m[1]) <= 90 && Math.abs(+m[2]) <= 180 ? m[1] + ',' + m[2] : '';
+}
+function mapErr(v) { return mapTrunc(v) ? 'ลิงก์นี้ถูกตัดท้าย (…) จึงไม่มีตำแหน่งครบ — เปิด Google Maps ที่ตำแหน่งหน้างาน กด แชร์ → คัดลอกลิงก์ แล้ววางใหม่' : 'ใส่ลิงก์ Google Maps หรือพิกัด เช่น 13.7563, 100.5018'; }
 function mapNorm(v) {   /* '' = ว่าง · null = รูปแบบผิด */
   v = String(v || '').trim().replace(/[，]/g, ','); if (!v) return '';
+  if (mapTrunc(v) && /^https:\/\//i.test(v)) { v = mapFix(v); if (!v) return null; }
   let c = /^\(?\s*(-?\d{1,2}(?:\.\d+)?)\s*°?\s*(?:,|\s)\s*(-?\d{1,3}(?:\.\d+)?)\s*°?\s*\)?$/.exec(v), la, lo;
   if (c) { la = +c[1]; lo = +c[2]; }
   else { c = /^(\d{1,2}(?:\.\d+)?)\s*°?\s*([NS])\s*,?\s*(\d{1,3}(?:\.\d+)?)\s*°?\s*([EW])$/i.exec(v); if (c) { la = +c[1] * (/s/i.test(c[2]) ? -1 : 1); lo = +c[3] * (/w/i.test(c[4]) ? -1 : 1); } }
   if (la != null) return Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? +la.toFixed(7) + ',' + +lo.toFixed(7) : null;
   return MAP_URL_RE.test(v) && v.length <= 600 && !/[\s<>"]/.test(v) ? v : null;
 }
-function mapHref(v) { v = String(v || ''); if (/^-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?$/.test(v)) return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v); return MAP_URL_RE.test(v) && !/[\s<>"]/.test(v) ? v : ''; }
+function mapHref(v) { v = mapFix(v); if (/^-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?$/.test(v)) return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(v); return MAP_URL_RE.test(v) && !/[\s<>"]/.test(v) ? v : ''; }
 /* V7.10.2: ปุ่มนำทาง — พิกัด (หรือพิกัดในลิงก์ Google Maps แบบยาว) → เส้นทาง Google Maps (มือถือเปิดแอปนำทาง) · ลิงก์สั้น maps.app.goo.gl → เปิดลิงก์ (กด “เส้นทาง” ในแอป) */
 function mapLatLng(v) {
-  v = String(v || '');
+  v = mapFix(v);
   if (/^-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?$/.test(v)) return v;
-  const m = /@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/.exec(v) || /[?&](?:q|query|destination|ll|daddr)=(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)/.exec(v) || /!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/.exec(v);
+  /* V7.16.10: !3d…!4d… (หมุดสถานที่จริง) ก่อน @… (จุดกลางจอแผนที่ตอนคัดลอก อาจเยื้องจากหมุด) */
+  const m = /!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/.exec(v) || /[?&](?:q|query|destination|ll|daddr)=(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)/.exec(v) || /@(-?\d{1,2}\.\d+),(-?\d{1,3}\.\d+)/.exec(v);
   return m && Math.abs(+m[1]) <= 90 && Math.abs(+m[2]) <= 180 ? m[1] + ',' + m[2] : '';
 }
 function mapNavHref(v) { const ll = mapLatLng(v); return ll ? 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(ll) : mapHref(v); }
@@ -2043,7 +2074,7 @@ function openOrder(id) {
     .concat(!log.length && o.editedAt ? [[o.editedAt, 'แก้ไข Order ล่าสุด', '']] : [])
     .concat(!log.length && o.cancelledAt ? [[o.cancelledAt, 'ยกเลิก Order', (o.cancelledBy || '') + (o.cancelReason ? ' · ' + o.cancelReason : '')]] : [])
     .filter(Boolean).sort((a, b) => String(a[0]).localeCompare(String(b[0])));
-  modal({ drawer: true, title: esc(o.id) + ' ' + badge(st), sub: esc(o.title),
+  modal({ drawer: true, title: esc(o.id) + ' ' + badge(st) + lateTag(o), sub: esc(o.title),
     body: (acts ? '<div class="actbar"><span class="lbl">จัดการ</span>' + acts + '</div>' : '') + cancelNote(o) +
       '<div class="row" style="margin:' + (o.cancelledAt ? '12px' : '0') + ' 0 12px">' + drawBtns(o) + '</div>' +
       (st === 'open' || st === 'expired' ? '<div style="margin-bottom:12px">' + cdHtml(o) + '</div>' : '') +
@@ -2272,6 +2303,8 @@ route(/^\/admin\/home$/, 'admin', () => {
   const kpi = (h, ico, tone, k, v, s) => '<a class="card kpi accent" href="' + h + '" style="--k:var(--' + tone + ')"><div class="k">' + icon(ico, 'sm') + k + '</div><div class="v">' + v + '</div><div class="s">' + s + '</div></a>';
   const flow = ['draft', 'dispatch', 'open', 'expired', 'booked', 'installing', 'check', 'done'], flowIh = ['ih_wait', 'ih_booked', 'ih_installing', 'ih_sign', 'ih_done'];
   const todo = [], soon = addDays(todayStr(), 7);
+  /* V7.16.11: งานเลยกำหนดเสร็จ (ผู้รับเหมา / ช่างโรงงาน) — ขึ้นบนสุด · เลยมากสุดก่อน */
+  DB.orders.filter((o) => lateDays(o)).sort((a, b) => lateDays(b) - lateDays(a)).forEach((o) => todo.push(['clock', 'red', 'เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน: ' + o.id, lateWho(o) + ' · ' + o.title + ' · ต้องเสร็จ ' + fmtDate(dueEnd(o)), o.channel === 'inhouse' ? '#/admin/inhouse' : '#/admin/install']));
   (DB.signups || []).filter((g) => g.status === 'pending').forEach((g) => todo.push(['user', 'violet', 'คำขอลงทะเบียนรออนุมัติ: ' + g.name, (ROLES[g.role] ? ROLES[g.role].label : g.role) + ' · ' + g.username + (g.company ? ' · ' + g.company : ''), '#/admin/users']));
   st.filter((x) => x.s === 'dispatch').forEach((x) => todo.push(['send', 'brass', 'รอจัดซื้อเลือกช่องทางติดตั้ง: ' + x.o.id, x.o.title + ' · Sale ยืนยัน ' + timeAgo(x.o.confirmedAt), '#/admin/inbox']));
   st.filter((x) => x.s === 'ih_wait').forEach((x) => todo.push(['users', 'amber', 'ช่างโรงงาน รอหัวหน้าช่างจัดทีม: ' + x.o.id, x.o.title + ' · ลูกค้าต้องการ ' + fmtRange(x.o.wantFrom, x.o.wantTo), '#/admin/inhouse']));
@@ -2304,7 +2337,7 @@ route(/^\/admin\/orders$/, 'admin', () => {
     Object.keys(OST).map((k) => '<button class="fchip ' + (f === k ? 'on' : '') + '" data-act="setOrdF" data-f="' + k + '">' + OST[k][0] + ' <span class="n">' + DB.orders.filter((o) => ost(o) === k).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาขาย ' + icon('lock', 'xs') + '</th><th class="r">ราคาตั้งต้น</th><th>สถานะ</th><th>ช่องทาง / ผู้ติดตั้ง</th><th>การเงิน</th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const s = ost(o); return '<tr class="click" data-act="order" data-id="' + o.id + '"' + qAttr(o) + '><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:300px">' + esc(o.title) + '</div></td>' +
-      '<td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="ราคาตั้งต้น" class="r money" style="color:var(--teal)">' + money(fee(o), 0) + '</td><td data-l="สถานะ">' + badge(s) + '</td>' +
+      '<td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="ราคาตั้งต้น" class="r money" style="color:var(--teal)">' + money(fee(o), 0) + '</td><td data-l="สถานะ">' + badge(s) + lateTag(o) + '</td>' +
       '<td data-l="ช่องทาง/ผู้ติดตั้ง">' + progCell(o, s) + '</td>' +
       '<td data-l="การเงิน">' + payBadge(payOf(o)) + '</td></tr>'; }).join('') : '<tr><td colspan="7">' + empty('list', 'ไม่มี Order ในสถานะนี้') + '</td></tr>') + '</tbody></table></div></div>' };
 });
@@ -2316,14 +2349,15 @@ function installPage(nav) {
   const acc = nav.indexOf('/acc/') >= 0, tabs = acc ? [['check', 'รอตรวจใบส่งมอบ'], ['done', 'ตรวจรับแล้ว'], ['installing', 'กำลังติดตั้ง'], ['booked', 'รอเข้าติดตั้ง']] : [['booked', 'รอเข้าติดตั้ง'], ['installing', 'กำลังติดตั้ง'], ['check', 'รอตรวจใบส่งมอบ'], ['done', 'ติดตั้งเสร็จ']];
   const nCheck = DB.orders.filter((o) => ost(o) === 'check').length;
   if (navJumped(nav) && nCheck) S.instTab = 'check';
-  const t = S.instTab, rows = DB.orders.filter((o) => ost(o) === t);
+  const t = S.instTab, rows = DB.orders.filter((o) => ost(o) === t), lateO = DB.orders.filter((o) => o.channel === 'contractor' && lateDays(o)).sort((a, b) => lateDays(b) - lateDays(a));
   return { nav, html: pageHead(acc ? 'ตรวจใบส่งมอบงาน' : 'สถานะติดตั้ง & ใบส่งมอบ', acc ? 'ตรวจรูปใบส่งมอบที่ลูกค้าเซ็น แล้วกำหนดวันชำระเงิน — ผู้รับเหมาเห็นวันชำระเงินในหน้างานของตนเอง' : 'ติดตามงานหลังอนุมัติผู้รับเหมา: ยิงรับงาน → ติดตั้ง → รูปใบส่งมอบที่ลูกค้าเซ็น — บัญชีตรวจรับและกำหนดวันชำระเงิน (Admin ตรวจแทนได้)') +
     alertBar(nCheck, nCheck + ' ใบส่งมอบรอตรวจ', 'ผู้รับเหมาส่งรูปใบส่งมอบที่ลูกค้าเซ็นแล้ว — กด <b>ตรวจใบส่งมอบ</b> ใส่วันชำระเงินแล้วกดผ่าน หรือส่งกลับให้แก้ (แถวที่มีแถบสีส้ม)' + (acc ? '' : ' · บัญชีเป็นผู้ตรวจหลัก'), t !== 'check' ? jumpBtn('instTab', 'data-t="check"', 'ไปแท็บรอตรวจใบส่งมอบ') : '') +
+    alertBar(lateO.length, lateO.length + ' งานเลยกำหนดเสร็จ ยังไม่ส่งใบส่งมอบ', lateO.map((o) => '<b>' + esc(o.id) + '</b> ' + esc(shortCo(conById(o.award.cid).company)) + ' · ' + esc(o.title) + ' — เลย ' + lateDays(o) + ' วัน').join('<br>'), '', 'red') +
     '<div class="chips" style="margin-bottom:12px">' + tabs.map((x) => '<button class="fchip ' + (t === x[0] ? 'on' : '') + '" data-act="instTab" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + DB.orders.filter((o) => ost(o) === x[0]).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ผู้รับเหมา</th><th>ช่วงติดตั้ง</th><th>ยิงรับงาน</th><th>ใบส่งมอบ</th><th></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const h = o.install.handover, pk = packStat(o), pct = pk.total ? Math.round(pk.got / pk.total * 100) : 0;
-      return '<tr' + (t === 'check' ? ' class="need"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
-        '<td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ช่วงติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + '</td>' +
+      return '<tr' + (t === 'check' ? ' class="need"' : lateDays(o) ? ' class="need over"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div></td>' +
+        '<td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ช่วงติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + lateTag(o) + '</td>' +
         '<td data-l="ยิงรับงาน"><div class="small">' + (pk.total ? pk.got + '/' + pk.total + ' ห่อ' : '<span class="muted">คลังยังไม่รับเข้า</span>') + '</div><div class="prog" style="width:120px"><i style="width:' + pct + '%"></i></div></td>' +
         '<td data-l="ใบส่งมอบ">' + (h ? (h.review ? (h.review.ok ? '<span class="badge t-green">ตรวจรับแล้ว</span>' : '<span class="badge t-red">ส่งกลับแก้ไข</span>') : '<span class="badge t-orange">รอตรวจ</span>') + '<div class="sub">ใบเซ็น ' + signCount(h) + ' · ภาพ ' + (h.files.length - signCount(h)) + ' รูป</div>' + (h.payDate && h.review && h.review.ok ? '<div class="sub" style="color:var(--teal)">' + icon('wallet', 'xs') + ' ชำระ ' + fmtDate(h.payDate) + '</div>' : '') : '<span class="muted small">ยังไม่ส่ง</span>') + '</td>' +
         '<td class="r">' + (h && !h.review && canReview() ? '<button class="btn sm primary" data-act="reviewHand" data-id="' + o.id + '">' + icon('eye', 'sm') + ' ตรวจใบส่งมอบ</button>' : '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>') + '</td></tr>'; }).join('')
@@ -2595,7 +2629,7 @@ route(/^\/sale\/orders$/, 'sale', () => {
     if (o.cancelledAt && isAdmin()) b.push('<button class="btn sm danger" data-act="ordPurge" data-id="' + o.id + '" aria-label="ลบ ' + o.id + ' ถาวร">' + icon('trash', 'sm') + ' ลบถาวร</button>');   /* V7.16.2 */
     return b.join('');
   };
-  const row = (o) => { const s = ost(o); return '<tr' + (o.cancelledAt ? ' class="dim"' : !o.confirmedAt ? ' class="need"' : '') + qAttr(o) + '><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:320px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td><td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="สถานะ">' + badge(s) + (o.editedAt && !o.cancelledAt ? '<div class="sub">แก้ไข ' + fmtDT(o.editedAt) + '</div>' : '') + '</td>' +
+  const row = (o) => { const s = ost(o); return '<tr' + (o.cancelledAt ? ' class="dim"' : !o.confirmedAt ? ' class="need"' : '') + qAttr(o) + '><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:320px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td><td data-l="ประเภท">' + sw(o.type) + '</td><td data-l="ราคาขาย" class="r money">' + money(o.sale, 0) + '</td><td data-l="สถานะ">' + badge(s) + lateTag(o) + (o.editedAt && !o.cancelledAt ? '<div class="sub">แก้ไข ' + fmtDT(o.editedAt) + '</div>' : '') + '</td>' +
       '<td data-l="ช่องทาง/ผู้ติดตั้ง">' + progCell(o, s) + '</td>' +
       '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + actsOf(o, s) + '</span></td></tr>'; };
   const head = '<thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาขาย</th><th>สถานะ</th><th>ช่องทาง / ผู้ติดตั้ง</th><th class="r">จัดการ</th></tr></thead>';
@@ -2669,8 +2703,10 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
 function mapChk() {
   const el = $('#sf [name=mapUrl]'), box = $('#map-prev'); if (!el || !box) return;
   const m = mapNorm(el.value);
-  box.innerHTML = m ? '<div class="map-ok">' + mapLink(m) + (m !== el.value.trim() ? ' <span class="xs muted">จะบันทึกเป็น ' + esc(m) + '</span>' : '') + '</div>'
-    : m === null ? '<div class="xs" style="color:var(--red);margin-top:4px">ยังไม่ใช่ลิงก์ Google Maps หรือพิกัด (ตัวอย่าง 13.7563, 100.5018 หรือ https://maps.app.goo.gl/…)</div>' : '';
+  /* V7.16.10: ปุ่มเหมือนที่ผู้รับเหมา / ช่างเห็น (นำทางไปหน้างาน + ดูแผนที่) ให้ลองกดตรวจได้ก่อนบันทึก */
+  const cut = m && mapTrunc(el.value);
+  box.innerHTML = m ? '<div class="map-ok">' + mapNavHtml(m) + (m !== el.value.trim() ? '<div class="xs muted" style="margin-top:4px;overflow-wrap:anywhere">' + (cut ? 'ลิงก์ถูกตัดท้าย (…) — ตัดส่วนที่ขาดออก ' : '') + 'จะบันทึกเป็น ' + esc(m) + '</div>' : '') + '</div>'
+    : m === null ? '<div class="xs" style="color:var(--red);margin-top:4px">' + (mapTrunc(el.value) ? esc(mapErr(el.value)) : 'ยังไม่ใช่ลิงก์ Google Maps หรือพิกัด (ตัวอย่าง 13.7563, 100.5018 หรือ https://maps.app.goo.gl/…)') + '</div>' : '';
 }
 Acts.mapChk = mapChk;
 on('mapFind', () => {
@@ -2832,7 +2868,7 @@ on('saleSave', async (el) => {
   const errs = {}, mp = mapNorm(v('mapUrl'));
   if (!(d.bidDays >= 1 && d.bidDays <= 60 && Math.floor(d.bidDays) === d.bidDays)) errs.bidDays = 'ใส่จำนวนวัน 1–60';
   else if (SF.live) { const o0 = DB.orders.find((x) => x.id === SF.id); if (o0 && d.bidDays !== bidDaysOf(o0) && d.bidDays < bdMin()) errs.bidDays = 'ลดได้แต่ต้องเหลือเวลาอย่างน้อย 1 วัน — ใส่อย่างน้อย ' + bdMin() + ' วัน'; }
-  if (mp === null) errs.mapUrl = 'ใส่ลิงก์ Google Maps หรือพิกัด เช่น 13.7563, 100.5018'; d.mapUrl = mp || '';
+  if (mp === null) errs.mapUrl = mapErr(v('mapUrl')); d.mapUrl = mp || '';
   if (!d.title) errs.title = 'กรอกชื่องาน';
   if (d.snOrder && !SN_RE.test(d.snOrder)) errs.snOrder = 'เลขที่ Order StarNexus ใช้ตัวอักษรอังกฤษ ตัวเลข _ - . / ยาว 3–60 ตัว';
   else if (d.snOrder && DB.orders.some((o) => o.id !== SF.id && !o.cancelledAt && o.snOrder && snKey(o.snOrder) === snKey(d.snOrder))) errs.snOrder = 'เลขนี้ใช้แล้วใน Sale Order อื่น';
@@ -2898,7 +2934,7 @@ function inboxPage(nav) {
         '<td data-l="พร้อมติดตั้ง" class="small"><b>' + fmtRange(o.wantFrom, o.wantTo) + '</b><div class="sub">' + daysIncl(o.wantFrom, o.wantTo) + ' วัน · ' + num(o.cabinets) + ' ตู้ · ' + sw(o.type) + '</div></td>' +
         '<td data-l="สถานที่" class="small">' + esc(o.siteName) + '<div class="sub">จ.' + esc(o.province) + '</div></td>' +
         '<td data-l="Sale" class="small">' + esc(userById(o.saleId).name) + '<div class="sub">ยืนยัน ' + fmtDT(o.confirmedAt) + '</div></td>' +
-        '<td data-l="สถานะ">' + badge(st) + (st === 'dispatch' ? '<div class="sub">รอมาแล้ว ' + timeAgo(o.confirmedAt).replace('ที่แล้ว', '') + '</div>' : '<div class="sub">' + progCell(o, st).replace(/<\/?div[^>]*>/g, ' ') + '</div>') + '</td>' +
+        '<td data-l="สถานะ">' + badge(st) + lateTag(o) + (st === 'dispatch' ? '<div class="sub">รอมาแล้ว ' + timeAgo(o.confirmedAt).replace('ที่แล้ว', '') + '</div>' : '<div class="sub">' + progCell(o, st).replace(/<\/?div[^>]*>/g, ' ') + '</div>') + '</td>' +
         '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + drawBtns(o) + (st === 'dispatch' && canManage() ? '<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทาง</button>' : '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>') + '</span></td></tr>'; }).join('')
       : '<tr><td colspan="6">' + empty('inbox', f === 'wait' ? 'ไม่มี Order รอเลือกช่องทาง' : 'ไม่มีรายการ', f === 'wait' ? 'Order ที่ Sale กดยืนยันจะมาอยู่ที่นี่' : '') + '</td></tr>') + '</tbody></table></div></div>' };
 }
@@ -2919,20 +2955,21 @@ function inhousePage(nav) {
   const act = all.filter((o) => o.inhouse && o.inhouse.teamId && !o.inhouse.handover).sort((a, b) => String(a.inhouse.start || '').localeCompare(String(b.inhouse.start || '')));
   const tabName = (k) => (IH_TABS.find((x) => x[0] === k) || ['', ''])[1];
   const rows = all.filter((o) => ost(o) === t).sort((a, b) => String((a.inhouse && a.inhouse.start) || a.wantFrom).localeCompare(String((b.inhouse && b.inhouse.start) || b.wantFrom)));
-  const teams = (DB.teams || []).filter((x) => x.active);
+  const teams = (DB.teams || []).filter((x) => x.active), lateO = all.filter((o) => lateDays(o)).sort((a, b) => lateDays(b) - lateDays(a));
   return { nav, html: pageHead('งานช่างติดตั้งโรงงาน', 'งานที่จัดซื้อส่งให้ช่างโรงงาน — เลือกทีมและวันติดตั้ง (ทีมเดียวกันห้ามคิวซ้อน) · แยกจากผู้รับเหมาทั้งหมด', '<a class="btn sm" href="' + (nav.indexOf('/admin/') === 0 || nav.indexOf('#/admin/') === 0 ? '#/admin/ibooking' : '#/ins/booking') + '">' + icon('calendar', 'sm') + ' Booking ช่างโรงงาน</a>') +
     (!teams.length ? '<div style="margin-bottom:12px">' + notice('warn', 'ยังไม่มีทีมช่างติดตั้ง — ' + (S.user.role === 'installer' || isAdmin() ? '<a href="#/ins/teams">เพิ่มทีมก่อน</a> แล้วจัดทีมให้งานได้' : 'ให้หัวหน้าช่างเพิ่มทีม')) + '</div>' : '') +
     alertBar(nIh + nSg, (nIh + nSg) + ' งานช่างโรงงานรอดำเนินการ', [nIh ? '<b>รอจัดทีม ' + nIh + ' งาน</b> — จัดซื้อส่งมาแล้ว ยังไม่ได้เลือกทีม / วันติดตั้ง: กด <b>จัดทีม</b> หรือคลิกช่องวันใน Booking ช่างโรงงาน' : '',
       nSg ? '<b>รอแนบใบส่งมอบ ' + nSg + ' งาน</b> — ติดตั้งเสร็จแล้ว ยังไม่แนบใบที่ลูกค้าเซ็น: กด <b>แนบใบส่งมอบ</b>' : ''].filter(Boolean).join('<br>'),
       (nIh && t !== 'ih_wait' ? jumpBtn('ihTab', 'data-t="ih_wait"', 'ไปแท็บรอจัดทีม') : '') + (nSg && t !== 'ih_sign' ? jumpBtn('ihTab', 'data-t="ih_sign"', 'ไปแท็บรอแนบใบส่งมอบ') : '')) +
+    alertBar(lateO.length, lateO.length + ' งานเลยกำหนดเสร็จ', lateO.map((o) => '<b>' + esc(o.id) + '</b> ทีม ' + esc(teamById(o.inhouse.teamId).name) + ' · ' + esc(o.title) + ' — เลย ' + lateDays(o) + ' วัน').join('<br>') + '<br>ติดตั้งเสร็จแล้ว — กด <b>ติดตั้งเสร็จ</b> แล้วแนบใบส่งมอบ · ยังไม่เสร็จ — กด <b>แก้ทีม/วัน</b> เลื่อนวัน', '', 'red') +
     (nav === '#/ins/queue' && act.length ? pkFindCard(act.map((o) => ({ id: o.id, label: o.id + ' · ' + o.title + ' — ' + tabName(ost(o)) + ' · ติดตั้ง ' + fmtRange(o.inhouse.start, o.inhouse.end) + pkOptLbl(o) }))) : '') +
     '<div class="chips" style="margin-bottom:12px">' + IH_TABS.map((x) => '<button class="fchip ' + (t === x[0] ? 'on' : '') + '" data-act="ihTab" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + cnt[x[0]] + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ลูกค้าพร้อมให้ติดตั้ง</th><th>สถานที่</th><th>ทีม / วันติดตั้ง</th><th class="r"></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const x = o.inhouse || {}, st = ost(o), tm = x.teamId ? teamById(x.teamId) : null;
-      return '<tr' + (st === 'ih_wait' || st === 'ih_sign' ? ' class="need"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td>' +
+      return '<tr' + (st === 'ih_wait' || st === 'ih_sign' ? ' class="need"' : lateDays(o) ? ' class="need over"' : '') + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:280px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td>' +
         '<td data-l="พร้อมติดตั้ง" class="small">' + fmtRange(o.wantFrom, o.wantTo) + '<div class="sub">' + daysIncl(o.wantFrom, o.wantTo) + ' วัน · ' + num(o.cabinets) + ' ตู้</div></td>' +
         '<td data-l="สถานที่" class="small">' + esc(o.siteName) + '<div class="sub">จ.' + esc(o.province) + (o.contactPhone ? ' · ' + esc(o.contactPhone) : '') + '</div></td>' +
-        '<td data-l="ทีม/วันติดตั้ง" class="small">' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' <span class="xs muted">' + tm.size + ' คน</span>' : '') + '<div class="sub">' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</div>' : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</td>' +
+        '<td data-l="ทีม/วันติดตั้ง" class="small">' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' <span class="xs muted">' + tm.size + ' คน</span>' : '') + '<div class="sub">' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</div>' + lateTag(o) : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</td>' +
         '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + drawBtns(o) +
           (canInhouse() && st !== 'ih_done' && st !== 'ih_sign' ? '<button class="btn sm ' + (tm ? '' : 'primary') + '" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + (tm ? ' แก้ทีม/วัน' : ' จัดทีม') + '</button>' : '') +
           (canInhouse() && st === 'ih_booked' && !packStat(o).total ? '<button class="btn sm primary" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button>' : '') +
@@ -3043,7 +3080,7 @@ route(/^\/ins\/job\/([^/]+)$/, 'ins', (m) => {
     '<div class="form-grid" style="margin-top:12px"><div class="field c6"><label>วันที่ส่งมอบงาน <span class="req">*</span></label><input class="input" type="date" name="date" max="' + todayStr() + '" value="' + (IHF.date || todayStr()) + '"></div><div class="field c6"><label>หมายเหตุ</label><input class="input" name="note" value="' + esc(IHF.note || '') + '" placeholder="เช่น ลูกค้าตรวจรับครบทุกตู้"></div></div>' +
     '<button class="btn primary block" style="margin-top:12px" data-act="ihfSend" data-id="' + o.id + '">' + icon('send', 'sm') + ' ส่งใบส่งมอบ · ปิดงาน</button></div>';
   return { nav: back, after: renderIhfFiles, html: '<div class="crumb"><a href="' + back + '">งานช่างติดตั้งโรงงาน</a> › ' + esc(o.id) + '</div>' +
-    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + '<h2 style="margin-top:4px">' + esc(o.title) + '</h2></div><span class="row" style="gap:6px">' + drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">' + icon('file', 'sm') + ' รายละเอียด Order</button></span></div>' +
+    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + lateTag(o) + '<h2 style="margin-top:4px">' + esc(o.title) + '</h2></div><span class="row" style="gap:6px">' + drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">' + icon('file', 'sm') + ' รายละเอียด Order</button></span></div>' +
     '<dl class="dl small" style="margin-top:10px">' + (o.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(o.snOrder) + '</dd>' : '') +
       '<dt>ทีมช่าง</dt><dd>' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' · ' + tm.size + ' คน' : '') + (tm.lead ? ' · ' + esc(tm.lead) : '') : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</dd>' +
       (tm ? '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(x.start, x.end) + '</b> (' + x.days + ' วัน)</dd>' : '<dt>ลูกค้าพร้อมให้ติดตั้ง</dt><dd>' + fmtRange(o.wantFrom, o.wantTo) + '</dd>') +
@@ -3147,7 +3184,7 @@ function bidsList(base) {
         '<td data-l="เสนอแล้ว" class="c"><b>' + o.bids.length + '</b> ราย</td><td data-l="ราคาต่ำสุด" class="r money">' + (lo == null ? '—' : money(lo, 0)) + '</td><td data-l="สถานะ">' + badge(ost(o)) + '</td>' +
         '<td class="r"><span class="row" style="justify-content:flex-end">' + drawBtns(o) + '<a class="btn sm primary" href="' + base + '/bids/' + o.id + '">ตรวจราคา</a></span></td></tr>'; }).join('')
       : '<tr><td colspan="8">' + empty('scale', 'ไม่มีงานรอเสนอราคา') + '</td></tr>') + '</tbody></table></div></div>' +
-    '<div class="sec-t">' + icon('checkCircle') + ' อนุมัติล่าสุด</div><div class="card"><div class="table-wrap"><table class="t resp"><tbody>' + recent.map((o) => '<tr class="click" data-act="order" data-id="' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b><div class="sub">' + esc(o.title) + '</div></td><td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ราคา" class="r money">' + money(o.award.price, 0) + '</td><td data-l="ติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + '</td><td data-l="สถานะ">' + badge(ost(o)) + ackTag(o) + '</td></tr>').join('') + '</tbody></table></div></div>' };
+    '<div class="sec-t">' + icon('checkCircle') + ' อนุมัติล่าสุด</div><div class="card"><div class="table-wrap"><table class="t resp"><tbody>' + recent.map((o) => '<tr class="click" data-act="order" data-id="' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b><div class="sub">' + esc(o.title) + '</div></td><td data-l="ผู้รับเหมา" class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</td><td data-l="ราคา" class="r money">' + money(o.award.price, 0) + '</td><td data-l="ติดตั้ง" class="small">' + fmtRange(o.award.start, o.award.end) + '</td><td data-l="สถานะ">' + badge(ost(o)) + ackTag(o) + lateTag(o) + '</td></tr>').join('') + '</tbody></table></div></div>' };
 }
 function bidsAlert(rows) {
   const ex = rows.filter((o) => ost(o) === 'expired'), op = rows.filter((o) => ost(o) === 'open'), ob = op.filter((o) => o.bids.length), soon = op.filter((o) => deadline(o) - nowMs() < DAY);
@@ -3166,7 +3203,7 @@ function bidReview(base, id) {
   const dec = !o.award && !o.cancelledAt ? (o.log || []).filter((l) => / ไม่รับเงื่อนไข /.test(' ' + l.what + ' ')).slice(-1)[0] : null;   /* V7.16.2 */
   const ackN = ackPending(o) ? notice('warn', '<b>รอผู้รับเหมายืนยันเงื่อนไขการชำระเงิน</b> — อนุมัติ ' + esc((PAY_OPTS[o.award.payOpt] || {}).label || '-') + ' ต่างจากที่ผู้รับเหมาเสนอ (' + esc((PAY_OPTS[o.award.bidPayOpt] || {}).label || '-') + ') · ถ้าไม่รับ งานจะกลับมาให้เลือกรายอื่นที่หน้านี้') : '';
   const decN = dec ? notice('warn', '<b>ผู้รับเหมาไม่รับเงื่อนไข</b> (' + fmtDT(dec.at) + ') — ' + esc(dec.what) + '<div class="xs" style="margin-top:4px">เลือกผู้รับเหมารายอื่นด้านล่าง · หมดเวลาเสนอราคาแล้ว → Sale / Admin ขยายวันเปิดรับราคาในฟอร์ม Order ได้</div>') : '';
-  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + (ackN || decN ? '<div style="margin-bottom:12px">' + (ackN || decN) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>' + (canManage() && o.channel === 'contractor' && canSwitch(o) ? '<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('hammer', 'sm') + ' เปลี่ยนเป็นช่างโรงงาน</button>' : ''), '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
+  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + (ackN || decN ? '<div style="margin-bottom:12px">' + (ackN || decN) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st) + lateTag(o), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>' + (canManage() && o.channel === 'contractor' && canSwitch(o) ? '<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('hammer', 'sm') + ' เปลี่ยนเป็นช่างโรงงาน</button>' : ''), '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
     '<div class="grid g3"><div class="card card-b"><div class="small muted">นับถอยหลัง ' + bidDaysOf(o) + ' วัน (เวลาเดียวกับที่ผู้รับเหมาเห็น)</div><div style="margin-top:6px">' + cdHtml(o) + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="money" style="font-size:24px;color:var(--teal)">' + money(ref) + '</div><div class="xs muted">' + sw(o.type) + (S.user.role === 'admin' ? ' ' + rateOf(o) + '% ของราคาขาย' : '') + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ลูกค้าต้องการติดตั้ง</div><div class="strong" style="font-size:18px">' + fmtRange(o.wantFrom, o.wantTo) + '</div><div class="xs muted">' + esc(o.siteName) + ' จ.' + esc(o.province) + ' · ' + o.cabinets + ' ตู้</div></div></div>' +
@@ -3262,8 +3299,8 @@ function queuePage(base) {
     const sub = cur ? '<span class="gs on">กำลังติดตั้ง ' + esc(sid(cur.id)) + ' · ถึง ' + dm(cur.end) + '</span>' : nxt ? '<span class="gs">งานถัดไป ' + rng(nxt.start, nxt.end) + ' · ' + esc(sid(nxt.id)) + '</span>' : '<span class="gs">ไม่มีงานค้าง</span>';
     const chip = pr ? (pr.cl.length ? '<span class="qchip no">' + icon('x', 'xs') + ' ชน ' + esc(pr.cl.map((x) => sid(x.id)).join(', ')) + '</span>' : '<span class="qchip ok">' + icon('check', 'xs') + ' ว่าง</span>') + '<span class="xs muted"> ' + (pr.b ? 'เสนอ ' + rng(pr.s, pr.e) : 'ยังไม่เสนอราคา') + '</span>' : '';
     const jb = jobs.map((o) => { const a = o.award, ack = ackPending(o);
-      return bar(a.start, a.end, (stCls[ost(o)] || 's-done') + (ack ? ' ack' : ''), '<b>' + esc(sid(o.id)) + '</b><span>' + esc(o.title) + '</span>',
-        o.id + ' · ' + o.title + ' · ' + fmtRange(a.start, a.end) + ' · ' + (ack ? 'รอผู้รับเหมายืนยันเงื่อนไข' : (OST[ost(o)] || [''])[0]), 'data-act="order" data-id="' + o.id + '"'); }).join('');
+      return bar(a.start, a.end, (stCls[ost(o)] || 's-done') + (ack ? ' ack' : '') + (lateDays(o) ? ' late' : ''), '<b>' + esc(sid(o.id)) + '</b><span>' + esc(o.title) + '</span>',
+        o.id + ' · ' + o.title + ' · ' + fmtRange(a.start, a.end) + ' · ' + (ack ? 'รอผู้รับเหมายืนยันเงื่อนไข' : (OST[ost(o)] || [''])[0]) + (lateDays(o) ? ' · เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน' : ''), 'data-act="order" data-id="' + o.id + '"'); }).join('');
     const pb = pr && pr.s && pr.e ? bar(pr.s, pr.e, pr.cl.length ? 's-probe' : 's-probeok', (pr.b ? 'เสนอ ' : 'ช่วงลูกค้า ') + rng(pr.s, pr.e) + (pr.cl.length ? ' · ชน' : ' · ว่าง'), (pr.b ? 'วันที่เสนอ ' : 'ช่วงลูกค้าต้องการ ') + fmtRange(pr.s, pr.e) + (pr.cl.length ? ' · ชน ' + pr.cl.map((x) => x.id).join(', ') : ' · คิวว่าง')) : '';
     return '<div class="gr' + (pr ? (pr.cl.length ? ' clash' : ' free') : '') + '"><div class="gn"><b>' + esc(shortCo(c.company)) + '</b>' + (chip ? '<div class="gchip">' + chip + '</div>' : sub) + '</div>' + gt(bg + jb + pb) + '</div>';
   }).join('');
@@ -3314,8 +3351,8 @@ function calGrid(items, C, opt) {
         (opt.pick ? ' data-act="' + opt.pick + '" data-d="' + k + '" title="คลิกเพื่อจัดคิววันที่ ' + fmtDMY(k) + '"' : '') + '><span class="dn">' + d.getDate() + '</span></div>'; });
     evs.forEach((ev) => { const it = ev.it, o = it.o, c = C[it.st] || C[Object.keys(C)[0]], span = ev.c1 - ev.c0 + 1;
       const info = [o.title, o.province ? 'จ.' + o.province : '', o.cabinets + ' ตู้', it.size ? 'ทีม ' + it.size + ' คน' : ''].filter(Boolean).join(' · ');
-      g += '<button class="cb' + (ev.cl ? ' cl' : '') + (ev.cr ? ' cr' : '') + (span === 1 ? ' one' : '') + '" style="grid-column:' + (ev.c0 + 1) + ' / span ' + span + ';grid-row:' + (ev.lane + 2) + ';--c:' + c[0] + ';--b:' + c[1] + '" data-act="' + (opt.barAct ? opt.barAct(it) : 'order') + '" data-id="' + o.id + '"' +
-        ' title="' + esc(o.id + (o.snOrder ? ' · ' + o.snOrder : '') + '\n' + o.title + '\n' + it.who + '\n' + fmtRange(it.start, it.end) + ' (' + it.days + ' วัน) · ' + c[2] + '\n' + o.siteName + ' จ.' + o.province + ' · ' + o.cabinets + ' ตู้') + '">' +
+      g += '<button class="cb' + (ev.cl ? ' cl' : '') + (ev.cr ? ' cr' : '') + (span === 1 ? ' one' : '') + (lateDays(o) ? ' late' : '') + '" style="grid-column:' + (ev.c0 + 1) + ' / span ' + span + ';grid-row:' + (ev.lane + 2) + ';--c:' + c[0] + ';--b:' + c[1] + '" data-act="' + (opt.barAct ? opt.barAct(it) : 'order') + '" data-id="' + o.id + '"' +
+        ' title="' + esc(o.id + (o.snOrder ? ' · ' + o.snOrder : '') + '\n' + o.title + '\n' + it.who + '\n' + fmtRange(it.start, it.end) + ' (' + it.days + ' วัน) · ' + c[2] + (lateDays(o) ? ' · เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน' : '') + '\n' + o.siteName + ' จ.' + o.province + ' · ' + o.cabinets + ' ตู้') + '">' +
         '<span class="cb1">' + (ev.cl ? '◂ ' : '') + '<b>' + esc(it.short) + '</b> · ' + esc(o.id) + (ev.cr ? ' ▸' : '') + '</span>' +
         '<span class="cb2"><span class="cbd">' + icon('calendar', 'xs') + ' ' + fmtRange(it.start, it.end) + ' · ' + it.days + ' วัน</span> · ' + esc(info) + '</span></button>'; });
     g += '</div>';
@@ -3337,7 +3374,7 @@ function monthList(items, C, whoLabel) {
     (inMonth.length ? inMonth.map((it) => { const o = it.o, c = C[it.st] || C[Object.keys(C)[0]];
       return '<tr class="click" data-act="order" data-id="' + o.id + '"><td class="main"><b class="mono">' + o.id + '</b>' + snTag(o) + '<div class="sub" style="max-width:300px">' + esc(o.title) + '</div></td><td data-l="' + whoLabel + '" class="small"><b>' + esc(it.short) + '</b>' + (it.size ? '<div class="sub">ทีม ' + it.size + ' คน</div>' : '') + '</td>' +
         '<td data-l="สถานที่" class="small">' + esc(o.siteName) + '<div class="sub">จ.' + esc(o.province) + '</div></td><td data-l="ช่วงติดตั้ง" class="small">' + fmtRange(it.start, it.end) + '<div class="sub">' + it.days + ' วัน</div></td><td data-l="ตู้" class="r">' + num(o.cabinets) + '</td>' +
-        '<td data-l="สถานะ"><span class="badge" style="background:' + c[1] + ';color:' + c[0] + '">' + c[2] + '</span></td></tr>'; }).join('')
+        '<td data-l="สถานะ"><span class="badge" style="background:' + c[1] + ';color:' + c[0] + '">' + c[2] + '</span>' + lateTag(o) + '</td></tr>'; }).join('')
       : '<tr><td colspan="6">' + empty('calendar', 'ไม่มีงานติดตั้งในเดือนนี้' + (S.bkWho || S.bkSt ? ' (ตามตัวกรอง)' : '')) + '</td></tr>') + '</tbody></table></div></div>';
 }
 function bookingPage(base) {
@@ -3540,13 +3577,14 @@ route(/^\/con\/work$/, 'con', () => {
   const act = mine.filter((x) => !finished(x.o) || ost(x.o) === 'check'), done = mine.filter((x) => ost(x.o) === 'done');
   const card = (x) => { const s = ost(x.o), a = x.p.award, i = x.p.install;
     const tag = ackPending(x.o) ? '<span class="badge t-amber">รอคุณยืนยันเงื่อนไข</span>' : s === 'booked' ? '<span class="badge t-teal">รอเข้าติดตั้ง</span>' : s === 'installing' ? '<span class="badge t-violet">' + STAGES[i.stage] + '</span>' : s === 'check' ? '<span class="badge t-orange">รอตรวจใบส่งมอบ</span>' : '<span class="badge t-green">ตรวจรับแล้ว</span>';
-    return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + tag + '</div><div class="jmeta">' + esc(x.p.title) + '</div></div>' +
+    return '<div class="job"><div class="jh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="jid">' + esc(x.p.id) + '</span>' + tag + lateTag(x.o) + '</div><div class="jmeta">' + esc(x.p.title) + '</div></div>' +
       '<div class="ref" style="background:var(--teal-bg);border-color:#9FD5CB"><div class="k" style="color:var(--teal)">ติดตั้ง</div><div class="v" style="color:var(--teal);font-size:15px">' + fmtRange(a.start, a.end) + '</div><div class="s" style="color:var(--teal)">' + a.days + ' วัน</div></div></div>' +
       '<div class="jb"><div class="ln">' + icon('pin', 'sm') + '<span>' + esc(x.p.siteName) + '<br><span class="xs">' + esc(x.p.address) + ' จ.' + esc(x.p.province) + '</span>' + (x.p.mapUrl ? '<br>' + mapNavHtml(x.p.mapUrl) : '') + '</span></div><div class="ln">' + icon('phone', 'sm') + '<span>' + esc(x.p.contactName) + ' · <a href="tel:' + esc(x.p.contactPhone) + '">' + esc(x.p.contactPhone) + '</a></span></div>' +
       '<div class="ln">' + icon('barcode', 'sm') + '<span>ยิงรับงาน: ' + pkTxt(x.o) + '</span></div>' + conDraw(x.p) + '</div>' +
       '<div class="jf"><span class="small muted">ราคางาน ' + money(a.price, 0) + '</span><a class="btn primary sm" href="#/con/job/' + x.p.id + '">' + (ackPending(x.o) ? icon('check', 'sm') + ' ยืนยันเงื่อนไข' : icon('hammer', 'sm') + ' เปิดงาน') + '</a></div></div>'; };
-  const nAck = act.filter((x) => ackPending(x.o)).length;
+  const nAck = act.filter((x) => ackPending(x.o)).length, lateJ = act.filter((x) => lateDays(x.o)).sort((a, b) => lateDays(b.o) - lateDays(a.o));
   return { nav: '#/con/work', html: conHero(cid, 'สถานะการทำงาน', 'งานที่ได้รับอนุมัติ — ทำตาม 2 ขั้น: ยิงรับของ (เริ่มงาน) → ติดตั้งเสร็จ · ส่งมอบงาน') +
+    alertBar(lateJ.length, lateJ.length + ' งานเลยกำหนดเสร็จแล้ว', lateJ.map((x) => '<b>' + esc(x.p.id) + '</b> ' + esc(x.p.title) + ' — เลย ' + lateDays(x.o) + ' วัน').join('<br>') + '<br>ติดตั้งเสร็จแล้ว — กด <b>เปิดงาน</b> แล้วส่งใบส่งมอบ · ยังไม่เสร็จ — แจ้งจัดซื้อเพื่อเลื่อนวัน', '', 'red') +
     alertBar(nAck, nAck + ' งานรอคุณยืนยันเงื่อนไขการชำระเงิน', 'จัดซื้ออนุมัติการชำระเงินต่างจากที่ท่านเสนอ — กด “ยืนยันเงื่อนไข” แล้วเลือก รับเงื่อนไขนี้ / ไม่รับ ก่อนเริ่มงาน') +
     (act.some((x) => !finished(x.o)) ? pkFindCard(act.filter((x) => !finished(x.o)).map((x) => ({ id: x.p.id, label: x.p.id + ' · ' + x.p.title + ' — ติดตั้ง ' + fmtRange(x.p.award.start, x.p.award.end) + pkOptLbl(x.o) }))) : '') +
     alertBar(act.filter((x) => !finished(x.o)).length, act.filter((x) => !finished(x.o)).length + ' งานที่ได้รับอนุมัติ ยังไม่ส่งมอบ', 'อัปเดตสถานะติดตั้ง แล้วส่งรูปใบส่งมอบที่ลูกค้าเซ็นเมื่อติดตั้งเสร็จ (กด <b>เปิดงาน</b>)', '', 'info') +
@@ -3570,9 +3608,10 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
     '<div class="form-grid" style="margin-top:12px"><div class="field c6"><label>วันที่ส่งมอบงาน <span class="req">*</span></label><input class="input" type="date" name="date" max="' + todayStr() + '" value="' + (HF.date || todayStr()) + '"></div><div class="field c6"><label>หมายเหตุ</label><input class="input" name="note" value="' + esc(HF.note || '') + '" placeholder="เช่น ลูกค้าตรวจรับครบทุกตู้"></div></div>' +
     '<button class="btn primary block" style="margin-top:12px" data-act="hfSend" data-id="' + o.id + '">' + icon('send', 'sm') + (returned ? ' ส่งเอกสารใหม่' : ' ส่งยืนยันติดตั้งเสร็จ') + '</button></div>';
   return { nav: '#/con/work', after: renderHfFiles, html: '<div class="crumb"><a href="#/con/work">สถานะการทำงาน</a> › ' + esc(o.id) + '</div>' +
-    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + '<h2 style="margin-top:4px">' + esc(p.title) + '</h2></div></div>' +
+    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + lateTag(o) + '<h2 style="margin-top:4px">' + esc(p.title) + '</h2></div></div>' +
     '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + (p.mapUrl ? '<br>' + mapNavHtml(p.mapUrl) : '') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
     (ack ? ackCard(o) : '') +
+    (lateDays(o) ? alertBar(1, 'เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน (ต้องเสร็จภายใน ' + fmtDate(dueEnd(o)) + ')', 'ติดตั้งเสร็จแล้ว — ส่งใบส่งมอบด้านล่าง · ยังไม่เสร็จ — แจ้งจัดซื้อเพื่อเลื่อนวัน', '', 'red') : '') +
     '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
     '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนห่อทุกห่อตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงห่อแรก = เริ่มงาน</div>' +
       (ack ? '<div class="box small muted">' + icon('lock', 'sm') + ' ยืนยันเงื่อนไขการชำระเงินด้านบนก่อน จึงยิงรับของ / เริ่มงานได้</div>' : recvBox(o, true)) + '</div></div>' +
@@ -4915,12 +4954,16 @@ async function drPdfRead(file) {
   let pdoc = null, locked = false;
   if (LIB) { try { pdoc = await LIB.PDFDocument.load(buf.slice(), { updateMetadata: false }); } catch (e) { pdoc = null; locked = /encrypt/i.test(String(e && (e.name + e.message))); } }
   const doc = await L.getDocument({ data: buf.slice(), isEvalSupported: false, disableFontFace: true, useSystemFonts: false }).promise;
-  const pages = []; let annots = 0;
+  const pages = [], links = []; let annots = 0;
   try {
-    if (doc.numPages > MAX_PAGES) return { pages, total: doc.numPages, LIB, pdoc, locked, annots };
+    if (doc.numPages > MAX_PAGES) return { pages, total: doc.numPages, LIB, pdoc, locked, annots, links };
     for (let p = 1; p <= doc.numPages; p++) {
       const pg = await doc.getPage(p), tc = await pg.getTextContent({ includeMarkedContent: true });
-      try { annots += (await pg.getAnnotations()).filter((a) => a.subtype !== 'Link' || a.url || a.dest).length; } catch (e) { annots++; }
+      try {
+        const an = await pg.getAnnotations(); annots += an.filter((a) => a.subtype !== 'Link' || a.url || a.dest).length;
+        /* V7.16.10: ลิงก์ Google Maps ที่ฝังในไฟล์ (ตัวอักษรบนแบบอาจถูกตัดเป็น …) → ใช้เติมลิงก์ให้เต็ม */
+        an.forEach((a) => { const u = a && a.subtype === 'Link' ? String(a.url || a.unsafeUrl || '') : ''; if (u && links.length < 20 && MAP_URL_RE.test(u)) links.push(u); });
+      } catch (e) { annots++; }
       const acts = pdoc && LIB ? drPageMarks(LIB, pdoc, p - 1) : null;
       const items = (acts && drActual(tc.items, acts)) || tc.items.filter((it) => it.str != null);
       const raw = items.map((it) => String(it.str)).join(''), nul = (raw.match(/\u0000/g) || []).length, vis = raw.replace(/[\s\u0000]/g, '').length;
@@ -4937,7 +4980,7 @@ async function drPdfRead(file) {
       pg.cleanup();
     }
   } finally { try { await doc.destroy(); } catch (e) { /* ไม่เป็นไร */ } }
-  return { pages, total: doc.numPages, LIB, pdoc, locked, annots };
+  return { pages, total: doc.numPages, LIB, pdoc, locked, annots, links };
 }
 /* สร้างไฟล์ใหม่จากหน้าที่เก็บ (ไม่เอา annotation / ฟอร์ม / ไฟล์แนบ / ประวัติแก้ไขเดิม) */
 async function drStrip(LIB, pdoc, keep, name, pages) {
@@ -4961,6 +5004,14 @@ async function drVerify(file, n) {
     for (let p = 1; p <= n; p++) { const pg = await doc.getPage(p), tc = await pg.getTextContent(); if (drIsPrice(drLines(tc.items).map((l) => l.t).join('\n'))) return false; }
     return true;
   } finally { try { await doc.destroy(); } catch (e) { /* ไม่เป็นไร */ } }
+}
+/* V7.16.10: พิกัดจากแบบที่ตัวอักษรถูกตัดท้าย (…) → ถ้าไฟล์มีลิงก์ฝังที่ขึ้นต้นเหมือนกัน ใช้ลิงก์เต็มนั้น (เฉพาะลิงก์ที่ตรงกับตัวอักษรบนแบบ — ไม่เดาจากลิงก์อื่นในไฟล์) */
+function drMapFull(res, links) {
+  const cur = res && res.mapUrl; if (!cur || !links || !links.length) return;
+  const t = /https:\/\/[^\s¦<>"]*/i.exec(String(cur.src || '')), raw = t ? t[0] : ''; if (!mapTrunc(raw)) return;
+  const pre = raw.replace(/\.{3,}\s*$/, '').split('\u2026')[0]; if (pre.length < 24) return;
+  const full = links.find((u) => u.indexOf(pre) === 0 && u.length > pre.length && !mapTrunc(u) && mapNorm(u));
+  if (full) res.mapUrl = Object.assign({}, cur, { v: mapNorm(full) });
 }
 function drHoldIt(f, why) { DR.hold.push(f); DR.holdWhy.push(why); }
 /* ไฟล์ PDF 1 ไฟล์ → ไฟล์ที่อัปโหลดได้ (หรือพัก / ไม่แนบ) */
@@ -4986,6 +5037,7 @@ async function drOne(f, gen) {
   DR.text.push({ name: f.name, lines: shown });
   if (!r.pages.some((pg) => pg.lines.length)) DR.err.push(f.name + ': ไม่มีตัวอักษรในไฟล์ (เป็นภาพ / สแกน) — กรอกข้อมูลลูกค้าเอง');
   const res = drParse(lines);
+  drMapFull(res, r.links);
   for (const k of DR_ORDER) if (res[k] && !DR.res[k]) DR.res[k] = Object.assign({ file: f.name }, res[k]);
   if (!keep.length) { DR.err.push(f.name + ': มีแต่หน้าราคา (ใบเสนอราคา) ที่ปิดราคาไม่ได้ (' + (r.pages.map((pg) => pg.maskWhy).filter(Boolean)[0] || 'ตรวจไม่ผ่าน') + ') — ไม่แนบ เพราะผู้รับเหมาเห็นไฟล์แบบงาน'); return null; }
   /* สร้างไฟล์ใหม่ทุกครั้ง (ตัดหน้าราคา · ไม่เอา annotation/ฟอร์ม/ประวัติเดิม) แล้วตรวจซ้ำ */
@@ -5511,7 +5563,11 @@ route(/^\/wh\/receive$/, 'wh', () => {
 });
 function whRecvDyn() {
   const o = DB.orders.find((x) => x.id === WH.order);
-  if (!o) return '<div class="card"><div class="card-b">' + empty('box', 'เลือก Order ที่จะรับเข้าคลัง', 'ห่อทุกห่อที่ยิงจะผูกกับ Order ที่เลือก') + '</div></div>' + whLogHtml(WH.log, 'ยิงรอบนี้');
+  /* V7.16.10: บอกว่านำเข้ารายการห่ออยู่ตรงไหน · ไม่มี Order ให้เลือก = บอกเหตุผล (Order ร่าง / ยังไม่ยืนยัน ไม่ขึ้นที่นี่) */
+  if (!o) { const n = whRecvOrders().length;
+    return '<div class="card"><div class="card-b">' + empty('box', n ? 'เลือก Order ที่จะรับเข้าคลัง' : 'ยังไม่มี Order ที่ยืนยันแล้ว',
+      (n ? 'ห่อทุกห่อที่ยิงจะผูกกับ Order ที่เลือก' : 'หน้านี้แสดงเฉพาะ Order ที่ Sale ยืนยันแล้ว และยังไม่ถูกยกเลิก — Order ร่างจะยังไม่ขึ้นที่นี่') +
+      (canPP() ? '<br>นำเข้ารายการห่อจากไลน์ผลิต (Excel): เลือก Order แล้วกดปุ่ม <b>นำเข้ารายการห่อ (Excel)</b> ในการ์ด “รายการห่อจากไลน์ผลิต” ด้านล่างกล่องสรุป Order' : '')) + '</div></div>' + whLogHtml(WH.log, 'ยิงรอบนี้'); }
   const w = o.wh || { in: 0, out: 0, locs: [] }, got = w.in + w.out, need = packNeed(o), pl = ppPlan(o), pct = Math.min(100, Math.round(got / Math.max(1, need) * 100)), l = WH.loc ? whLoc(WH.loc) : null, sg = whSuggest(o);
   const mine = whOrderIn(o.id).slice().sort((a, b) => String(b.inAt).localeCompare(String(a.inAt)));
   return '<div class="card wh-ordsum"><div class="card-b"><div class="row between" style="align-items:flex-start"><div style="min-width:0"><b class="mono">' + esc(o.id) + '</b> ' + badge(ost(o)) + snTag(o) + '<div class="strong" style="margin-top:2px">' + esc(o.title) + '</div><div class="xs muted">' + esc(o.customer) + ' · ' + esc(o.siteName) + ' จ.' + esc(o.province) + '</div><div class="xs muted">ติดตั้ง ' + (whInstDate(o) ? fmtDate(whInstDate(o)) : '—') + ' · ' + esc(whWho(o)) + '</div></div>' +
@@ -6295,15 +6351,15 @@ const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue', purchasing
 /* V7.16.5: หัวข้อที่จัดซื้อ / Sale เลือกเปิด-ปิดได้ (ตรงกับ cn_push_topics ใน SQL) — เก็บที่ Server ใช้กับทุกเครื่องของบัญชี */
 const PUSH_TOPICS = {
   purchasing: [['p_new', 'Order ใหม่เข้า', 'Sale ยืนยันแล้ว รอเลือกช่องทางติดตั้ง'], ['p_expire', 'หมดเวลาเสนอราคา', 'ปิดรับราคาแล้ว รอเลือกผู้รับเหมา (บอกจำนวนที่เสนอ)'],
-    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)']],
+    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_late', 'งานติดตั้งเลยกำหนดเสร็จ', 'เช้าวันถัดจากวันครบกำหนด ถ้ายังไม่ส่งใบส่งมอบ / ยังไม่กดเสร็จ'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)']],
   sale: [['s_booked', 'ได้ช่างติดตั้ง + วันติดตั้ง', 'รวมเปลี่ยนวันติดตั้ง / ยกเลิกช่าง — ไว้แจ้งลูกค้า'], ['s_start', 'เริ่มงานที่หน้างาน', 'ช่างยิงรับของห่อแรก / กดเริ่มงาน'],
     ['s_done', 'ติดตั้งเสร็จ', 'ช่างส่งใบส่งมอบงานแล้ว'], ['s_cancel', 'Order ถูกยกเลิก', 'เมื่อคนอื่นยกเลิก Order ของคุณ']],
-  /* V7.16.6: ผู้รับเหมา / หัวหน้าช่างโรงงาน (ตรงกับ cn_push_topics ใน SQL 07 · ค่าเริ่มต้นเปิดหมด) */
+  /* V7.16.6: ผู้รับเหมา / หัวหน้าช่างโรงงาน (ตรงกับ cn_push_topics ใน SQL 07 / 12 · ค่าเริ่มต้นเปิดหมด · V7.16.11 + c_due / i_due / p_late) */
   contractor: [['c_open', 'งานใหม่ให้เสนอราคา', 'จัดซื้อเปิดงานให้ผู้รับเหมาเสนอราคา'], ['c_remind', 'ใกล้หมดเวลาเสนอราคา', 'เหลือ 1 วัน — งานที่ยังไม่ได้เสนอ'],
     ['c_result', 'ผลการเสนอราคา', 'ได้รับอนุมัติงาน / ปิดรับราคาแล้ว (ไม่ได้งาน)'], ['c_change', 'เปลี่ยนวันติดตั้ง / ยกเลิกงาน', 'เลื่อนวัน · ยกเลิกการอนุมัติ · งานถูกยกเลิก'],
-    ['c_hand', 'ใบส่งมอบต้องแก้ไข', 'ใบส่งมอบถูกส่งกลับให้แก้'], ['c_pay', 'บันทึกจ่ายเงิน', 'บริษัทบันทึกจ่ายเงินงวดแล้ว']],
+    ['c_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่ส่งใบส่งมอบ'], ['c_hand', 'ใบส่งมอบต้องแก้ไข', 'ใบส่งมอบถูกส่งกลับให้แก้'], ['c_pay', 'บันทึกจ่ายเงิน', 'บริษัทบันทึกจ่ายเงินงวดแล้ว']],
   installer: [['i_new', 'งานใหม่รอจัดทีม', 'จัดซื้อส่งงานให้ช่างโรงงาน'], ['i_tomorrow', 'พรุ่งนี้มีงานติดตั้ง', 'เตือนล่วงหน้า 1 วัน + ชื่อทีม'],
-    ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']]
+    ['i_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่กดเสร็จ'], ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']]
 };
 function pushAfter(path) {
   pushBadge();
