@@ -537,6 +537,18 @@ a.sn-chip{text-decoration:none;color:var(--action)}a.sn-chip:hover{border-color:
 .field.dr-calc > label::after{content:'คำนวณจากแบบงาน';margin-left:6px;padding:0 6px;border-radius:999px;background:var(--blue-bg);color:var(--blue);font-size:11px;font-weight:600;vertical-align:1px}
 .field.dr-calc .input{border-color:#C3D5EF;background:#F7FAFE}
 .map-nav .map-addr + .xs{flex-basis:100%;margin-top:-2px}
+.drb-tip{margin:2px 0 6px}
+.drb-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.drb-row > .drb-in,.drb-row > .dp,.drb-dates{flex:1 1 240px;min-width:0;max-width:100%}
+.drb-in.input,.drb-in.select,.drb-dates .input{min-height:34px;padding:5px 9px;font-size:13.5px;font-weight:500}
+.drb-dates{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}.drb-dates > .dp,.drb-dates > .input{flex:1 1 150px;min-width:0}
+.drb-arr{font-size:12.5px;color:var(--text-3);font-weight:500;white-space:nowrap}
+.drb-st{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-weight:500}
+.drb-dl dd .drb-st .btn{margin-left:0}
+.drb-ed{color:var(--amber);font-size:12px;font-weight:600}
+.drb-miss{display:inline-block;padding:0 6px;border-radius:999px;background:var(--red-bg);color:var(--red);font-size:11px;font-weight:600}
+.drb-sub{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.btn.nudge{border-color:var(--action);color:var(--action);box-shadow:0 0 0 3px rgba(30,91,168,.16)}
 @container app (max-width:640px){.drb-dl{grid-template-columns:minmax(0,1fr)}.drb-dl dt{margin-top:4px}}
 /* V7.9: มือถือ / แท็บเล็ต */
 .ctabs .ct-menu{display:none}
@@ -1117,7 +1129,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.13';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.14';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -2711,8 +2723,9 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       F('customer', 'ชื่อลูกค้า / โครงการ <span class="req">*</span>', d.customer, 'c6') + F('siteName', 'สถานที่ติดตั้ง <span class="req">*</span>', d.siteName, 'c6') +
       F('address', 'ที่อยู่', d.address, 'c8') + F('province', 'จังหวัด <span class="req">*</span>', d.province, 'c4', '<select class="select" name="province"><option value="">— เลือก —</option><optgroup label="ใช้บ่อย">' + PROV.map(provOpt).join('') + '</optgroup><optgroup label="จังหวัดอื่น">' + PROV_REST.map(provOpt).join('') + '</optgroup>' + (d.province === 'จังหวัดอื่น ๆ' ? provOpt('จังหวัดอื่น ๆ') : '') + '</select>') +
       F('mapUrl', icon('pin', 'sm') + ' พิกัด / ลิงก์ Google Maps', d.mapUrl || '', 'c12', '<div class="map-in"><input class="input" name="mapUrl" value="' + esc(d.mapUrl || '') + '" placeholder="วางลิงก์จาก Google Maps หรือพิกัด เช่น 13.7563, 100.5018" autocomplete="off" spellcheck="false" data-inp="mapChk">' +
-        '<button type="button" class="btn" data-act="mapFind" title="เปิด Google Maps ค้นจากชื่อสถานที่ / ที่อยู่ / จังหวัด">' + icon('search', 'sm') + ' หาใน Google Maps</button></div>' +
-        '<div class="help">ใน Google Maps กดค้างที่ตำแหน่ง (หรือ แชร์ → คัดลอกลิงก์) แล้ววางที่นี่ · ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น (เหมือนที่อยู่) · ไม่ใส่พิกัด = ผู้รับเหมา / ช่างได้ปุ่ม “นำทางตามที่อยู่” แทน (Google หาจากที่อยู่ — ใส่พิกัดแม่นกว่า)</div><div id="map-prev"></div>') +
+        '<button type="button" class="btn" data-act="mapFind" title="เปิด Google Maps ค้นจากที่อยู่ + จังหวัด">' + icon('search', 'sm') + ' หาใน Google Maps</button>' +
+        '<button type="button" class="btn" data-act="mapPaste" title="วางลิงก์ / พิกัดที่คัดลอกจาก Google Maps">' + icon('copy', 'sm') + ' วางลิงก์</button></div>' +
+        '<div class="help">กด หาใน Google Maps → ดูว่าหมุดอยู่ที่บ้านลูกค้า (ไม่ตรง: กดค้างที่บ้านหลังที่ถูก) → แชร์ → คัดลอกลิงก์ → กลับมากด วางลิงก์ · ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น (เหมือนที่อยู่) · ไม่ใส่พิกัด = ผู้รับเหมา / ช่างได้ปุ่ม “นำทางตามที่อยู่” แทน (Google หาจากที่อยู่ — ใส่พิกัดแม่นกว่า)</div><div id="map-prev"></div>') +
       F('contactName', 'ผู้ติดต่อหน้างาน', d.contactName, 'c6') + F('contactPhone', 'เบอร์ผู้ติดต่อ', d.contactPhone, 'c6', '<input class="input" name="contactPhone" value="' + esc(d.contactPhone) + '"><div class="help">ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น</div>') +
       /* V7.16.12: ลูกค้าพร้อมให้ติดตั้ง = “กำหนดติดตั้ง” ในแบบ (อ่านให้เอง) · ต้องเสร็จภายใน = + N วัน (Admin ตั้ง) ตามให้จนกว่าจะแก้เอง */
       F('wantFrom', 'ลูกค้าพร้อมให้ติดตั้งตั้งแต่ (กำหนดติดตั้ง) <span class="req">*</span>', d.wantFrom, 'c6', '<input class="input" type="date" name="wantFrom" value="' + esc(d.wantFrom) + '" data-chg="wantChg"' + (o ? '' : ' data-def="1"') + '>') +
@@ -2738,6 +2751,7 @@ function wantHelp() {
   const ff = wf.closest('.field'), tf = wt.closest('.field'), draw = !!(ff && ff.classList.contains('dr-auto')) && !!wf.value, auto = wt.dataset.auto === '1';
   if (tf) { tf.classList.toggle('dr-calc', draw && auto); if (draw && auto) tf.classList.remove('dr-auto', 'invalid'); }   /* ป้าย "คำนวณจากแบบงาน" (ไม่ใช่ "จากแบบงาน") */
   h.innerHTML = wantHelpHtml(wf.value, wt.value, auto, draw && auto);
+  drSyncAll();   /* V7.16.14: วันที่ในกล่องอ่านจากแบบตาม */
 }
 /* ตั้งวันลูกค้าพร้อม (จากแบบงาน / Odoo) → ต้องเสร็จภายในตามค่ามาตรฐาน ถ้ายังไม่ได้แก้เอง (force = ใช้ค่ามาตรฐานเลย) */
 function wantSet(from, force) {
@@ -2771,6 +2785,21 @@ on('mapFind', () => {
   const q = mapAddrQ({ address: g('address'), province: g('province') }) || [g('siteName'), g('province')].filter(Boolean).join(' ');   /* V7.16.13: ค้นจากที่อยู่ก่อน */
   const url = m ? mapHref(m) : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q || 'ประเทศไทย');
   window.open(url, '_blank', 'noopener');
+  if (!m) { const b = $('#sf .map-in [data-act=mapPaste]'); if (b) b.classList.add('nudge'); }   /* V7.16.14: ขั้นต่อไป = วางลิงก์ */
+});
+/* V7.16.14: วางลิงก์จากคลิปบอร์ดในคลิกเดียว (มือถือ: คัดลอกลิงก์ใน Google Maps แล้วกลับมากด) · อ่านคลิปบอร์ดไม่ได้ = โฟกัสช่องให้วางเอง */
+on('mapPaste', async () => {
+  const el = $('#sf [name=mapUrl]'); if (!el) return;
+  if (el.readOnly || el.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; }
+  let t = '';
+  try { t = navigator.clipboard && navigator.clipboard.readText ? String((await navigator.clipboard.readText()) || '') : ''; } catch (e) { t = ''; }
+  t = t.trim();
+  if (!t) { el.focus(); try { el.select(); } catch (e) { /* select */ } toast('อ่านลิงก์ที่คัดลอกไม่ได้ — วางในช่องเอง: Ctrl+V (มือถือ: กดค้างในช่อง → วาง)'); return; }
+  const u = /https?:\/\/\S+/.exec(t), v = u && mapNorm(u[0]) ? u[0] : mapNorm(t) ? t : '';
+  if (!v) { toast('สิ่งที่คัดลอกไว้ไม่ใช่ลิงก์ Google Maps หรือพิกัด — ใน Google Maps กด แชร์ → คัดลอกลิงก์ ก่อน', 'err'); return; }
+  el.value = v; el.dispatchEvent(new Event('input', { bubbles: true }));
+  const b = $('#sf .map-in [data-act=mapPaste]'); if (b) b.classList.remove('nudge');
+  toast('วางลิงก์แล้ว — กด “นำทางไปหน้างาน” ใต้ช่องเพื่อลองดูว่าไปถูกที่');
 });
 /* เตือนเลข StarNexus ซ้ำกับ Order ที่มองเห็นอยู่ (Server ตรวจซ้ำกับทุก Order อีกครั้งตอนบันทึก) */
 function snCheck() {
@@ -2875,7 +2904,7 @@ function odooApply(raw, opt) {
   const ban = $('#odoo-ban');
   if (ban) ban.innerHTML = '<div style="margin-bottom:14px">' + notice('info', '<b>ข้อมูลจาก Odoo' + (d.ref ? ' · ' + esc(d.ref) : '') + '</b> — เติมให้ ' + keys.length + ' ช่อง' + (lock ? ' · <b>แก้ได้เฉพาะวันที่ติดตั้ง</b> (ลูกค้าพร้อมให้ติดตั้ง / ต้องเสร็จภายใน) และแนบแบบงาน' : ' · แก้ไขได้ทุกช่อง') +
     (lock && S.user.role === 'admin' ? ' <button type="button" class="btn sm" data-act="odooUnlock">' + icon('edit', 'sm') + ' ปลดล็อก (Admin)</button>' : ''), 'link') + '</div>';
-  saleCalc(); snCheck(); mapChk();
+  saleCalc(); snCheck(); mapChk(); drMark();   /* V7.16.14: กล่องอ่านจากแบบตาม */
   toast('เติมข้อมูลจาก Odoo' + (d.ref ? ' ' + d.ref : '') + ' แล้ว — ตรวจวันที่ติดตั้ง แนบแบบงาน แล้วกดยืนยัน');
   return true;
 }
@@ -2884,7 +2913,7 @@ on('odooUnlock', () => {
   const f = $('#sf'); if (!f || !isAdmin()) return;
   $$('[readonly], select:disabled, [name=type]:disabled', f).forEach((el) => { el.readOnly = false; el.disabled = false; });
   $$('.odoo-lock', f).forEach((x) => x.classList.remove('odoo-lock'));
-  if (SF.odoo) SF.odoo.lock = false; const b = $('#odoo-ban [data-act=odooUnlock]'); if (b) b.remove();
+  if (SF.odoo) SF.odoo.lock = false; const b = $('#odoo-ban [data-act=odooUnlock]'); if (b) b.remove(); drMark();
   toast('ปลดล็อกช่องที่มาจาก Odoo แล้ว');
 });
 window.CN_odooOrder = (d, opt) => odooApply(d, opt || {});
@@ -5292,19 +5321,21 @@ function drMark() {
     const v = String(el.value || '').trim(), empty = !v || (k === 'cabinets' && v === '0');
     fd.classList.toggle('dr-miss', on && empty && !fd.classList.contains('dr-auto') && !fd.classList.contains('sn-auto'));
   }
+  drSyncAll();   /* V7.16.14: กล่องอ่านจากแบบตามช่องในฟอร์ม */
 }
 function drPaint() {
   const box = $('#drb'); if (!box) return;
   drMark();
+  const act = document.activeElement, adp = act && act.closest ? act.closest('#drb .dp') : null, ak = act && act.dataset && act.dataset.drk ? act.dataset.drk : adp && adp.querySelector('[data-drk]') ? adp.querySelector('[data-drk]').dataset.drk : '';
+  let apos = null; try { apos = ak ? act.selectionStart : null; } catch (e) { apos = null; }
   if (!DR.busy && !DR.files.length && !DR.err.length && !DR.hold.length) { box.innerHTML = ''; return; }
   const found = SF.drawOnly ? [] : DR_ORDER.filter((k) => DR.res[k]), miss = SF.drawOnly ? [] : ['customer', 'siteName', 'address', 'province', 'contactName', 'contactPhone'].filter((k) => !DR.res[k]);   /* V7.16.6: หน้าแก้ไขแบบงานไม่มีช่องลูกค้า */
   box.innerHTML = '<div class="drb">' +
     '<div class="drb-h">' + icon('file', 'sm') + (DR.busy ? '<span>กำลังอ่านแบบงาน + ตรวจหน้าราคา…</span><span class="spin" aria-hidden="true"></span>' : '<span>' + (DR.files.length ? 'อ่านจากแบบงาน ' + DR.files.length + ' ไฟล์' : 'ไฟล์แนบ') + '</span>') + '</div>' +
-    (found.length ? '<dl class="drb-dl">' + found.map((k) => '<dt>' + DR_FIELD[k] + '</dt><dd>' + (k === 'wantFrom' ? esc(fmtDate(DR.res[k].v)) + ' → ต้องเสร็จภายใน ' + esc(fmtDate(wantStd(DR.res[k].v))) + ' (+' + finishDaysNow() + ' วัน)' + (DR.res[k].v < todayStr() ? ' <span class="badge t-amber">วันที่ผ่านมาแล้ว — ตรวจอีกครั้ง</span>' : '') : esc(DR.res[k].v)) +
-        (DR.filled.indexOf(k) >= 0 ? ' <span class="drb-ok">' + icon('check', 'xs') + ' เติมแล้ว</span>' : '') +
-        (DR.conf.indexOf(k) >= 0 ? ' <button type="button" class="btn sm" data-act="drUse" data-k="' + k + '">ใช้ค่าจากแบบ</button><span class="xs muted"> (ในฟอร์มกรอกไว้ต่างจากแบบ)</span>' : '') + '</dd>').join('') + '</dl>'
-      : (DR.busy || !DR.files.length || SF.drawOnly ? '' : '<div class="small muted">ไม่พบหัวข้อลูกค้า / ที่อยู่ ในแบบงาน — กรอกเอง</div>')) +
-    (!DR.busy && found.length && miss.length ? '<div class="xs muted">ไม่พบในแบบ: ' + miss.map((k) => DR_FIELD[k]).join(' · ') + '</div>' : '') +
+    (!DR.busy && DR.files.length && !SF.drawOnly ? '<div class="xs muted drb-tip">แก้ได้ทุกช่องในกล่องนี้ หรือในฟอร์มด้านล่าง — สองที่ผูกกัน แก้ที่หนึ่งอีกที่เปลี่ยนตาม</div>' +
+      '<dl class="drb-dl">' + drRowKeys().map((k) => '<dt>' + DR_FIELD[k] + '</dt><dd data-drr="' + k + '"><div class="drb-row">' + drCtl(k) + '<span class="drb-st" data-drs="' + k + '"></span></div>' +
+        (k === 'mapUrl' ? '<div class="drb-sub"><button type="button" class="btn sm" data-act="mapFind">' + icon('search', 'sm') + ' หาใน Google Maps</button><button type="button" class="btn sm" data-act="mapPaste">' + icon('copy', 'sm') + ' วางลิงก์</button></div>' : '') + '</dd>').join('') + '</dl>'
+      : '') +
     DR.cut.map((c) => '<div class="drb-cut">' + icon('shield', 'xs') + ' <b>' + esc(c.name) + '</b>: ' +
       ((c.masked || []).length ? 'ปิดราคาแล้ว — หน้า ' + c.masked.join(', ') + ' (ใบเสนอราคา: เอาเฉพาะราคาออก รายการตู้ / ขนาด / จำนวน ยังอยู่)' : '') +
       ((c.cut || []).length ? ((c.masked || []).length ? ' · ' : '') + 'ตัดทั้งหน้า — หน้า ' + c.cut.join(', ') + (c.why ? ' (' + esc(c.why) + ')' : '') : '') +
@@ -5315,7 +5346,60 @@ function drPaint() {
       '<span class="row" style="gap:6px"><button type="button" class="btn sm" data-act="drHoldNo">ไม่แนบ</button><button type="button" class="btn sm primary" data-act="drHold">ตรวจแล้ว ไม่มีราคา — แนบ</button></span></div>' : '') +
     (DR.text.some((t) => t.lines.length) ? '<details class="drb-raw"><summary>ดูข้อความที่อ่านได้จากแบบ</summary>' + DR.text.filter((t) => t.lines.length).map((t) => '<div class="xs strong" style="margin-top:6px">' + esc(t.name) + '</div><pre>' + esc(t.lines.slice(0, 120).join('\n')) + (t.lines.length > 120 ? '\n…' : '') + '</pre>').join('') + '</details>' : '') +
     '</div>';
+  drSyncAll();
+  if (ak) setTimeout(() => {   /* วาดใหม่ระหว่างพิมพ์ในกล่อง → โฟกัสช่องเดิมต่อ */
+    const c = $('#drb [data-drk="' + ak + '"]'); if (!c) return; const t = c.closest('.dp') ? c.closest('.dp').querySelector('.dp-t') : c;
+    if (!t || t.disabled) return; t.focus(); if (apos != null) { try { t.setSelectionRange(apos, apos); } catch (e) { /* select */ } }
+  }, 0);
 }
+/* V7.16.14: กล่องอ่านจากแบบงาน — แก้ได้ทุกช่อง · ผูกกับช่องในฟอร์ม (ไม่มี name — ค่าที่บันทึกมาจากฟอร์มที่เดียว) */
+function drRowKeys() { return DR_ORDER.filter((k) => drField(k) && (DR.res[k] || DR_MISS.indexOf(k) >= 0 || k === 'wantFrom')); }
+const drTrim = (v) => String(v == null ? '' : v).trim();
+function drShowV(k, v) { return k === 'wantFrom' ? fmtDate(v) : v; }
+function drCtl(k) {
+  const f = drField(k), lab = String(DR_FIELD[k] || '').replace(/\s*\(.*$/, ''), at = ' data-drk="' + k + '" aria-label="' + esc(lab) + '"';
+  if (k === 'province') return '<select class="select sm drb-in"' + at + '>' + f.innerHTML + '</select>';
+  if (k === 'wantFrom') return '<span class="drb-dates"><input class="input sm drb-in" type="date"' + at + '><span class="drb-arr">→ ต้องเสร็จภายใน</span><input class="input sm drb-in" type="date" data-drk="wantTo" aria-label="ต้องเสร็จภายใน"></span>';
+  return '<input class="input sm drb-in' + (k === 'snOrder' ? ' mono' : '') + '"' + at + (f.getAttribute('inputmode') ? ' inputmode="' + esc(f.getAttribute('inputmode')) + '"' : '') + (f.maxLength > 0 ? ' maxlength="' + f.maxLength + '"' : '') + ' placeholder="' + (k === 'mapUrl' ? 'วางลิงก์จาก Google Maps หรือพิกัด' : 'กรอกเอง') + '" autocomplete="off" spellcheck="false">';
+}
+function drStHtml(k) {
+  const f = drField(k); if (!f) return '';
+  const v = drTrim(f.value), r = DR.res[k], rv = r ? drTrim(r.v) : '';
+  let h;
+  if (r && v === rv) h = '<span class="drb-ok">' + icon('check', 'xs') + (DR.filled.indexOf(k) >= 0 ? ' เติมแล้ว' : ' ตรงกับแบบ') + '</span>';
+  else if (r) h = '<span class="drb-ed">' + (DR.conf.indexOf(k) >= 0 && DR.filled.indexOf(k) < 0 ? 'ในฟอร์มกรอกไว้ต่างจากแบบ' : 'แก้แล้ว') + '</span><span class="xs muted">ในแบบ: ' + esc(drShowV(k, rv)) + '</span><button type="button" class="btn sm" data-act="drUse" data-k="' + k + '">ใช้ค่าจากแบบ</button>';
+  else if (k === 'wantFrom') h = '<span class="xs muted">ไม่พบกำหนดติดตั้งในแบบ</span>';
+  else h = v ? '<span class="xs muted">กรอกเองแล้ว</span>' : '<span class="drb-miss">ไม่พบในแบบ — กรอกเอง</span>';
+  if (k === 'wantFrom') {
+    const t = drField('wantTo'), n = finishDaysNow();
+    h += t && t.dataset.auto === '1' ? '<span class="xs muted">ต้องเสร็จ = +' + n + ' วัน</span>' : '<span class="xs muted">วันเสร็จกำหนดเอง</span>';
+    if (v && v < todayStr()) h += '<span class="badge t-amber">วันที่ผ่านมาแล้ว — ตรวจอีกครั้ง</span>';
+  }
+  if (f.readOnly || f.disabled) h += '<span class="xs muted">' + icon('lock', 'xs') + ' ล็อกตาม Odoo</span>';
+  return h;
+}
+/* ฟอร์ม → กล่อง (เรียกจาก drMark / wantHelp ทุกครั้งที่ช่องในฟอร์มเปลี่ยน · ช่องในกล่องที่กำลังพิมพ์ไม่ถูกทับ) */
+function drSyncAll() {
+  const box = $('#drb'); if (!box || !box.querySelector('[data-drk]')) return;
+  const act = document.activeElement;
+  $$('[data-drk]', box).forEach((c) => {
+    const f = drField(c.dataset.drk); if (!f) return;
+    const foc = act === c || !!(act && act.closest && act.closest('.dp') && act.closest('.dp').contains(c));
+    const dis = !!(f.readOnly || f.disabled); let force = false; if (c.disabled !== dis) { c.disabled = dis; force = !!c.dataset.dp; }
+    if (force || (!foc && c.value !== f.value)) c.value = f.value;   /* ช่องวันที่: ตั้งค่าใหม่ = ช่องตัวหนังสือล็อก/ปลดตาม */
+  });
+  $$('[data-drs]', box).forEach((x) => { const h = drStHtml(x.dataset.drs); if (x.innerHTML !== h) x.innerHTML = h; });
+}
+/* กล่อง → ฟอร์ม: ใส่ค่าในช่องจริง แล้วส่งเหตุการณ์แบบเดียวกับพิมพ์ในช่องจริง (ตรวจเลข Order ซ้ำ / พิกัด / วันเสร็จ / ป้ายจากแบบงาน ทำงานเหมือนเดิม) */
+function drPush(e) {
+  const c = e.target && e.target.closest ? e.target.closest('#drb [data-drk]') : null; if (!c) return;
+  const f = drField(c.dataset.drk); if (!f) return;
+  if (f.readOnly || f.disabled) { c.value = f.value; toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; }
+  if (f.value !== c.value) f.value = c.value;
+  f.dispatchEvent(new Event(e.type, { bubbles: true }));
+  drSyncAll();
+}
+document.addEventListener('input', drPush); document.addEventListener('change', drPush);
 on('drUse', (el) => {
   const k = el.dataset.k, r = DR.res[k]; if (!r) return;
   if (k === 'snOrder') { const s = $('#sf-sn'); if (s) { s.value = r.v; snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } }
