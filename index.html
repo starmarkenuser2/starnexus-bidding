@@ -952,6 +952,12 @@ body.slv-on{overflow:hidden}
 .cb.late{box-shadow:inset 0 0 0 2px var(--red)}
 .gb.late{box-shadow:0 0 0 2px var(--red)}
 .late-tag{white-space:nowrap}
+/* V7.16.12: ปุ่มแบบลิงก์ในข้อความช่วยเหลือ (ใช้ค่ามาตรฐาน) */
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--action);text-decoration:underline;cursor:pointer}
+.linkbtn:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:2px}
+/* V7.16.12: Order ทั้งหมดใน Production — กล่องเลื่อนดูได้ */
+.snb-all{max-height:min(420px,55vh);overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.snb-all .snb-more{margin:6px 0 2px;width:100%;justify-content:center}
 
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
@@ -1108,11 +1114,14 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.11';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.12';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
 const bidDaysOf = (o) => Math.min(60, Math.max(1, Math.floor(Number(o && o.bidDays) || BID_DAYS)));
+/* V7.16.12: ต้องเสร็จภายใน = วันลูกค้าพร้อมให้ติดตั้ง (กำหนดติดตั้ง) + N วัน — Admin ตั้ง 0–90 วัน (ตั้งค่าระบบ · ค่าเริ่มต้น 7) · Sale แก้วันรายงานได้ */
+const FINISH_DAYS = 7;
+const finishDaysNow = () => { const st = typeof DB !== 'undefined' && DB && DB.settings, v = st && st.finishDays != null && st.finishDays !== '' ? Number(st.finishDays) : NaN; return Number.isFinite(v) && v >= 0 ? Math.min(90, Math.floor(v)) : FINISH_DAYS; };
 const bidDaysNow = () => Math.min(60, Math.max(1, Math.floor(Number(typeof DB !== 'undefined' && DB && DB.settings && DB.settings.bidDays) || BID_DAYS)));
 /* % ค่าติดตั้งจากราคาขาย: เก็บที่ Server และส่งมาเฉพาะ Admin — ไม่มีค่าอัตราฝังในโค้ดหน้าเว็บ */
 const TYPES = [
@@ -1690,7 +1699,7 @@ if (typeof MutationObserver !== 'undefined') new MutationObserver((ms) => { for 
 /* ---------- แบบงาน (ทุกหน้าที่เกี่ยวข้องกับ Order) ---------- */
 function drawBtns(o) {
   return '<button class="drawbtn" data-act="viewDraw" data-id="' + o.id + '">' + icon('drawing', 'sm') + ' ดูแบบงานติดตั้ง</button>' +
-    '<button class="drawbtn prod" data-act="viewProd" data-id="' + o.id + '">' + icon('factory', 'sm') + ' ดูแบบงานผลิต</button>';
+    (o.prodUrl ? '<button class="drawbtn prod" data-act="viewProd" data-id="' + o.id + '">' + icon('factory', 'sm') + ' ดูแบบงานผลิต</button>' : '');   /* V7.16.12: ลิงก์ไม่บังคับ — ไม่มี = ไม่มีปุ่ม */
 }
 on('viewDraw', (el) => {
   const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o) return;
@@ -2650,14 +2659,14 @@ function sfDrawFields(prodUrl) {
         '<li>△ รูปภาพ / PDF สแกน — ตรวจราคาไม่ได้: ระบบถามให้ยืนยันว่าไม่มีราคาก่อนแนบ · อ่านข้อมูลไม่ได้ ต้องกรอกเอง</li>' +
         '<li>✕ ห้ามแนบรูปถ่ายใบเสนอราคา / ต้นทุน (ระบบตรวจราคาในรูปไม่ได้) · ไฟล์ละไม่เกิน 25 MB</li></ul></div>' +
         '<div id="sf-files"></div><div class="err"></div></div>' +
-      '<div class="field c6" data-f="prodUrl"><label>ลิงก์ดูแบบงานผลิต (Production Drawing) <span class="req">*</span></label><input class="input" name="prodUrl" type="url" value="' + esc(d.prodUrl) + '" placeholder="https://drive.google.com/…"><div class="help">ผู้รับเหมากดเปิดได้จากทุกหน้าที่เกี่ยวกับ Order นี้</div><div class="err"></div></div><div class="c12" id="drb"></div>';
+      '<div class="field c6" data-f="prodUrl"><label>ลิงก์ดูแบบงานผลิต (Production Drawing) <span class="xs muted">ไม่บังคับ</span></label><input class="input" name="prodUrl" type="url" value="' + esc(d.prodUrl) + '" placeholder="https://drive.google.com/…"><div class="help">เลือก Order จาก StarNexus ด้านบน = เติมให้เอง · พิมพ์เลข Order เองแล้วไม่มีลิงก์ เว้นว่างได้ · ผู้รับเหมากดเปิดได้จากทุกหน้าที่เกี่ยวกับ Order นี้</div><div class="err"></div></div><div class="c12" id="drb"></div>';
 }
 const SF = { files: [] };
 route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
   const o = m[1] ? DB.orders.find((x) => x.id === m[1]) : null;
   if (m[1] && (!o || !canEditOrder(o))) return { nav: '#/sale/orders', html: empty('lock', 'แก้ไขไม่ได้', !o ? 'ไม่พบ Order นี้' : o.cancelledAt ? 'Order นี้ถูกยกเลิกแล้ว' : o.award ? 'จัดซื้ออนุมัติผู้รับเหมาแล้ว — แก้ไข Order ไม่ได้ (ถ้าต้องยกเลิก ติดต่อ Admin)' : 'ไม่ใช่ Order ของคุณ', '<a class="btn" href="#/sale/orders">กลับ</a>') };
   const live = !!(o && o.confirmedAt), admin = S.user.role === 'admin';
-  const d = o || { snOrder: '', title: '', customer: '', siteName: '', address: '', province: '', contactName: '', contactPhone: '', mapUrl: '', type: '', sale: '', cabinets: '', wantFrom: addDays(todayStr(), 14), wantTo: addDays(todayStr(), 21), note: '', prodUrl: '', drawings: [] };
+  const d = o || { snOrder: '', title: '', customer: '', siteName: '', address: '', province: '', contactName: '', contactPhone: '', mapUrl: '', type: '', sale: '', cabinets: '', wantFrom: addDays(todayStr(), 14), wantTo: addDays(addDays(todayStr(), 14), finishDaysNow()), note: '', prodUrl: '', drawings: [] };
   snbReset(); drReset(); SF.drawOnly = false; SF.files = (d.drawings || []).slice(); SF.id = o ? o.id : ''; SF.busy = false; SF.live = live; SF.orig = o ? { sale: Number(o.sale) || 0, type: o.type || '' } : null;
   const F = (n, label, val, cls, extra) => '<div class="field ' + cls + '" data-f="' + n + '"><label>' + label + '</label>' + (extra || '<input class="input" name="' + n + '" value="' + esc(val) + '">') + '<div class="err"></div></div>';
   const PROV = ['กรุงเทพมหานคร', 'นนทบุรี', 'ปทุมธานี', 'สมุทรปราการ', 'สมุทรสาคร', 'นครปฐม', 'อยุธยา', 'ชลบุรี', 'ระยอง', 'ฉะเชิงเทรา'];
@@ -2690,7 +2699,9 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
         '<button type="button" class="btn" data-act="mapFind" title="เปิด Google Maps ค้นจากชื่อสถานที่ / ที่อยู่ / จังหวัด">' + icon('search', 'sm') + ' หาใน Google Maps</button></div>' +
         '<div class="help">ใน Google Maps กดค้างที่ตำแหน่ง (หรือ แชร์ → คัดลอกลิงก์) แล้ววางที่นี่ · ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น (เหมือนที่อยู่)</div><div id="map-prev"></div>') +
       F('contactName', 'ผู้ติดต่อหน้างาน', d.contactName, 'c6') + F('contactPhone', 'เบอร์ผู้ติดต่อ', d.contactPhone, 'c6', '<input class="input" name="contactPhone" value="' + esc(d.contactPhone) + '"><div class="help">ผู้รับเหมาเห็นหลังได้รับอนุมัติเท่านั้น</div>') +
-      F('wantFrom', 'ลูกค้าพร้อมให้ติดตั้งตั้งแต่ <span class="req">*</span>', d.wantFrom, 'c6', '<input class="input" type="date" name="wantFrom" value="' + esc(d.wantFrom) + '">') + F('wantTo', 'ต้องเสร็จภายใน <span class="req">*</span>', d.wantTo, 'c6', '<input class="input" type="date" name="wantTo" value="' + esc(d.wantTo) + '">') +
+      /* V7.16.12: ลูกค้าพร้อมให้ติดตั้ง = “กำหนดติดตั้ง” ในแบบ (อ่านให้เอง) · ต้องเสร็จภายใน = + N วัน (Admin ตั้ง) ตามให้จนกว่าจะแก้เอง */
+      F('wantFrom', 'ลูกค้าพร้อมให้ติดตั้งตั้งแต่ (กำหนดติดตั้ง) <span class="req">*</span>', d.wantFrom, 'c6', '<input class="input" type="date" name="wantFrom" value="' + esc(d.wantFrom) + '" data-chg="wantChg"' + (o ? '' : ' data-def="1"') + '>') +
+      F('wantTo', 'ต้องเสร็จภายใน <span class="req">*</span>', d.wantTo, 'c6', '<input class="input" type="date" name="wantTo" value="' + esc(d.wantTo) + '" data-chg="wantChg" data-auto="' + (!o || d.wantTo === wantStd(d.wantFrom) ? '1' : '0') + '"><div class="help" id="wt-help">' + wantHelpHtml(d.wantFrom, d.wantTo, !o || d.wantTo === wantStd(d.wantFrom)) + '</div>') +
       F('bidDays', icon('clock', 'sm') + ' เปิดรับราคา <span class="req">*</span>', '', 'c6', '<div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + (o ? bidDaysOf(o) : bidDaysNow()) + '" data-inp="bdChk" aria-label="จำนวนวันเปิดรับราคา"><span>วัน</span></div><div class="help" id="bd-help"></div>') +
       F('note', 'หมายเหตุถึงผู้รับเหมา', d.note, 'c12', '<textarea class="textarea" name="note" rows="2" placeholder="เช่น เวลาเข้างาน ลิฟต์ขนของ">' + esc(d.note) + '</textarea>') + '</div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('layers') + ' ประเภทงานและราคา</h2><span class="xs muted">เลือกได้ 1 ประเภทต่อ 1 Order</span></div><div class="card-b">' +
@@ -2699,6 +2710,30 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       (admin ? '<div class="c6"><div class="fee-total" id="fee-box"></div><div class="xs muted" style="margin-top:4px">' + icon('lock', 'xs') + ' ช่องนี้เห็นเฉพาะ Admin</div></div>' : '') + '</div></div></div>' +
     '<div class="card"><div class="card-f" style="border-top:0;border-radius:var(--r-lg)"><a class="btn" href="#/sale/orders">กลับ</a><span class="spacer"></span>' + btns + '</div></div></form>' };
 });
+/* V7.16.12: ต้องเสร็จภายใน = ลูกค้าพร้อมให้ติดตั้ง + N วัน (finishDaysNow) — ตามวันเริ่มให้เอง จนกว่า Sale จะแก้ช่อง “ต้องเสร็จภายใน” เอง */
+function wantStd(from) { return from ? addDays(from, finishDaysNow()) : ''; }
+function wantHelpHtml(from, to, auto) {
+  const n = finishDaysNow(), std = wantStd(from);
+  return (auto ? 'คำนวณให้: ลูกค้าพร้อมให้ติดตั้ง + ' + n + ' วัน' : 'กำหนดเอง') +
+    (std && to !== std ? ' · <button type="button" class="linkbtn" data-act="wantStdUse">ใช้ค่ามาตรฐาน ' + fmtDate(std) + ' (+' + n + ' วัน)</button>' : '') + ' · แก้วันเองได้ · ค่ามาตรฐานตั้งที่ ตั้งค่าระบบ (Admin)';
+}
+function wantHelp() { const f = $('#sf'), h = $('#wt-help'); if (!f || !h) return; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]'); if (wf && wt) h.innerHTML = wantHelpHtml(wf.value, wt.value, wt.dataset.auto === '1'); }
+/* ตั้งวันลูกค้าพร้อม (จากแบบงาน / Odoo) → ต้องเสร็จภายในตามค่ามาตรฐาน ถ้ายังไม่ได้แก้เอง (force = ใช้ค่ามาตรฐานเลย) */
+function wantSet(from, force) {
+  const f = $('#sf'); if (!f) return false; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]'); if (!wf || !from) return false;
+  wf.value = from; delete wf.dataset.def;
+  let moved = false;
+  if (wt && (force || wt.dataset.auto === '1' || !wt.value)) { wt.value = wantStd(from); wt.dataset.auto = '1'; moved = true; const fd = wt.closest('.field'); if (fd) fd.classList.remove('invalid'); }
+  const fd = wf.closest('.field'); if (fd) fd.classList.remove('invalid');
+  wantHelp(); return moved;
+}
+Acts.wantChg = (el) => {
+  const f = $('#sf'); if (!f) return; const wf = f.querySelector('[name=wantFrom]'), wt = f.querySelector('[name=wantTo]');
+  if (el.name === 'wantFrom') { delete wf.dataset.def; if (wt && wt.dataset.auto === '1' && wf.value) wt.value = wantStd(wf.value); }
+  else if (el.name === 'wantTo' && wt) wt.dataset.auto = wt.value === wantStd(wf && wf.value) ? '1' : '0';
+  wantHelp();
+};
+on('wantStdUse', () => { const f = $('#sf'); if (!f) return; const wf = f.querySelector('[name=wantFrom]'); if (wf && wf.value) { wantSet(wf.value, true); toast('ต้องเสร็จภายใน ' + fmtDate(wantStd(wf.value)) + ' (ลูกค้าพร้อม + ' + finishDaysNow() + ' วัน)'); } });
 /* V7.10: พิกัด Google Maps — ตรวจรูปแบบ + ปุ่มเปิดดู · หาใน Google Maps จากชื่อสถานที่/ที่อยู่ */
 function mapChk() {
   const el = $('#sf [name=mapUrl]'), box = $('#map-prev'); if (!el || !box) return;
@@ -2813,7 +2848,8 @@ function odooApply(raw, opt) {
     const fd = el.closest('.field'); if (fd) { fd.classList.remove('invalid', 'dr-miss'); fd.classList.toggle('odoo-lock', lock); }
     keys.push(k);
   });
-  ['wantFrom', 'wantTo'].forEach((k) => { const el = f.querySelector('[name=' + k + ']'); if (el && d[k]) el.value = d[k]; });
+  if (d.wantFrom) wantSet(d.wantFrom, false);   /* V7.16.12: ไม่มีวันเสร็จจาก Odoo → + N วัน */
+  if (d.wantTo) { const el = f.querySelector('[name=wantTo]'); if (el) { el.value = d.wantTo; el.dataset.auto = d.wantTo === wantStd(d.wantFrom || (f.querySelector('[name=wantFrom]') || {}).value) ? '1' : '0'; wantHelp(); } }
   SF.odoo = { ref: d.ref || '', lock, keys };
   const ban = $('#odoo-ban');
   if (ban) ban.innerHTML = '<div style="margin-bottom:14px">' + notice('info', '<b>ข้อมูลจาก Odoo' + (d.ref ? ' · ' + esc(d.ref) : '') + '</b> — เติมให้ ' + keys.length + ' ช่อง' + (lock ? ' · <b>แก้ได้เฉพาะวันที่ติดตั้ง</b> (ลูกค้าพร้อมให้ติดตั้ง / ต้องเสร็จภายใน) และแนบแบบงาน' : ' · แก้ไขได้ทุกช่อง') +
@@ -2851,7 +2887,7 @@ on('drawSave', async () => {
   const f = $('#sf'), o = DB.orders.find((x) => x.id === SF.id); if (!f || !o) return;
   const url = ((f.querySelector('[name=prodUrl]') || {}).value || '').trim(), errs = {};
   if (o.confirmedAt && !SF.files.length) errs.drawings = 'แนบแบบงานติดตั้งอย่างน้อย 1 ไฟล์';
-  if ((o.confirmedAt || url) && !/^https?:\/\/\S+\.\S+/.test(url)) errs.prodUrl = 'ใส่ลิงก์ที่ขึ้นต้นด้วย https://';
+  if (url && !/^https?:\/\/\S+\.\S+/.test(url)) errs.prodUrl = 'ใส่ลิงก์ที่ขึ้นต้นด้วย https:// (หรือเว้นว่าง)';   /* V7.16.12: ไม่บังคับ */
   $$('.field', f).forEach((x) => { const k = x.dataset.f; x.classList.toggle('invalid', !!errs[k]); const e = x.querySelector('.err'); if (e) e.textContent = errs[k] || ''; });
   if (Object.keys(errs).length) { toast('กรอกข้อมูลให้ครบ ' + Object.keys(errs).length + ' ช่อง', 'err'); return; }
   if (SF.busy || DR.busy) { toast('รออัปโหลด / ตรวจราคาในไฟล์ให้เสร็จก่อน', 'err'); return; }
@@ -2878,8 +2914,8 @@ on('saleSave', async (el) => {
     if (!d.type) errs.type = 'เลือกประเภทงาน 1 ประเภท'; if (!(d.sale > 0)) errs.sale = 'ใส่ราคาขาย';
     if (!d.wantFrom) errs.wantFrom = 'เลือกวันที่'; if (!d.wantTo || d.wantTo < d.wantFrom) errs.wantTo = 'ต้องไม่ก่อนวันเริ่ม';
     if (!SF.files.length) errs.drawings = 'แนบแบบงานติดตั้งอย่างน้อย 1 ไฟล์';
-    if (!/^https?:\/\/\S+\.\S+/.test(d.prodUrl)) errs.prodUrl = 'ใส่ลิงก์ที่ขึ้นต้นด้วย https://';
   }
+  if (d.prodUrl && !/^https?:\/\/\S+\.\S+/.test(d.prodUrl)) errs.prodUrl = 'ใส่ลิงก์ที่ขึ้นต้นด้วย https:// (หรือเว้นว่าง)';   /* V7.16.12: ไม่บังคับ — พิมพ์เลข Order เองไม่มีลิงก์ก็บันทึกได้ */
   $$('.field', f).forEach((x) => { const k = x.dataset.f; x.classList.toggle('invalid', !!errs[k]); const e = x.querySelector('.err'); if (e) e.textContent = errs[k] || ''; });
   if (Object.keys(errs).length) { toast('กรอกข้อมูลให้ครบ ' + Object.keys(errs).length + ' ช่อง', 'err'); const first = f.querySelector('.field.invalid'); if (first) first.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
   if (SF.busy) { toast('รอบันทึกไฟล์แนบให้เสร็จก่อน', 'err'); return; }
@@ -4141,7 +4177,7 @@ on('doLogin', async () => {
              + รายละเอียด (รายการตู้ · ลิงก์แบบผลิต · ไม่มีราคา) ขึ้นตาราง sn_orders ทุก 10 นาที (ผู้ใช้ภายใน ไม่ใช่ผู้รับเหมา)
              · เปิดจากลิงก์ (มือถือ / คอม) — Admin / Sale / จัดซื้อ ค้น + เติมจากข้อมูลที่ซิงก์ (cn_sn_status / recent / search / order)
    ===================================================================== */
-const SNB = { on: false, hidden: false, app: '', ver: '', cur: '', seq: 0, wait: new Map(), q: '', list: null, pick: '', det: null, err: '', loading: false, t: 0, filled: '', home: false, recent: null, recentAt: 0, recentBusy: false, sumT: 0, sumLast: '' };
+const SNB = { on: false, hidden: false, app: '', ver: '', cur: '', seq: 0, wait: new Map(), q: '', list: null, pick: '', det: null, err: '', loading: false, t: 0, filled: '', home: false, recent: null, recentAt: 0, recentBusy: false, sumT: 0, sumLast: '', all: null };
 const SNB_FRAMED = FRAMED;
 const SNL = { uid: '', at: 0, busy: false, err: '', cache: new Map(), st: null };   /* V7.16.7–7.16.8: โหมดลิงก์ */
 const SNL_ROLES = { admin: 1, sale: 1, purchasing: 1 };
@@ -4150,6 +4186,7 @@ async function snbLinkCall(op, args) {
   if (!snbLinkOk()) throw new Error('ไม่ได้เปิดผ่าน Production Nexus');
   args = args || {};
   if (op === 'hello') return rpc('cn_sn_status');
+  if (op === 'page') return rpc('cn_sn_page', { p_offset: args.offset || 0, p_limit: args.limit || 100 });   /* V7.16.12: รายการทั้งหมดทีละหน้า */
   if (op === 'orders') return args.recent && !String(args.q || '').trim() ? rpc('cn_sn_recent', { p_limit: args.limit || 8 }) : rpc('cn_sn_search', { p_q: String(args.q || ''), p_limit: args.limit || 8 });
   if (op === 'order') {
     const h = SNL.cache.get(args.oid); if (h && Date.now() - h.at < 120000) return h.d;   /* ถามซ้ำภายใน 2 นาที = ใช้ผลเดิม */
@@ -4311,12 +4348,54 @@ function snbPick(oid, copied) {
 }
 on('snbRecent', (el) => snbPick(el.dataset.oid, false));
 on('snbNav', async (el) => { try { await snbCall('nav', { to: el.dataset.to === 'prod' ? 'prod' : 'home' }, 5000); } catch (e) { toast(e.message, 'err'); } });
-/* Order ล่าสุดใน Production (ฟอร์มว่าง) — ถามครั้งเดียว / 60 วิ */
-function snbRecent() {
-  if (!SNB.on || SNB.recentBusy || (SNB.recent && Date.now() - SNB.recentAt < 60000)) return;
-  SNB.recentBusy = true;
-  snbCall('orders', { recent: true, limit: 8 }).then((r) => { SNB.recent = Array.isArray(r && r.rows) ? r.rows : []; SNB.recentAt = Date.now(); }, () => { SNB.recent = []; SNB.recentAt = Date.now(); })
-    .finally(() => { SNB.recentBusy = false; if (!SNB.list && !SNB.det && !SNB.loading && !SNB.err) snbPaint(); });
+/* V7.16.12: Order ทั้งหมดใน Production (ฟอร์มว่าง) — เลื่อนดูได้ทั้งหมด
+   ในแท็บ Production: คำสั่ง index (ทุก Order ทีเดียว · ถามใหม่ทุก 60 วิ) · เปิดจากลิงก์: ข้อมูลที่ซิงก์ ทีละ 100 (เลื่อนถึงท้ายรายการโหลดต่อ)
+   Production / SQL รุ่นเก่ายังไม่มีคำสั่งนี้ → Order ล่าสุด 20 รายการแบบเดิม */
+const SNB_STEP = 60;
+function snbAllLoad(more) {
+  const A = SNB.all;
+  if (!SNB.on || (A && A.busy)) return;
+  if (A && !more && Date.now() - A.at < 60000) return;
+  if (A && more && A.done) return;
+  const st = A && more ? A : { rows: [], total: 0, at: Date.now(), busy: false, done: false, show: SNB_STEP, old: false };
+  st.busy = true; SNB.all = st;
+  const link = SNB.via === 'link' && !SNB_FRAMED;
+  const got = (rows, total, done) => { const seen = new Set(st.rows.map((r) => r.oid)); (rows || []).forEach((r) => { if (r && r.oid && !seen.has(String(r.oid))) { seen.add(String(r.oid)); st.rows.push({ oid: String(r.oid), origin: String(r.origin || ''), when: String(r.when || '') }); } }); st.total = Math.max(total || 0, st.rows.length); st.done = done || st.rows.length >= st.total; };
+  const old = () => snbCall('orders', { recent: true, limit: 20 }).then((r) => { st.old = true; got(r && r.rows, 0, true); });
+  (link ? snbCall('page', { offset: st.rows.length, limit: 100 }).then((r) => got(r && r.rows, r && r.total, !(r && r.rows && r.rows.length)), (e) => (st.rows.length ? Promise.reject(e) : old()))
+    : snbCall('index').then((r) => got(r && r.rows, 0, true), () => old()))
+    .catch(() => { st.done = true; })
+    .finally(() => { st.busy = false; st.at = Date.now(); if (!SNB.list && !SNB.det && !SNB.loading && !SNB.err) { if (more) snbAllMore(true); else snbPaint(); } });
+}
+function snbAllRow(r) { return '<button type="button" class="snb-it" data-act="snbRecent" data-oid="' + esc(r.oid) + '"><b class="mono">' + esc(r.oid) + '</b>' + snbSrc(r.origin) + (r.when ? '<span class="xs muted">' + esc(r.when) + '</span>' : '') + '</button>'; }
+function snbAllRows() { return ((SNB.all && SNB.all.rows) || []).filter((r) => r.oid !== SNB.cur); }
+function snbAllFoot() {
+  const A = SNB.all; if (!A) return '';
+  const rows = snbAllRows(), left = Math.max(0, (A.done ? rows.length : Math.max(A.total, rows.length)) - Math.min(A.shown != null ? A.shown : A.show, rows.length));
+  return left > 0 || (!A.done && A.busy) ? '<button type="button" class="btn sm snb-more" data-act="snbMore">' + (A.busy ? 'กำลังโหลด…' : 'แสดงเพิ่ม (เหลือ ' + left.toLocaleString('th-TH') + ' Order)') + '</button>' : '';
+}
+function snbAllHtml() {
+  const A = SNB.all;
+  if (!A || (A.busy && !A.rows.length)) return '<div class="xs muted" style="margin-top:8px">กำลังโหลดรายการ Order…</div>';
+  const rows = snbAllRows(); if (!rows.length) return '';
+  const n = A.done ? rows.length : Math.max(A.total, rows.length);
+  A.shown = Math.min(A.show, rows.length);   /* จำนวนที่วาดอยู่จริง (ต่อท้ายจากตรงนี้) */
+  return '<div class="xs muted" style="margin:10px 0 6px">' + (A.old ? 'Order ล่าสุดใน Production' : 'Order ทั้งหมดใน Production (' + n.toLocaleString('th-TH') + ') — เลื่อนลงเพื่อดูเพิ่ม') + '</div>' +
+    '<div class="snb-list snb-all" id="snb-all">' + rows.slice(0, A.shown).map(snbAllRow).join('') + '<div id="snb-all-f">' + snbAllFoot() + '</div></div>';
+}
+/* เพิ่มทีละชุดต่อท้าย (ไม่วาดใหม่ทั้งกล่อง — ตำแหน่งที่เลื่อนอยู่ไม่กระโดด) */
+function snbAllMore(loaded) {
+  const A = SNB.all, box = $('#snb-all'); if (!A || !box) return;
+  const rows = snbAllRows(), from = Math.min(A.shown || 0, rows.length);
+  if (!loaded) A.show += SNB_STEP;
+  if (A.show > rows.length && !A.done) { if (!A.busy) snbAllLoad(true); }
+  const to = Math.min(A.show, rows.length), f = $('#snb-all-f'), html = rows.slice(from, to).map(snbAllRow).join('');
+  if (f) { if (html) f.insertAdjacentHTML('beforebegin', html); A.shown = Math.max(from, to); f.innerHTML = snbAllFoot(); }
+}
+on('snbMore', () => snbAllMore(false));
+function snbAllScroll() {
+  const box = $('#snb-all'); if (!box || box.dataset.sc) return; box.dataset.sc = '1';
+  box.addEventListener('scroll', () => { if (box.scrollTop + box.clientHeight >= box.scrollHeight - 80) { const A = SNB.all; if (A && !A.busy && (A.show < snbAllRows().length || !A.done)) snbAllMore(false); } }, { passive: true });
 }
 /* สรุปตัวเลขงานให้การ์ด Contractor Nexus บนหน้าเลือก (ไม่มีราคา) */
 function snbSumSoon() { if (!SNB_FRAMED || !SNB.on) return; snbSync(); clearTimeout(SNB.sumT); SNB.sumT = setTimeout(snbSumNow, 400); }
@@ -4411,13 +4490,13 @@ function snbPaint() {
   else if (SNB.list && SNB.list.length) body = '<div class="xs muted" style="margin-bottom:6px">พบ ' + SNB.list.length + ' Order ใน ' + from + ' — เลือก 1 รายการ</div><div class="snb-list">' + SNB.list.map((r) => '<button type="button" class="snb-it" data-act="snbPick" data-oid="' + esc(r.oid) + '"><b class="mono">' + esc(r.oid) + '</b>' + snbSrc(r.origin) + (r.when ? '<span class="xs muted">' + esc(r.when) + '</span>' : '') + '</button>').join('') + '</div>';
   else if (SNB.list) body = '<div class="small muted">ไม่พบ Order "' + esc(SNB.q) + '" ใน ' + from + ' — ตรวจเลขอีกครั้ง หรือกรอกช่องด้านล่างเอง</div>';
   else {
-    snbRecent();
-    const rec = (SNB.recent || []).filter((r) => r.oid && r.oid !== SNB.cur);
+    snbAllLoad(false);
     body = '<div class="small muted">พิมพ์หรือวางเลข Order ในช่องด้านบน (อย่างน้อย 3 ตัว) หรือเลือกจากรายการ — ' + (link ? 'ข้อมูล Order ซิงก์จาก Production' + (SNL.st && SNL.st.at ? ' ล่าสุด ' + fmtDT(SNL.st.at) : '') + (SNL.st && SNL.st.n ? ' (' + SNL.st.n.toLocaleString('th-TH') + ' Order)' : '') : 'อ่านข้อมูลจาก Production Nexus ที่ต่อกับ StarNexus / Odoo') + '</div>' +
       (SNB.cur ? '<button type="button" class="snb-it snb-cur" data-act="snbCur">' + icon('link', 'sm') + '<span>ใช้ Order ที่เปิดอยู่ใน Production: <b class="mono">' + esc(SNB.cur) + '</b></span></button>' : '') +
-      (rec.length ? '<div class="xs muted" style="margin:10px 0 6px">Order ล่าสุดใน Production</div><div class="snb-list">' + rec.map((r) => '<button type="button" class="snb-it" data-act="snbRecent" data-oid="' + esc(r.oid) + '"><b class="mono">' + esc(r.oid) + '</b>' + snbSrc(r.origin) + (r.when ? '<span class="xs muted">' + esc(r.when) + '</span>' : '') + '</button>').join('') + '</div>' : SNB.recent ? '' : '<div class="xs muted" style="margin-top:8px">กำลังโหลดรายการ Order ล่าสุด…</div>');
+      snbAllHtml();
   }
   el.innerHTML = '<div class="snb"><div class="snb-h">' + icon('link', 'sm') + (link ? ' ข้อมูลจาก StarNexus' : ' ข้อมูลจาก StarNexus ผ่าน ' + esc(SNB.app) + (SNB.ver ? ' ' + esc(SNB.ver) : '')) + ' <span class="badge t-green">เชื่อมแล้ว</span></div><div class="snb-b">' + body + '</div></div>';
+  snbAllScroll();
 }
 on('snbUse', (el) => {   /* V7.10.1: ใช้ค่าจาก StarNexus แทนค่าที่กรอกไว้ (ทีละช่อง) */
   const d = SNB.det, f = $('#sf'); if (!d || !f) return;
@@ -4481,7 +4560,8 @@ const DR_LABELS = [
   ['snOrder', 'เลขที่ order|order no\\.?|เลข order|order']
 ];
 const DR_FIELD = { customer: 'ชื่อลูกค้า / โครงการ', siteName: 'สถานที่ติดตั้ง', address: 'ที่อยู่', province: 'จังหวัด', mapUrl: 'พิกัด Google Maps', contactName: 'ผู้ติดต่อหน้างาน', contactPhone: 'เบอร์ผู้ติดต่อ', title: 'ชื่องาน', cabinets: 'จำนวนตู้', snOrder: 'เลขที่ Order StarNexus' };
-const DR_ORDER = ['snOrder', 'title', 'cabinets', 'customer', 'siteName', 'address', 'province', 'mapUrl', 'contactName', 'contactPhone'];
+const DR_ORDER = ['snOrder', 'title', 'cabinets', 'customer', 'siteName', 'address', 'province', 'mapUrl', 'contactName', 'contactPhone', 'wantFrom'];
+DR_FIELD.wantFrom = 'กำหนดติดตั้ง (ลูกค้าพร้อมให้ติดตั้ง)';   /* V7.16.12 */
 const DR_RE = new RegExp('(' + DR_LABELS.map((x) => x[1]).join('|') + ')\\s*[:：=]?', 'gi');
 const DR_KEY = (lab) => { const l = lab.toLowerCase(); for (const [k, re] of DR_LABELS) if (new RegExp('^(?:' + re + ')$', 'i').test(l)) return k; return ''; };
 
@@ -4542,6 +4622,38 @@ function drIssuer(T) {
     for (let j = top; j <= k; j++) out.add(j);
   });
   return out;
+}
+/* V7.16.12: วันที่จากแบบ → yyyy-mm-dd (พ.ศ. / ค.ศ. · 27/10/2569 · 27-10-69 · 2026-10-27 · 27 ต.ค. 2569 · 27 ตุลาคม 2569 · 27 Oct 2026) · ปีต้องใกล้ปัจจุบัน */
+const DR_MON = { 'มค': 1, 'มกราคม': 1, 'กพ': 2, 'กุมภาพันธ์': 2, 'มีค': 3, 'มีนาคม': 3, 'เมย': 4, 'เมษายน': 4, 'พค': 5, 'พฤษภาคม': 5, 'มิย': 6, 'มิถุนายน': 6,
+  'กค': 7, 'กรกฎาคม': 7, 'สค': 8, 'สิงหาคม': 8, 'กย': 9, 'กันยายน': 9, 'ตค': 10, 'ตุลาคม': 10, 'พย': 11, 'พฤศจิกายน': 11, 'ธค': 12, 'ธันวาคม': 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+function drDate(s) {
+  s = String(s || '');
+  const mk = (d, m, y) => {
+    d = +d; m = +m; y = +y; if (y < 100) y = y >= 50 ? 2500 + y : 2000 + y; if (y > 2400) y -= 543;
+    const now = new Date().getFullYear(); if (y < now - 1 || y > now + 2 || m < 1 || m > 12 || d < 1 || d > 31) return '';
+    const t = new Date(Date.UTC(y, m - 1, d)); if (t.getUTCMonth() !== m - 1) return '';
+    return y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  };
+  let m = /(^|\D)(\d{4})-(\d{1,2})-(\d{1,2})(?!\d)/.exec(s); if (m) { const v = mk(m[4], m[3], m[2]); if (v) return v; }
+  m = /(^|\D)(\d{1,2})\s*[/.\-]\s*(\d{1,2})\s*[/.\-]\s*(\d{4}|\d{2})(?!\d)/.exec(s); if (m) { const v = mk(m[2], m[3], m[4]); if (v) return v; }
+  const re = /(^|[^\d])(\d{1,2})\s*([ก-๙.]{2,12}|[A-Za-z]{3,9}\.?)\s*(?:พ\.?\s*ศ\.?|ค\.?\s*ศ\.?)?\s*(\d{4}|\d{2})(?!\d)/g;
+  while ((m = re.exec(s))) { const mo = DR_MON[m[3].replace(/[.\s]/g, '').toLowerCase()] || DR_MON[m[3].replace(/[.\s]/g, '').toLowerCase().slice(0, 3)]; if (mo) { const v = mk(m[2], mo, m[4]); if (v) return v; } }
+  return '';
+}
+/* กำหนดติดตั้ง / วันที่ติดตั้ง / นัดติดตั้ง (ในใบเสนอราคา / Memo / Order check list) — ค่าหลังหัวข้อในช่องเดียวกัน (หรือบรรทัดถัดไปถ้าหัวข้ออยู่โดด ๆ) · มีแต่เดือน / ช่องว่าง = ไม่เอา */
+const DR_INST_RE = /(?:ก[ำา]?หนด(?:การ)?(?:วัน)?ติดตั้ง(?:งาน)?|วันที่?ติดตั้ง|นัด(?:หมาย)?ติดตั้ง|install(?:ation)?\s*date)\s*/gi;
+function drInstDate(T) {
+  for (let i = 0; i < T.length; i++) {
+    DR_INST_RE.lastIndex = 0; let m;
+    while ((m = DR_INST_RE.exec(T[i]))) {
+      const rest = T[i].slice(m.index + m[0].length).replace(/^[\s:：=¦-]+/, '');
+      const seg = rest.split('¦')[0];
+      const v = drDate(seg) || (!seg.trim() && T[i + 1] ? drDate(T[i + 1].split('¦')[0]) : '');
+      if (v) return { v, src: T[i] };
+    }
+  }
+  return null;
 }
 function drParse(lines) {
   const L = (lines || []).map((l) => (typeof l === 'string' ? { t: drNorm(l), x: null } : l)).filter((l) => l && l.t);
@@ -4650,6 +4762,7 @@ function drParse(lines) {
     if (!out.customer) out.customer = out.project; else if (!out.siteName) out.siteName = out.project;
     delete out.project;
   }
+  { const w = drInstDate(T); if (w) out.wantFrom = { v: w.v, src: w.src, pri: 2 }; }   /* V7.16.12: กำหนดติดตั้ง → ลูกค้าพร้อมให้ติดตั้ง */
   if (custTel && !out.contactName && out.contactPhone) put('contactName', custTel, '', 1);
   if (!out.contactPhone) {   /* เบอร์ที่อยู่บรรทัดเดียวกับชื่อผู้ติดต่อ / คุณ… */
     const ln = T.find((q) => /ผู้ติดต่อ|ติดต่อ|คุณ/.test(q) && drPhone(q)); if (ln) put('contactPhone', drPhone(ln), ln);
@@ -4673,6 +4786,8 @@ function pdfjs() {
 /* ตัวอักษรแต่ละชิ้น → บรรทัด (รองรับตัวหนังสือหมุน 90° ในกรอบรายละเอียดแบบ)
    · จัดบรรทัดจากตำแหน่งแนวตั้ง (คนละขนาดตัวอักษรก็ไม่ปนกัน) · เรียงซ้าย→ขวา โดยสระ/วรรณยุกต์ที่ตำแหน่งเกือบเท่ากันคงลำดับเดิม
    · ช่องว่างจริง (ชิ้น " ") / ระยะห่าง → เว้นวรรค · ห่างมาก (คนละช่องตาราง) → ' ¦ ' */
+/* V7.16.12: ฟอนต์ไทยบางตัว (เอกสาร Memo จาก Word / Excel) ส่งวรรณยุกต์ออกมาเป็นตัวอื่น — ไม้เอก É / ѷ · ไม้โท Ê / Ѹ (เฉพาะที่ตามหลังตัวอักษรไทย · จำนวนตัวอักษรเท่าเดิม ตำแหน่งปิดราคาไม่เลื่อน) */
+const DR_TONE = { '\u00C9': '\u0E48', '\u0477': '\u0E48', '\u00CA': '\u0E49', '\u0478': '\u0E49' };
 function drLines(items) {
   const P = [];
   (items || []).forEach((it, i) => {
@@ -4690,7 +4805,7 @@ function drLines(items) {
   return lines.map((ln) => {
     ln.parts.sort((p, q) => (Math.abs(p.x - q.x) < 1 ? p.i - q.i : p.x - q.x));
     let t = '', end = null, pend = 0; const xs = [];
-    const add = (str, x0, w) => { for (let k = 0; k < str.length; k++) { const ch = str[k]; if (ch === ' ' && (!t || t.endsWith(' '))) continue; if (ch === '\u0E32' && t.endsWith('\u0E4D')) { t = t.slice(0, -1) + 'ำ'; continue; } t += ch;   /* นิคหิต + า คนละชิ้น → ำ */ xs.push(x0 + (str.length > 1 ? (w * k) / str.length : 0)); } };
+    const add = (str, x0, w) => { for (let k = 0; k < str.length; k++) { const ch = DR_TONE[str[k]] && /[\u0E01-\u0E4E]$/.test(t) ? DR_TONE[str[k]] : str[k]; if (ch === ' ' && (!t || t.endsWith(' '))) continue; if (ch === '\u0E32' && t.endsWith('\u0E4D')) { t = t.slice(0, -1) + 'ำ'; continue; } t += ch;   /* นิคหิต + า คนละชิ้น → ำ */ xs.push(x0 + (str.length > 1 ? (w * k) / str.length : 0)); } };
     for (const p of ln.parts) {
       if (p.sp) { if (end != null) pend = Math.max(pend, p.w > p.fs * 3 ? 2 : p.w > p.fs * 0.12 ? 1 : 0); continue; }
       if (end != null) { const gap = p.x - end, g = gap > p.fs * 3 ? 2 : gap > p.fs * 0.2 ? 1 : 0, k = Math.max(g, pend); if (k === 2) add(' ¦ ', end, 0); else if (k === 1) add(' ', end, 0); }
@@ -4833,17 +4948,21 @@ function drActual(items, acts) {
    เทียบคำแบบ "โครง" (ตัดสระบน-ล่าง/วรรณยุกต์/ช่องว่าง) — ทนตัวอักษรไทยหาย / คำแตกบรรทัด */
 const TH_MARK = /[ัิ-ฺ็-๎\u0000]/g;
 function drSkel(s) { return String(s || '').toLowerCase().replace(TH_MARK, '').replace(/[\s¦]+/g, ''); }
-const PRICE_TH = ['ราคา/หน่วย', 'ราคาต่อหน่วย', 'จำนวนเงิน', 'รวมเป็นเงิน', 'รวมเงิน', 'ยอดรวม', 'รวมทั้งสิ้น', 'ภาษีมูลค่าเพิ่ม', 'ส่วนลด', 'ราคาสุทธิ', 'ราคารวม', 'ราคาขาย', 'ราคาทุน', 'ต้นทุน', 'มัดจำ', 'ราคา', 'บาท']
+const PRICE_TH = ['ราคา/หน่วย', 'ราคาต่อหน่วย', 'จำนวนเงิน', 'รวมเป็นเงิน', 'รวมเงิน', 'ยอดรวม', 'รวมทั้งสิ้น', 'ภาษีมูลค่าเพิ่ม', 'ส่วนลด', 'ราคาสุทธิ', 'ราคารวม', 'ราคาขาย', 'ราคาทุน', 'ต้นทุน', 'มัดจำ', 'ราคา', 'บาท', 'ยอดขาย', 'ยอดสั่งซื้อ']
   .map(drSkel).sort((a, b) => b.length - a.length);
 const PRICE_STRONG = ['ราคา/หน่วย', 'ราคาต่อหน่วย', 'จำนวนเงิน', 'รวมเป็นเงิน', 'ยอดรวม', 'รวมทั้งสิ้น', 'ภาษีมูลค่าเพิ่ม', 'ราคาสุทธิ', 'ราคารวม'].map(drSkel);
 const PRICE_EN = /\b(unit\s*price|grand\s*total|sub\s*-?\s*total|amount|total|price|vat|cost|discount|net|thb)\b/gi;
 const SK_QT = drSkel('ใบเสนอราคา'), SK_KEEP = drSkel('ยืนราคา');
 /* ตัวเลขเงิน: มีทศนิยม 2 ตำแหน่ง / มีจุลภาคหลักพัน / ติดหน่วยเงิน — ไม่นับระดับ (+0.00) และขนาด (mm / ซม.) */
 function drNums(t) {
-  const clean = String(t || '').replace(/[+±][\d.,]+|\d[\d,]*(?:\.\d+)?\s*(?:mm|cm|m|ม\.ม\.|มม\.?|ซม\.?|ม\.)(?![a-z])/gi, ' ');
+  t = String(t || '').replace(/\.{2,}|…+/g, ' ');   /* V7.16.12: เส้นจุดเติมคำ (……205,000……บาท) ไม่บังตัวเลขเงิน */
+  /* V7.16.12: เลขเงินรูปแบบ 7,203.00 ที่ซ้อนกับหน่วยขนาด (“7,203.00ซม.” ข้อความล้นช่องในใบเสนอราคา) ยังนับเป็นเงิน — ขนาดไม่มีจุลภาค + ทศนิยม 2 ตำแหน่ง */
+  const clean = t.replace(/[+±][\d.,]+|\d[\d,]*(?:\.\d+)?\s*(?:mm|cm|m|ม\.ม\.|มม\.?|ซม\.?|ม\.)(?![a-z])/gi, (x) => (/\d,\d{3}\.\d{2}(?!\d)/.test(x) && !/^[+±]/.test(x) ? x.replace(/[^\d.,]+$/, ' ') : ' '));
   return { m2: (clean.match(/(?:^|[^\d.,+\-±])\d{1,3}(?:,\d{3})*\.\d{2}(?!\d)/g) || []).length,
     mk: (clean.match(/(?:^|[^\d.,])\d{1,3}(?:,\d{3})+(?![\d.,])/g) || []).length,
-    mc: (String(t || '').match(/฿\s*\d[\d,]*(?:\.\d+)?|\d[\d,]*(?:\.\d+)?\s*(?:บาท|฿|thb|baht)/gi) || []).length };
+    mc: (t.match(/฿\s*\d[\d,]*(?:\.\d+)?|\d[\d,]*(?:\.\d+)?\s*(?:บาท|฿|thb|baht)/gi) || []).length,
+    /* V7.16.12: เงินก้อนเดียวก็นับ — ตัวเลข ≥ 3 หลัก (หรือมีจุลภาคหลักพัน) ติดคำว่าบาท / ฿ */
+    mb: (t.match(/฿\s*(?:\d{1,3}(?:,\d{3})+|\d{3,})|(?:^|[^\d.,])(?:\d{1,3}(?:,\d{3})+|\d{3,})(?:\.\d+)?\s*(?:บาท|฿|thb|baht)/gi) || []).length };
 }
 function drPriceWords(t) {
   let sk = drSkel(t).split(SK_QT).join('|').split(SK_KEEP).join('|');
@@ -4853,9 +4972,11 @@ function drPriceWords(t) {
   if (/unit\s*price|grand\s*total|sub\s*-?\s*total|\bamount\b/i.test(t)) strong++;
   return { n: w.size, strong };
 }
+/* V7.16.12: ยอดขาย / ยอดสั่งซื้อ / มัดจำ / ราคา / ชำระ ตามด้วยตัวเลขเงิน (เอกสาร Memo · Order check list ที่มีเงินแค่ 1–2 จุด) — ร่วมสะกดที่ฟอนต์ทำ ำ หาย (มัดจา · ชาระ) */
+const DR_SALE_AMT = /(?:ยอด\s*(?:ขาย|สั่งซื้อ|ซื้อ|รวม|ชำระ|ชาระ)|มัดจ[ำา]|ราคา|ช[ำา]ระ)[^\n¦]{0,60}?(?:\d{1,3}(?:,\d{3})+(?:\.\d{2})?(?![\d,]*\s*(?:mm|cm|มม|ซม))|\d{4,}(?:\.\d{2})?\s*(?:บาท|฿))/;   /* เลขเงินมีจุลภาค หรือเลขติดคำว่าบาท (ไม่ใช่เลขเอกสาร QT-261102) */
 function drIsPrice(text) {
   const t = String(text || ''), w = drPriceWords(t), m = drNums(t);
-  return /บาท[ก-๙]*สตางค์|บาทถ้วน/.test(t) || m.mc >= 2 || (w.n >= 2 && m.m2 + m.mc >= 2) || (w.n >= 2 && m.mk >= 3) || (w.strong >= 1 && m.m2 + m.mk >= 2) || (w.n >= 1 && m.m2 >= 4);
+  return /บาท[ก-๙]*สตางค์|บาทถ้วน/.test(t) || m.mc >= 2 || m.mb >= 1 || DR_SALE_AMT.test(t.replace(/\.{2,}|…+/g, ' ').replace(/ใบเสนอราคา|ยืนราคา/g, ' ')) || (w.n >= 2 && m.m2 + m.mc >= 2) || (w.n >= 2 && m.mk >= 3) || (w.strong >= 1 && m.m2 + m.mk >= 2) || (w.n >= 1 && m.m2 >= 4);
 }
 /* ค่าที่ห้ามเอาเข้าฟอร์ม (ตัวเลขเงิน / คำราคา) */
 function drMoney(v) { const m = drNums(v); return m.m2 + m.mk + m.mc > 0 || drPriceWords(v).n > 0; }
@@ -4868,9 +4989,10 @@ const MAX_PAGES = 300;
 const PRICE_COL = ['ราคา/หน่วย', 'ราคาต่อหน่วย', 'หน่วยละ', 'จำนวนเงิน', 'ราคารวม', 'รวมเงิน', 'ราคา', 'ราคาสุทธิ', 'ส่วนลด', 'มูลค่า', 'unitprice', 'price', 'amount', 'total', 'discount', 'netprice', 'subtotal', 'netamount'].map(drSkel);
 const BAHT_TXT = /บาท[ก-๙]*สตางค์|บาทถ้วน/;
 /* V7.10.6: คำเกี่ยวกับราคา — ผู้รับเหมาต้องไม่รู้เรื่องราคาเลย (ปิดทั้งกลุ่มคำ เช่น "ยืนราคาถึง 2 ธ.ค. 2569" · "เงื่อนไขการชำระเงิน: …" · "ใบเสนอราคา") */
-const PRICE_WORD_TH = ['ราคา', 'จำนวนเงิน', 'รวมเงิน', 'รวมเป็นเงิน', 'ชำระ', 'ภาษี', 'ยอดรวม', 'บาท', 'ส่วนลด', 'มัดจำ', 'บัญชี', 'โอนเงิน', 'ต้นทุน', 'กำไร'].map(drSkel);
+const PRICE_WORD_TH = ['ราคา', 'จำนวนเงิน', 'รวมเงิน', 'รวมเป็นเงิน', 'ชำระ', 'ภาษี', 'ยอดรวม', 'บาท', 'ส่วนลด', 'มัดจำ', 'บัญชี', 'โอนเงิน', 'ต้นทุน', 'กำไร', 'ยอดขาย', 'ยอดสั่งซื้อ', 'ยอดซื้อ'].map(drSkel);   /* V7.16.12 + ยอดขาย / ยอดสั่งซื้อ */
 const PRICE_WORD_EN = ['quotation', 'payment', 'discount', 'subtotal', 'amount', 'deposit', 'price', 'total', 'invoice'];
-function drPriceWord(t) { const k = drSkel(t); return PRICE_WORD_TH.some((w) => k.indexOf(w) >= 0) || PRICE_WORD_EN.some((w) => k.indexOf(w) >= 0) || /(^|[^a-z])(vat|tax|cost|thb|baht|quote)([^a-z]|$)/i.test(t); }
+function drPriceWord(t) { const k = drSkel(t); return PRICE_WORD_TH.some((w) => k.indexOf(w) >= 0) || /มัดจา|ชาระ/.test(String(t || '')) ||   /* V7.16.12: มัดจำ / ชำระ ที่ฟอนต์ทำ ำ หาย (เทียบตัวอักษรตรง ๆ — โครงไม่มีสระจะไปตรงกับ “หมดจาก”) */
+  PRICE_WORD_EN.some((w) => k.indexOf(w) >= 0) || /(^|[^a-z])(vat|tax|cost|thb|baht|quote)([^a-z]|$)/i.test(t); }
 /* ชื่อไฟล์ที่ผู้รับเหมาเห็น — มีคำเกี่ยวกับราคา / ตัวเลขเงิน → "แบบงานติดตั้ง" (ตรงกับ Server cn_order_json) */
 const PRICE_NAME = /ราคา|quot|price|ต้นทุน|บาท|invoice|ใบแจ้งหนี้|ใบกำกับ|ส่วนลด|(^|[^a-z])(vat|cost)([^a-z]|$)|(^|[^a-z])qt[-_ ]?\d|\d{1,3}(?:,\d{3})+|\d\.\d{2}(?!\d)/i;
 function drSafeName(n) { n = String(n || ''); const m = /\.[A-Za-z0-9]{1,5}$/.exec(n), base = m ? n.slice(0, -m[0].length) : n; return PRICE_NAME.test(base) ? 'แบบงานติดตั้ง' + (m ? m[0].toLowerCase() : '') : n; }
@@ -4917,9 +5039,25 @@ function drMaskPlan(items) {
   });
   const restC = []; lines.forEach((ln) => ln.cells.forEach((c) => { if (!hit.has(c)) restC.push(c.t); }));
   const rest = lines.map((ln) => ln.cells.filter((c) => !hit.has(c)).map((c) => c.t).join(' ')).join('\n');
-  const ok = heads.length > 0 && !money(rest) && !drIsPrice(rest) && !restC.some(drPriceWord);
+  /* V7.16.12: หน้าที่ไม่ใช่ตาราง (Memo / Order check list — เงิน 1 จุดต่อบรรทัด ไม่มีหัวคอลัมน์ราคา) ปิดเฉพาะเงิน + กลุ่มคำราคาได้ · มีแถวที่มีเงิน ≥ 2 ช่อง (ตารางราคา) ต้องเจอหัวคอลัมน์ · ที่เหลือต้องไม่มีเงิน / คำราคาเลย */
+  /* ไม่มีหัวคอลัมน์ → ปิดได้เฉพาะเมื่อ: ไม่มีแถวเงิน ≥ 2 ช่อง · ที่เหลือไม่มีคำราคาเลย (รวมทั้งสิ้น ฯลฯ) · ไม่มีตัวเลข ≥ 4 หลักลอย ๆ เหลือ (เช่น “ชุดครัว 25000”)
+     — ยกเว้น ขนาด (มม. / ซม.) · ปี (19xx / 20xx / 25xx) · รหัสไปรษณีย์ที่มีคำที่อยู่ / จังหวัดนำหน้า · รหัส / วันที่ / เบอร์ (ติดตัวอักษร - / ,) */
+  const rowMoney = lines.some((ln) => ln.cells.filter((c) => money(c.t)).length >= 2);
+  const bareN = (t) => {
+    t = String(t || '').replace(/\d[\d,]*(?:\.\d+)?\s*(?:mm|cm|มม\.?|ซม\.?|ม\.)/gi, ' ');
+    const re = /(^|[^\w.,/-])(\d{4,})(?![\w,/-])/g, at = new RegExp(ADDR_TOK.source); let m, n = 0;
+    while ((m = re.exec(t))) {
+      const v = m[2], pre = t.slice(Math.max(0, m.index - 40), m.index + m[1].length);
+      if (/^(?:19|20|25)\d\d$/.test(v)) continue;
+      if (/^[1-9]\d{4}$/.test(v) && (at.test(pre) || /กทม|กรุงเทพ/.test(pre) || PROV_ALL.some((x) => pre.indexOf(x) >= 0))) continue;
+      n++;
+    }
+    return n;
+  };
+  const loose = !heads.length && hit.size > 0 && !rowMoney && drPriceWords(rest).n === 0 && bareN(rest) === 0;
+  const ok = (heads.length > 0 || loose) && !money(rest) && !drIsPrice(rest) && !restC.some(drPriceWord);
   const boxes = []; hit.forEach((c) => c.items.forEach((it) => boxes.push(it)));
-  return { ok, why: !heads.length ? 'ไม่เจอหัวคอลัมน์ราคา' : !ok ? 'ยังมีตัวเลขเงิน / คำเกี่ยวกับราคาที่ปิดไม่ได้' : '', boxes, cells: Array.from(hit).map((c) => c.t), rest };
+  return { ok, why: !heads.length && !loose ? 'ไม่เจอหัวคอลัมน์ราคา' : !ok ? 'ยังมีตัวเลขเงิน / คำเกี่ยวกับราคาที่ปิดไม่ได้' : '', boxes, cells: Array.from(hit).map((c) => c.t), rest };
 }
 /* วาดหน้าเป็นภาพ แล้วทาสีพื้น (สีรอบกรอบ) ทับช่องราคา → JPEG */
 async function drMaskRender(page, plan) {
@@ -5093,6 +5231,12 @@ function drApply() {
   const done = [], conf = [];
   for (const k of DR_ORDER) {
     const r = DR.res[k]; if (!r) continue;
+    if (k === 'wantFrom') {   /* V7.16.12: ยังเป็นค่าเริ่มต้นของฟอร์มใหม่ / ว่าง → ใส่ + ต้องเสร็จภายใน = + N วัน · กรอกเองไว้แล้วไม่ตรง → เสนอ */
+      const el = drField(k); if (!el || el.readOnly || el.disabled) continue;
+      if (!el.value || el.dataset.def === '1') { const mv = wantSet(r.v, false); done.push(k); [el, mv ? drField('wantTo') : null].forEach((x) => { const fd = x && x.closest('.field'); if (fd) { fd.classList.add('dr-auto'); fd.classList.remove('invalid'); } }); }
+      else if (el.value !== r.v) conf.push(k);
+      continue;
+    }
     if (k === 'snOrder') { const el = $('#sf-sn'); if (!el) continue; if (!el.value.trim()) { el.value = r.v; done.push(k); try { snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } catch (e) { /* ไม่เป็นไร */ } } else if (snKey(el.value) !== snKey(r.v)) conf.push(k); continue; }
     const el = drField(k); if (!el || el.readOnly || el.disabled) continue;   /* V7.12: ช่องที่ล็อกจาก Odoo ไม่แตะ */
     const cur = String(el.value || '').trim();
@@ -5123,7 +5267,7 @@ function drPaint() {
   const found = SF.drawOnly ? [] : DR_ORDER.filter((k) => DR.res[k]), miss = SF.drawOnly ? [] : ['customer', 'siteName', 'address', 'province', 'contactName', 'contactPhone'].filter((k) => !DR.res[k]);   /* V7.16.6: หน้าแก้ไขแบบงานไม่มีช่องลูกค้า */
   box.innerHTML = '<div class="drb">' +
     '<div class="drb-h">' + icon('file', 'sm') + (DR.busy ? '<span>กำลังอ่านแบบงาน + ตรวจหน้าราคา…</span><span class="spin" aria-hidden="true"></span>' : '<span>' + (DR.files.length ? 'อ่านจากแบบงาน ' + DR.files.length + ' ไฟล์' : 'ไฟล์แนบ') + '</span>') + '</div>' +
-    (found.length ? '<dl class="drb-dl">' + found.map((k) => '<dt>' + DR_FIELD[k] + '</dt><dd>' + esc(DR.res[k].v) +
+    (found.length ? '<dl class="drb-dl">' + found.map((k) => '<dt>' + DR_FIELD[k] + '</dt><dd>' + (k === 'wantFrom' ? esc(fmtDate(DR.res[k].v)) + ' → ต้องเสร็จภายใน ' + esc(fmtDate(wantStd(DR.res[k].v))) + ' (+' + finishDaysNow() + ' วัน)' + (DR.res[k].v < todayStr() ? ' <span class="badge t-amber">วันที่ผ่านมาแล้ว — ตรวจอีกครั้ง</span>' : '') : esc(DR.res[k].v)) +
         (DR.filled.indexOf(k) >= 0 ? ' <span class="drb-ok">' + icon('check', 'xs') + ' เติมแล้ว</span>' : '') +
         (DR.conf.indexOf(k) >= 0 ? ' <button type="button" class="btn sm" data-act="drUse" data-k="' + k + '">ใช้ค่าจากแบบ</button><span class="xs muted"> (ในฟอร์มกรอกไว้ต่างจากแบบ)</span>' : '') + '</dd>').join('') + '</dl>'
       : (DR.busy || !DR.files.length || SF.drawOnly ? '' : '<div class="small muted">ไม่พบหัวข้อลูกค้า / ที่อยู่ ในแบบงาน — กรอกเอง</div>')) +
@@ -5142,6 +5286,7 @@ function drPaint() {
 on('drUse', (el) => {
   const k = el.dataset.k, r = DR.res[k]; if (!r) return;
   if (k === 'snOrder') { const s = $('#sf-sn'); if (s) { s.value = r.v; snCheck(); if (typeof SNB !== 'undefined' && SNB.on) snbFind(r.v); } }
+  else if (k === 'wantFrom') { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } wantSet(r.v, true); [f, drField('wantTo')].forEach((x) => { const fd = x && x.closest('.field'); if (fd) fd.classList.add('dr-auto'); }); toast('ลูกค้าพร้อมให้ติดตั้ง ' + fmtDate(r.v) + ' · ต้องเสร็จภายใน ' + fmtDate(wantStd(r.v)) + ' (+' + finishDaysNow() + ' วัน)'); }   /* V7.16.12 */
   else { const f = drField(k); if (!f) return; if (f.readOnly || f.disabled) { toast('ช่องนี้ล็อกตามข้อมูลจาก Odoo', 'err'); return; } f.value = r.v; const fd = f.closest('.field'); if (fd) fd.classList.add('dr-auto'); }
   if (k === 'mapUrl') mapChk();
   if (DR.filled.indexOf(k) < 0) DR.filled.push(k);
@@ -5161,7 +5306,7 @@ function saveJsonFile(name, text) { const u = URL.createObjectURL(new Blob([text
 
 route(/^\/admin\/settings$/, 'admin', () => {
   const rt = DB.settings.rates, pc = payCfg();
-  return { nav: '#/admin/settings', html: pageHead('ตั้งค่าระบบ', 'อัตราค่าติดตั้ง · การชำระเงินผู้รับเหมา · ระยะเวลาเปิดรับราคา · สำรองข้อมูล') +
+  return { nav: '#/admin/settings', html: pageHead('ตั้งค่าระบบ', 'อัตราค่าติดตั้ง · การชำระเงินผู้รับเหมา · ระยะเวลาเปิดรับราคา · ระยะเวลาติดตั้ง · สำรองข้อมูล') +
     '<div class="grid g2">' +
     '<div class="card"><div class="card-h"><h2>' + icon('lock') + ' อัตราค่าติดตั้งผู้รับเหมา</h2><span class="xs muted">เฉพาะภายใน</span></div><div class="card-b"><div id="rt" class="form-grid">' +
       TYPES.map((t) => '<div class="field c4"><label>' + sw(t.k) + '</label><div class="addon"><input class="input" name="' + t.k + '" inputmode="decimal" value="' + rateNow(t.k) + '" aria-label="อัตรา ' + t.name + '"><span>%</span></div></div>').join('') +
@@ -5180,7 +5325,12 @@ route(/^\/admin\/settings$/, 'admin', () => {
     '<div class="card"><div class="card-h"><h2>' + icon('clock') + ' ระยะเวลาเปิดรับราคา (ค่าเริ่มต้น)</h2><span class="xs muted">ผู้รับเหมาเปลี่ยนไม่ได้</span></div><div class="card-b"><div id="bd" class="form-grid">' +
       '<div class="field c6"><label>ค่าเริ่มต้นของ Order ใหม่</label><div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + bidDaysNow() + '" aria-label="ระยะเวลาเปิดรับราคา (วัน)"><span>วัน</span></div><div class="help">1–60 วัน · นับจากเวลาที่จัดซื้อกดยืนยันส่งให้ผู้รับเหมา (วันปฏิทิน รวมวันหยุด)</div></div></div>' +
       '<div class="small muted" style="margin-top:10px">Sale เลือกจำนวนวันรายงานได้ในฟอร์ม Sale Order (1–60 วัน · เริ่มที่ค่านี้) · จัดซื้อปรับได้อีกครั้งตอนส่งให้ผู้รับเหมา · แก้ได้จนกว่าจัดซื้อจะอนุมัติ (ต้องเหลือเวลาอย่างน้อย 1 วัน) · <b>เปลี่ยนค่านี้ไม่กระทบ Order ที่มีอยู่</b></div></div>' +
-      '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="bidSet">' + icon('check', 'sm') + ' บันทึก</button></div></div></div>' +
+      '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="bidSet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
+    /* V7.16.12: ต้องเสร็จภายใน = ลูกค้าพร้อมให้ติดตั้ง + N วัน (ค่ามาตรฐานในฟอร์ม Sale Order · Sale แก้วันรายงานได้) */
+    '<div class="card"><div class="card-h"><h2>' + icon('calendar') + ' ระยะเวลาติดตั้ง (ค่ามาตรฐาน)</h2><span class="xs muted">ฟอร์ม Sale Order</span></div><div class="card-b"><div id="fd" class="form-grid">' +
+      '<div class="field c6"><label for="fd-days">ต้องเสร็จภายใน (หลังวันลูกค้าพร้อมให้ติดตั้ง)</label><div class="addon"><input class="input" id="fd-days" name="finishDays" inputmode="numeric" value="' + finishDaysNow() + '" data-inp="fdChk"><span>วัน</span></div><div class="help" id="fd-help">' + fdHelp(finishDaysNow()) + '</div></div></div>' +
+      '<div class="small muted" style="margin-top:10px">วันลูกค้าพร้อมให้ติดตั้ง = “กำหนดติดตั้ง” ที่อ่านจากแบบงาน (หรือ Sale เลือกเอง) · ช่อง “ต้องเสร็จภายใน” คำนวณให้ตามค่านี้ แต่ Sale แก้วันรายงานได้ · มีผลกับ Order ที่สร้าง / แก้หลังบันทึก — Order เดิมไม่เปลี่ยน</div></div>' +
+      '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="fdSet">' + icon('check', 'sm') + ' บันทึก</button></div></div></div>' +
     /* V7.16.1: วิธียิงรับของที่หน้างาน — คลังต้องยิงรับเข้าก่อน (ค่าเริ่มต้น) / ผู้รับเหมา·ช่างยิงรับเองได้ */
     '<div class="card" style="margin-top:16px"><div class="card-h"><h2>' + icon('barcode') + ' ยิงรับของที่หน้างาน</h2><span class="xs muted">ผู้รับเหมา / ช่างโรงงาน · ขั้นที่ 1</span></div><div class="card-b" id="sr">' +
       '<div class="pay-opts" role="radiogroup" aria-label="วิธียิงรับของที่หน้างาน">' +
@@ -5243,6 +5393,18 @@ on('bidSet', () => {
       notice('info', 'เป็นค่าเริ่มต้นในฟอร์ม Sale Order ใหม่ (Sale ปรับรายงานได้) · Order ที่เปิดรับราคาอยู่ ' + open + ' รายการใช้วันเดิม'),
     foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="bidSetOk">' + icon('check', 'sm') + ' บันทึก</button>' });
   Acts.bidSetOk = async () => { await rpc('cn_save_bid_days', { p_days: v }); await refresh(); closeOverlay(); toast('ตั้งค่าเริ่มต้นเปิดรับราคา ' + v + ' วันแล้ว — ใช้กับ Order ใหม่'); rerender(); };
+});
+/* V7.16.12: ค่ามาตรฐาน ต้องเสร็จภายใน */
+function fdHelp(n) { const ex = '2026-10-27'; return Number.isFinite(n) && n >= 0 && n <= 90 ? 'ตัวอย่าง: ลูกค้าพร้อม ' + fmtDate(ex) + ' → ต้องเสร็จภายใน ' + fmtDate(addDays(ex, n)) + (n === 0 ? ' (วันเดียวกัน)' : '') : 'ใส่จำนวนเต็ม 0–90 วัน'; }
+Acts.fdChk = (el) => { const h = $('#fd-help'), n = parseNum(el.value); if (h) h.textContent = fdHelp(Math.floor(n) === n ? n : NaN); };
+on('fdSet', () => {
+  const v = parseNum($('#fd [name=finishDays]').value), cur = finishDaysNow();
+  if (!(v >= 0 && v <= 90 && Math.floor(v) === v)) { toast('ต้องเสร็จภายในต้องเป็นจำนวนเต็ม 0–90 วัน', 'err'); return; }
+  if (v === cur) { toast('ไม่มีการเปลี่ยนแปลง'); return; }
+  modal({ title: icon('calendar') + ' เปลี่ยนค่ามาตรฐาน ต้องเสร็จภายใน?', body: '<p>ลูกค้าพร้อมให้ติดตั้ง + ' + cur + ' วัน → <b>+ ' + v + ' วัน</b></p>' +
+      notice('info', 'ใช้ตอนสร้าง / แก้ Sale Order หลังจากนี้ (Sale แก้วันรายงานได้) · Order ที่บันทึกไว้แล้วไม่เปลี่ยน'),
+    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="fdSetOk">' + icon('check', 'sm') + ' บันทึก</button>' });
+  Acts.fdSetOk = async () => { await rpc('cn_save_finish_days', { p_days: v }); await refresh(); closeOverlay(); toast('ตั้งค่ามาตรฐานแล้ว — ต้องเสร็จภายใน = ลูกค้าพร้อมให้ติดตั้ง + ' + v + ' วัน'); rerender(); };
 });
 on('exportGo', async () => {
   await refresh();
