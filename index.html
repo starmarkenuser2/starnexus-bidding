@@ -393,6 +393,8 @@ tr.hidden{display:none}
 .login.reg{width:min(560px,100%)}
 .reg-roles{grid-template-columns:repeat(3,minmax(0,1fr))}
 .lg-reg{margin-top:14px;justify-content:center}
+.lg-share{display:flex;margin:12px auto 0;justify-content:center}   /* V7.16.17 */
+.side .foot .f-share{margin-bottom:10px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 @container app (max-width:520px){.reg-roles{grid-template-columns:1fr}}
 .lg-note{margin-top:16px;padding-top:12px;border-top:1px solid var(--line);line-height:1.5}
@@ -1011,6 +1013,7 @@ const ICONS = {
   copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
   nav: '<path d="M3 11l18-8-8 18-2-8z"/>',
   home: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h4.75v-5.5h3.5V20h4.75V9.5"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',   /* V7.16.17: แชร์ลิงก์โปรแกรม */
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
@@ -1124,7 +1127,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.16';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.17';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -1851,12 +1854,12 @@ function shell(area, active, inner) {
     '<aside class="side ' + (S.navOpen ? 'open' : '') + '"><div class="brand"><div class="bm" role="img" aria-label="StarNexus"></div><div style="min-width:0"><b>' + APP_NAME + '</b><span>' + (isCon ? 'Contractor Portal' : 'Installation Management') + '</span></div>' + backBtnHtml('') + admBtnHtml(area, '') + snbHomeHtml('') + '</div>' +
     '<div class="who"><span class="av" style="background:' + who.c + '">' + esc(initials(who.n)) + '</span><div style="min-width:0"><div class="nm">' + esc(who.n) + '</div><div class="xs" style="color:#93A3BA">' + esc(who.s) + '</div></div>' + bellSafe('side') + '</div>' +
     '<nav class="nav">' + navHtml(nav, active) + '</nav>' +
-    '<div class="foot">' + (FRAMED ? '<div class="nx-nav">' + snbNavHtml('') + '</div>' : '') + '<button data-act="logout">' + icon('logout', 'sm') + ' ออกจากระบบ</button><div style="margin-top:6px">' + APP_NAME + ' ' + APP_VERSION + '</div></div></aside>' +
+    '<div class="foot">' + (FRAMED ? '<div class="nx-nav">' + snbNavHtml('') + '</div>' : '') + '<button type="button" class="f-share" data-act="appShare">' + icon('share', 'sm') + ' แชร์ลิงก์โปรแกรม</button>' + '<button data-act="logout">' + icon('logout', 'sm') + ' ออกจากระบบ</button><div style="margin-top:6px">' + APP_NAME + ' ' + APP_VERSION + '</div></div></aside>' +
     '<div class="app-main">' + viewAs +
     '<div class="mtop"><button data-act="navToggle" aria-label="เมนู">' + icon('menu') + '</button><b>' + APP_NAME + '</b><span class="spacer"></span>' + backBtnHtml('mt') + admBtnHtml(area, 'mt') + snbHomeHtml('mt') + bellSafe('') + roleTag(isCon ? 'contractor' : u.role) + '</div>' +
     '<div class="content ' + (isCon ? 'con' : '') + '">' + inner +
     (isCon ? '<nav class="ctabs">' + ctabsHtml(nav, active) +
-      '<button type="button" class="ct-menu" data-act="navToggle" aria-label="เมนู · ลิงก์ผู้รับเหมา · ออกจากระบบ">' + icon('menu') + '<span>เมนู</span></button></nav>' : '') +   /* V7.9: มือถือ/แท็บเล็ต — เปิดเมนูข้าง (ออกจากระบบ · ลิงก์ผู้รับเหมา) ได้จากแท็บล่าง */
+      '<button type="button" class="ct-menu" data-act="navToggle" aria-label="เมนู · แชร์ลิงก์โปรแกรม · ออกจากระบบ">' + icon('menu') + '<span>เมนู</span></button></nav>' : '') +   /* V7.9: มือถือ/แท็บเล็ต — เปิดเมนูข้าง (ออกจากระบบ · ลิงก์ผู้รับเหมา) ได้จากแท็บล่าง */
     '</div></div>' + (S.navOpen ? '<div class="scrim" data-act="navToggle"></div>' : '') + '</div>';
 }
 on('navToggle', () => { S.navOpen = !S.navOpen; rerender(); });
@@ -1941,6 +1944,30 @@ on('cnLinkCopy', (el) => copyText(CONTRACTOR_URL).then((ok) => {
   const i = $('.cn-link .cl-u'); if (i) { i.focus(); i.select(); }
   toast('คัดลอกให้อัตโนมัติไม่ได้ในหน้านี้ — เลือกลิงก์ไว้ให้แล้ว กด Ctrl+C', 'err');
 }));
+/* V7.16.17: แชร์ลิงก์โปรแกรม (ผู้ใช้ 12/11: "อยากแชร์ลิงก์ผ่านแอป") — หน้าเข้าระบบ + เมนูของทุกบัญชี
+   ลิงก์เดียวกันทุกคน (CONTRACTOR_URL) — เข้าด้วยบัญชีของตัวเอง เห็นตามสิทธิ์ · ลิงก์ไม่ใช่ตัวกันสิทธิ์ (ต้องเข้าระบบเสมอ)
+   เครื่องที่มีหน้าต่างแชร์ (มือถือ / แอปที่ติดตั้ง) → เลือก LINE ฯลฯ · ไม่มี / แชร์ไม่ได้ → คัดลอกลิงก์ · คัดลอกไม่ได้ → เปิดกล่องลิงก์ให้กดค้างคัดลอกเอง
+   กดยกเลิกหน้าต่างแชร์ = ไม่ทำอะไรต่อ */
+const SHARE_TEXT = APP_NAME + ' — ระบบบริหารงานติดตั้งเฟอร์นิเจอร์ STARMARK · เข้าด้วย Username / Password ของคุณ · ยังไม่มีบัญชี กด “ลงทะเบียนใช้งาน” (ใช้ได้หลัง Admin อนุมัติ)';
+function appShareBox() {
+  modal({ title: icon('share') + ' แชร์ลิงก์โปรแกรม', sub: 'กดค้างที่ลิงก์ → คัดลอก แล้ววางส่งใน LINE / ข้อความ',
+    body: '<input class="input mono" id="share-u" type="text" readonly value="' + esc(CONTRACTOR_URL) + '" aria-label="ลิงก์โปรแกรม">' +
+      '<div class="xs muted" style="margin-top:8px;line-height:1.5">ลิงก์เดียวกันสำหรับ Sale · จัดซื้อ · ผู้รับเหมา · หัวหน้าช่าง — แต่ละคนเข้าด้วยบัญชีของตัวเอง ยังไม่มีบัญชีกด “ลงทะเบียนใช้งาน” แล้วรอ Admin อนุมัติ</div>',
+    foot: '<button class="btn primary" data-act="closeOv">ปิด</button>',
+    onOpen: (box) => { const i = box.querySelector('#share-u'); if (i) { i.focus(); i.select(); } } });
+}
+function appShareCopy() {
+  return copyText(CONTRACTOR_URL).then((ok) => { if (ok) toast('คัดลอกลิงก์โปรแกรมแล้ว — วางส่งใน LINE / ข้อความได้เลย'); else appShareBox(); });
+}
+on('appShare', () => {
+  const d = { title: APP_NAME, text: SHARE_TEXT, url: CONTRACTOR_URL };
+  let can = false;
+  try { can = typeof navigator.share === 'function' && (typeof navigator.canShare !== 'function' || navigator.canShare(d)); } catch (e) { can = false; }
+  if (S.navOpen) { S.navOpen = false; rerender(); }
+  if (!can) { appShareCopy(); return; }
+  let p; try { p = navigator.share(d); } catch (e) { appShareCopy(); return; }
+  Promise.resolve(p).then(() => {}, (e) => { if (e && e.name === 'AbortError') return; appShareCopy(); });
+});
 on('viewCid', (el) => { S.viewCid = el.value; saveS(); rerender(); });
 
 /* ---------- Router ---------- */
@@ -4159,6 +4186,7 @@ route(/^\/login$/, null, () => (REG.done = '', { html: '<div class="login-wrap">
   '<form id="lf" onsubmit="return false"><div class="field"><label for="lf-u">Username</label><input class="input" id="lf-u" name="u" autocomplete="username" autocapitalize="off" spellcheck="false"></div><div class="field" style="margin-top:12px"><label for="lf-p">Password</label><input class="input" id="lf-p" name="p" type="password" autocomplete="current-password"></div>' +
   '<div id="lf-err" class="small" role="alert" style="color:var(--red);margin-top:8px;min-height:18px"></div><button class="btn primary lg block" data-act="doLogin">เข้าสู่ระบบ</button><div class="xs muted" style="margin-top:8px;text-align:center">ลืมรหัสผ่าน ติดต่อ Admin เพื่อตั้งรหัสใหม่</div></form>' +
   '<a class="btn block lg-reg" href="#/register">' + icon('user', 'sm') + ' ยังไม่มีบัญชี? ลงทะเบียนใช้งาน</a>' + (FRAMED && SNB.on && SNB.home ? '<button type="button" class="btn block lg-reg" data-act="snbNav" data-to="home" style="margin-top:8px">' + icon('chevLeft', 'sm') + ' กลับหน้าเลือกโปรแกรม</button>' : '') + '<div class="xs muted" style="text-align:center;margin-top:6px">สำหรับ Sale · จัดซื้อ · ผู้รับเหมา — ใช้งานได้หลัง Admin อนุมัติ</div>' +
+  '<button type="button" class="btn sm lg-share" data-act="appShare">' + icon('share', 'sm') + ' แชร์ลิงก์โปรแกรมให้คนอื่น</button>' +   /* V7.16.17 */
   '<div class="xs muted lg-note">' + icon('lock', 'xs') + ' ใช้ Username และ Password ที่ได้รับจาก Admin · เห็นเฉพาะข้อมูลตามสิทธิ์ของบัญชี</div></div></div>',
   after: () => { const u = $('#lf-u'); if (u) u.focus(); } }));
 /* ===================== ลงทะเบียนเอง (รอ Admin อนุมัติ) ===================== */
