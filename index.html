@@ -394,6 +394,11 @@ tr.hidden{display:none}
 .reg-roles{grid-template-columns:repeat(3,minmax(0,1fr))}
 .lg-reg{margin-top:14px;justify-content:center}
 .lg-share{display:flex;margin:12px auto 0;justify-content:center}   /* V7.16.17 */
+.lg-inst:empty{display:none}   /* V7.16.18 */
+.lg-inst{margin-top:14px}
+.lg-inst .lg-inst-b{justify-content:center;border-color:#0e7490;color:#0e7490;font-weight:700}
+.lg-inst-s{text-align:center;margin-top:6px}
+.lg-inst-ok{text-align:center;color:#15803d;font-weight:700;font-size:13px;display:flex;gap:6px;align-items:center;justify-content:center}
 .side .foot .f-share{margin-bottom:10px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 @container app (max-width:520px){.reg-roles{grid-template-columns:1fr}}
@@ -1127,7 +1132,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.17';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.18';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -4186,6 +4191,7 @@ route(/^\/login$/, null, () => (REG.done = '', { html: '<div class="login-wrap">
   '<form id="lf" onsubmit="return false"><div class="field"><label for="lf-u">Username</label><input class="input" id="lf-u" name="u" autocomplete="username" autocapitalize="off" spellcheck="false"></div><div class="field" style="margin-top:12px"><label for="lf-p">Password</label><input class="input" id="lf-p" name="p" type="password" autocomplete="current-password"></div>' +
   '<div id="lf-err" class="small" role="alert" style="color:var(--red);margin-top:8px;min-height:18px"></div><button class="btn primary lg block" data-act="doLogin">เข้าสู่ระบบ</button><div class="xs muted" style="margin-top:8px;text-align:center">ลืมรหัสผ่าน ติดต่อ Admin เพื่อตั้งรหัสใหม่</div></form>' +
   '<a class="btn block lg-reg" href="#/register">' + icon('user', 'sm') + ' ยังไม่มีบัญชี? ลงทะเบียนใช้งาน</a>' + (FRAMED && SNB.on && SNB.home ? '<button type="button" class="btn block lg-reg" data-act="snbNav" data-to="home" style="margin-top:8px">' + icon('chevLeft', 'sm') + ' กลับหน้าเลือกโปรแกรม</button>' : '') + '<div class="xs muted" style="text-align:center;margin-top:6px">สำหรับ Sale · จัดซื้อ · ผู้รับเหมา — ใช้งานได้หลัง Admin อนุมัติ</div>' +
+  '<div id="lg-inst" class="lg-inst">' + lgInstSafe() + '</div>' +   /* V7.16.18: ติดตั้งแอปจากหน้าเข้าระบบ */
   '<button type="button" class="btn sm lg-share" data-act="appShare">' + icon('share', 'sm') + ' แชร์ลิงก์โปรแกรมให้คนอื่น</button>' +   /* V7.16.17 */
   '<div class="xs muted lg-note">' + icon('lock', 'xs') + ' ใช้ Username และ Password ที่ได้รับจาก Admin · เห็นเฉพาะข้อมูลตามสิทธิ์ของบัญชี</div></div></div>',
   after: () => { const u = $('#lf-u'); if (u) u.focus(); } }));
@@ -6575,7 +6581,7 @@ function ppShortNote(o, got) {
    หัวหน้าช่างโรงงาน: งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · ย้ายไปผู้รับเหมา / ยกเลิก
    V7.16.5: จัดซื้อ: Order ใหม่รอเลือกช่องทาง · หมดเวลาเสนอราคา · ผู้รับเหมาไม่รับเงื่อนไข (sql/06_push_pur.sql)
             แถบ “ติดตั้งแอปลงหน้าจอ” ทุกหน้าบนมือถือ · กระดิ่งมุมขวาบน = เปิด / ปิดแจ้งเตือน + เสียง + ส่งทดสอบ ในแอปเลย */
-const PUSH = { reg: null, sub: null, perm: 'default', inst: null, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
+const PUSH = { reg: null, sub: null, perm: 'default', inst: null, installed: false, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
 const PUSH_ROLES = { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1 };   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
 function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
 function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
@@ -6595,7 +6601,7 @@ function sameKey(sub, key) { try { const a = new Uint8Array(sub.options.applicat
   add('meta', { name: 'apple-mobile-web-app-title', content: 'Starmark CN' });
   if (!document.querySelector('meta[name="theme-color"]')) add('meta', { name: 'theme-color', content: '#14233B' });
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); PUSH.inst = e; pushCardRefresh(); });
-  window.addEventListener('appinstalled', () => { PUSH.inst = null; pushCardRefresh(); });
+  window.addEventListener('appinstalled', () => { PUSH.inst = null; PUSH.installed = true; pushCardRefresh(); });
   navigator.serviceWorker.addEventListener('message', (e) => { const d = e.data || {}; if (d.type === 'cn-nav' && typeof d.hash === 'string' && d.hash.charAt(0) === '#') location.hash = d.hash; });
   navigator.serviceWorker.register('sw.js', { scope: './' }).then(async (reg) => { PUSH.reg = reg; await soundLoad(); PUSH.ready = true; return pushSync(); }).catch(() => { PUSH.ready = true; pushCardRefresh(); });
 })();
@@ -6699,6 +6705,7 @@ function pushAfter(path) {
   instBarPaint();
 }
 function pushCardRefresh() {
+  lgInstPaint();   /* V7.16.18: ปุ่มติดตั้งที่หน้าเข้าระบบ เปลี่ยนตามความพร้อมของเครื่อง */
   const el = document.getElementById('pushCard');
   if (el) el.innerHTML = pushCardHtml();
   else if (S.user && PUSH_HOME[S.user.role] === (location.hash.slice(1).split('?')[0])) { const h = pushCardHtml(), c = document.querySelector('#app .content'); if (h && c) c.insertAdjacentHTML('afterbegin', '<div id="pushCard">' + h + '</div>'); }
@@ -6768,6 +6775,31 @@ function instBarPaint() {
   const c = document.querySelector('#app .content');
   if (h && c) c.insertAdjacentHTML('afterbegin', '<div id="instBar">' + h + '</div>');
 }
+/* V7.16.18: ติดตั้งแอปจากหน้าเข้าระบบ (ผู้ใช้ 12/11: "ตอนนี้มีลิงก์แล้ว อยากให้มันติดตั้งได้") — คนที่ได้ลิงก์ยังไม่มีบัญชี / ยังไม่เข้าระบบ ก็ติดตั้งได้เลย
+   ใช้ตัวเดียวกับแถบติดตั้งหลังเข้าระบบ: Android Chrome (เครื่องพร้อม) = หน้าต่างติดตั้งของเครื่อง · ยังไม่พร้อม / iPhone = วิธีติดตั้ง
+   เปิดใน LINE = เปิดในเบราว์เซอร์ก่อน · Edge / เบราว์เซอร์อื่น = เปิดใน Chrome / Safari · คอมพิวเตอร์ = มีปุ่มเฉพาะเมื่อเบราว์เซอร์ติดตั้งได้
+   ไม่แสดง: เปิดเป็นแอปที่ติดตั้งแล้ว · อยู่ในกรอบ Production · ไม่ใช่ https */
+function lgInstOn() { return pwaTop() && pwaTopWin() && !pwaStandalone() && (pwaMobile() || !!PUSH.inst || !!pwaInApp() || PUSH.installed); }
+function lgInstHtml() {
+  if (!lgInstOn()) return '';
+  if (PUSH.installed) return '<div class="lg-inst-ok">' + icon('check', 'sm') + ' ติดตั้งแล้ว — เปิดแอป <b>Starmark CN</b> จากหน้าจอ' + (pwaMobile() ? 'มือถือ' : 'เครื่อง') + '</div>';
+  const ia = pwaInApp(), nc = pwaNotChrome(), mob = pwaMobile();
+  const lbl = mob ? 'ติดตั้งแอปลงหน้าจอมือถือ' : 'ติดตั้งแอปลงเครื่องนี้';
+  const b = (act, txt, ic) => '<button type="button" class="btn block lg-inst-b" data-act="' + act + '">' + icon(ic || 'download', 'sm') + ' ' + txt + '</button>';
+  const btn = ia === 'line' ? b('pwaExternal', 'เปิดในเบราว์เซอร์เพื่อติดตั้งแอป', 'external')
+    : ia ? b('pwaGuide', 'วิธีเปิดในเบราว์เซอร์เพื่อติดตั้งแอป', 'external')
+    : nc ? chromeBtn('block lg-inst-b')
+    : PUSH.inst ? b('pwaInstall', lbl)
+    : b('pwaGuide', lbl);
+  const sub = ia ? 'ตอนนี้เปิดอยู่ใน ' + (ia === 'line' ? 'LINE' : 'แอปแชท') + ' — ติดตั้งในนี้ไม่ได้ ต้องเปิดในเบราว์เซอร์ก่อน'
+    : nc ? 'ตอนนี้เปิดอยู่ใน ' + BR_NAME[pwaBrowser()] + ' — ติดตั้งแอป / รับแจ้งเตือนได้ดีจาก ' + pwaGoBr()
+    : PUSH.inst ? 'เปิดเร็วเหมือนแอป · รับแจ้งเตือนงานได้ · ไม่ต้องโหลดจาก Store'
+    : pwaIOS() ? 'iPhone ติดตั้งจากปุ่มแชร์ของ Safari — กดดูวิธี (มีขั้นตอนให้)'
+    : 'เปิดเร็วเหมือนแอป · รับแจ้งเตือนงานได้ — กดดูวิธี (มีขั้นตอนให้)';
+  return btn + '<div class="xs muted lg-inst-s">' + sub + '</div>';
+}
+function lgInstSafe() { try { return lgInstHtml(); } catch (e) { return ''; } }   /* หน้าเข้าระบบวาดก่อนไฟล์นี้โหลดเสร็จ (เปิดลิงก์ที่มี #/login) → ว่างไว้ก่อน แล้ววาดท้ายไฟล์ */
+function lgInstPaint() { const el = document.getElementById('lg-inst'); if (el) el.innerHTML = lgInstSafe(); }
 function pwaGuideBody() {
   const ia = pwaInApp();
   if (!ia && pwaNotChrome()) return '<ol class="ps-steps"><li>กด <b>คัดลอกลิงก์</b> ด้านล่าง</li><li>เปิดแอป <b>' + pwaGoBr() + '</b>' + (pwaIOS() ? ' (เข็มทิศสีฟ้า)' : ' (วงกลม แดง เหลือง เขียว)') + '</li><li>แตะช่องลิงก์ด้านบน → <b>วาง</b> → ไป</li><li>ล็อกอิน แล้ว' + (pwaIOS() ? 'ติดตั้งตามแถบด้านบน → เปิดแอปจากไอคอน → ' : '') + 'กด <b>กระดิ่ง</b> → เปิดการแจ้งเตือน</li></ol>' +
@@ -6930,7 +6962,7 @@ on('pwaInstall', async () => {
   PUSH.inst = null;
   let ok = false;
   try { ev.prompt(); const c = await ev.userChoice; ok = !!(c && c.outcome === 'accepted'); } catch (e) { /* ข้าม */ }
-  if (ok) toast('ติดตั้งแล้ว — เปิดแอป “Starmark CN” จากหน้าจอมือถือ แล้วกดกระดิ่งเพื่อเปิดการแจ้งเตือน');
+  if (ok) { PUSH.installed = true; toast('ติดตั้งแล้ว — เปิดแอป “Starmark CN” จากหน้าจอมือถือ แล้วกดกระดิ่งเพื่อเปิดการแจ้งเตือน'); }
   pushCardRefresh();
 });
 /* ออกจากระบบ: เลิกผูกเครื่องนี้กับบัญชี (เครื่องที่ใช้ร่วมกันจะไม่ได้แจ้งเตือนของบัญชีเดิม) */
@@ -6983,6 +7015,7 @@ on('pushAdmAll', async (el) => {
   } catch (e) { el.checked = !v; toast('บันทึกไม่สำเร็จ: ' + ((e && e.message) || e), 'err'); }
   finally { el.disabled = false; }
 });
+lgInstPaint();   /* V7.16.18: หน้าเข้าระบบที่วาดไว้ก่อนไฟล์นี้โหลด → ใส่ปุ่มติดตั้ง */
 
 })();
 
