@@ -976,6 +976,67 @@ body.slv-on{overflow:hidden}
 .snb-all{max-height:min(420px,55vh);overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
 .snb-all .snb-more{margin:6px 0 2px;width:100%;justify-content:center}
 
+/* ===== V7.17 ไลน์ผลิต (เอกสาร + สถานะ) ===== */
+.r-production{background:#7A3E12}
+.prd-tbl tr.prd-row{cursor:pointer}
+.prd-tbl tr.prd-row:hover td{background:var(--surface-2)}
+.prd-tbl tr.prd-row.todo td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
+.prd-tbl tr.prd-row:focus-visible{outline:2px solid var(--action);outline-offset:-2px}
+.prd-mo{display:flex;align-items:center;gap:8px;min-width:150px}.prd-mo .prog{flex:1;min-width:60px}
+.prd-pills{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
+.prd-sync{margin-top:10px;display:flex;gap:6px;align-items:center}
+.prd-head .prd-hrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.prd-head .prd-hb{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}.prd-head .prd-hb .prd-mob{width:100%}
+.prd-tabs{margin:14px 0 12px}
+.prd-seg{display:flex;width:100%;max-width:520px}
+.prd-seg button{flex:1;padding:10px 8px;font-size:14.5px;font-weight:600}
+.prd-seg button .n{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--gray-bg);color:var(--text-2);font-size:12px;margin-left:4px}
+.prd-seg button.on .n{background:rgba(255,255,255,.22);color:#fff}
+.prd-doc{margin-bottom:14px}
+.prd-doc.off{opacity:.62}
+.prd-doc.ok{border-left:4px solid var(--green)}
+.prd-doc .card-h h2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prd-trk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:2px 0 14px;position:relative}
+.prd-trk .pt{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;position:relative;padding:0 4px}
+.prd-trk .pt::before{content:'';position:absolute;top:13px;left:-50%;width:100%;height:3px;background:var(--line);z-index:0}
+.prd-trk .pt:first-child::before{display:none}
+.prd-trk .pt.done::before{background:var(--green)}
+.prd-trk .pt i{width:28px;height:28px;border-radius:50%;border:2px solid var(--line-2);background:#fff;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#fff}
+.prd-trk .pt.done i{background:var(--green);border-color:var(--green)}
+.prd-trk .pt.cur i{border-color:var(--amber);box-shadow:0 0 0 4px rgba(154,98,6,.14)}
+.prd-trk .pt b{font-size:13.5px;margin-top:4px}
+.prd-trk .pt span{font-size:11.5px;color:var(--text-3);line-height:1.35}
+.prd-trk .pt.cur b{color:var(--amber)}
+.prd-wh{margin-bottom:10px;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.prd-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.prd-acts .btn:not(.sm){min-height:44px;padding:0 20px;font-size:15px}
+.prd-dead{margin:6px 0 14px}.prd-dead summary{cursor:pointer;color:var(--text-2);font-size:13.5px;padding:6px 0}
+.prd-lmh{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:10px}
+.prd-due{display:flex;flex-direction:column;padding:10px 14px;border:2px solid var(--ink);border-radius:10px;min-width:180px}
+.prd-due span{font-size:12px;color:var(--text-2)}.prd-due b{font-size:22px;color:var(--ink);line-height:1.2}.prd-due span.xs{font-size:11.5px;color:var(--text-3)}
+.prd-dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0;font-size:13.5px}.prd-dl dt{color:var(--text-3)}.prd-dl dd{margin:0}
+.prd-bom{margin-top:4px;font-size:12.5px}.prd-bom summary{cursor:pointer;color:var(--action)}.prd-bom ul{margin:4px 0 0;padding-left:18px;color:var(--text-2)}
+.prd-lines tr.prd-tot td{border-top:2px solid var(--line-2);font-weight:600}.prd-lines tr.prd-tot .prd-tot-m{display:none}
+.prd-mob{min-width:0}
+.prd-moh{margin:0 0 10px;display:flex;gap:6px;align-items:flex-start}.prd-moh .ico{flex:none;margin-top:2px}
+.prd-bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.prd-bar.on{border-color:var(--action);box-shadow:0 2px 10px rgba(20,35,59,.10)}
+.prd-sec{margin-bottom:14px}.prd-sec .card-h{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.prd-all{display:flex;gap:6px;align-items:center;cursor:pointer}
+.prd-mo-t td.ck{width:30px}.prd-mo-t td.ck input,.prd-all input{width:20px;height:20px}
+.prd-mo-t tr.sel td{background:var(--blue-bg)}
+.prd-mo-t tr.st-received td.main{color:var(--green)}
+@media (max-width:760px){
+  .prd-head .prd-hrow{grid-template-columns:1fr}
+  .prd-seg{max-width:none}
+  .prd-trk .pt span{font-size:11px}
+  .prd-mo-t td.ck{display:block;float:right;width:auto;padding:0}
+  .prd-bar{top:56px}
+  .prd-due{min-width:0;width:100%}
+  .prd-lines tr.prd-tot td[colspan]{padding:6px 0}.prd-lines tr.prd-tot .prd-tot-m{display:inline}.prd-lines tr.prd-tot td.prd-tot-n{display:none}
+  .t.resp td .prd-mob,.t.resp td .prd-pills{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+}
+
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
    · โลโก้ STARMARK (บริษัท · ภาพเวกเตอร์ คมทุกขนาด) อยู่ “ในโลโก้ StarNexus” มุมบนซ้าย — หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน (ไอคอนแอป + หน้าเปิดแอปฝังในภาพ pwa/icons) · บนสุดของเมนูข้าง */
@@ -1132,7 +1193,7 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.16.18';
+const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.17';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -1151,17 +1212,18 @@ const TYPE_BY = Object.fromEntries(TYPES.map((t) => [t.k, t]));
 const ROLES = {
   admin: { label: 'Admin', cls: 'r-admin', color: '#14233B', home: '#/admin/home' },
   sale: { label: 'Sale', cls: 'r-sale', color: '#1E5BA8', home: '#/sale/orders' },
-  purchasing: { label: 'จัดซื้อ', cls: 'r-purchasing', color: '#0E7466', home: '#/pur/inbox' },   /* V7.12: หน้าแรก = Order รอจัดซื้อเลือกช่องทาง */
+  purchasing: { label: 'จัดซื้อ', cls: 'r-purchasing', color: '#0E7466', home: '#/pur/bids' },   /* V7.17: หน้าแรก = งานรอผู้รับเหมาเสนอราคา (หัวหน้าช่างเลือกช่องทางแทน) */   /* V7.12: หน้าแรก = Order รอจัดซื้อเลือกช่องทาง */
   contractor: { label: 'ผู้รับเหมา', cls: 'r-contractor', color: '#C25A0F', home: '#/con/open' },
   accounting: { label: 'บัญชี', cls: 'r-accounting', color: '#8A6420', home: '#/acc/review' },          /* V7.12: ตรวจใบส่งมอบ + วันชำระเงิน + บันทึกจ่าย */
   installer: { label: 'หัวหน้าช่างติดตั้ง', cls: 'r-installer', color: '#6A4BC4', home: '#/ins/queue' }, /* V7.12: จัดทีมช่างติดตั้งโรงงาน */
   warehouse: { label: 'คลังสินค้า', cls: 'r-warehouse', color: '#2F5D7C', home: '#/wh/receive' },        /* V7.13: ยิงรับเข้า / จ่ายออก / โลเคชั่น */
+  production: { label: 'ฝ่ายผลิต', cls: 'r-production', color: '#7A3E12', home: '#/prd/orders' },      /* V7.17: ไลน์ผลิตดูเอกสาร (ใบปิดผิว · ใบเบิก) + สถานะ · กด “ผลิตรับแล้ว” */
 };
 /* V7.12: ช่องทางติดตั้งที่จัดซื้อเลือกหลัง Sale ยืนยัน */
 const CHANNELS = { contractor: 'ผู้รับเหมาติดตั้ง', inhouse: 'ช่างติดตั้งโรงงาน' };
 const OST = {
   draft: ['ร่าง (ยังไม่ยืนยัน)', 'gray'],
-  dispatch: ['รอจัดซื้อเลือกช่องทาง', 'brass'],
+  dispatch: ['รอหัวหน้าช่างเลือกช่องทาง', 'brass'],   /* V7.17 */
   open: ['เปิดรับราคา', 'blue'],
   expired: ['หมดเวลา · รอเลือกผู้รับเหมา', 'amber'],
   booked: ['อนุมัติแล้ว · รอเข้าติดตั้ง', 'teal'],
@@ -1756,7 +1818,7 @@ function navFor(area) {
   if (area === 'admin') return [
     { h: '#/admin/home', i: 'dashboard', t: 'ภาพรวม' },
     { h: '#/admin/orders', i: 'list', t: 'Order ทั้งหมด' },
-    { h: '#/admin/inbox', i: 'inbox', t: 'Order รอจัดซื้อ', n: c.dispatch, w: true, tip: NAV_TIP.dispatch },
+    { h: '#/admin/inbox', i: 'inbox', t: 'Order รอเลือกช่องทาง', n: c.dispatch, w: true, tip: NAV_TIP.dispatch },   /* V7.17: หัวหน้าช่างเลือก (Admin เลือก / เปลี่ยนได้) */
     { h: '#/admin/bids', i: 'scale', t: 'ราคาเสนอ & อนุมัติ', n: c.toApprove, w: true, tip: NAV_TIP.toApprove },
     { h: '#/admin/queue', i: 'users', t: 'คิวผู้รับเหมา' },
     { h: '#/admin/booking', i: 'calendar', t: 'Booking ผู้รับเหมา' },
@@ -1772,21 +1834,24 @@ function navFor(area) {
     { h: '#/acc/review', i: 'wallet', t: 'หน้าจอบัญชี' },
     { h: '#/ins/queue', i: 'hammer', t: 'หน้าจอหัวหน้าช่างติดตั้ง' },
     { h: '#/wh/receive', i: 'box', t: 'หน้าจอคลังสินค้า' },
+    { h: '#/prd/orders', i: 'factory', t: 'หน้าจอไลน์ผลิต' },   /* V7.17 */
     { h: '#/con/open', i: 'tool', t: 'หน้าจอผู้รับเหมา' },
   ];
   if (area === 'sale') return [{ h: '#/sale/orders', i: 'list', t: 'Sale Order ของฉัน', n: c.drafts, tip: NAV_TIP.drafts }, { h: '#/sale/new', i: 'plus', t: 'สร้าง Sale Order' }];
   if (area === 'pur') return [
-    { h: '#/pur/inbox', i: 'inbox', t: 'Order รอจัดซื้อ', n: c.dispatch, w: true, tip: NAV_TIP.dispatch },
-    { h: '#/pur/bids', i: 'scale', t: 'งานรอผู้รับเหมาเสนอราคา', n: c.toApprove, w: true, tip: NAV_TIP.toApprove },
+    { h: '#/pur/bids', i: 'scale', t: 'งานรอผู้รับเหมาเสนอราคา', n: c.toApprove, w: true, tip: NAV_TIP.toApprove },   /* V7.17: หน้าแรกจัดซื้อ (หัวหน้าช่างเลือกช่องทางแทน) */
+    { h: '#/pur/inbox', i: 'inbox', t: 'Order ที่ Sale ยืนยัน' },
     { h: '#/pur/queue', i: 'users', t: 'ตรวจสอบคิวผู้รับเหมา' },
     { h: '#/pur/booking', i: 'calendar', t: 'Booking ผู้รับเหมา' },
     { h: '#/pur/ibooking', i: 'calendar', t: 'Booking ช่างโรงงาน' },
+    prdNavItem(c),   /* V7.17: ไลน์ผลิต — งานสั่งทำ (สั่งแล้ว / ได้รับแล้ว) */
   ];
   if (area === 'acc') return [
     { h: '#/acc/review', i: 'file', t: 'ตรวจใบส่งมอบงาน', n: c.check, w: true, tip: NAV_TIP.check },
     { h: '#/acc/pay', i: 'wallet', t: 'การเงินผู้รับเหมา', n: c.payDue, w: true, tip: NAV_TIP.payDue },
   ];
   if (area === 'ins') return [
+    { h: '#/ins/inbox', i: 'inbox', t: 'Order รอเลือกช่องทาง', n: c.dispatch, w: true, tip: NAV_TIP.dispatch },   /* V7.17: Sale ยืนยัน → หัวหน้าช่างเลือก ช่างโรงงาน / ผู้รับเหมา */
     { h: '#/ins/queue', i: 'hammer', t: 'งานช่างติดตั้งโรงงาน', n: c.ihTodo, w: true, tip: ihTip(c) },
     { h: '#/ins/booking', i: 'calendar', t: 'Booking ช่างโรงงาน' },
     { h: '#/ins/teams', i: 'users', t: 'ทีมช่างติดตั้ง' },
@@ -1797,7 +1862,9 @@ function navFor(area) {
     { h: '#/wh/issue', i: 'truck', t: 'ยิงจ่ายออก', s: 'จ่ายออก', n: c.whDue, w: true, tip: NAV_TIP.whDue },
     { h: '#/wh/stock', i: 'box', t: 'สินค้าในคลัง', s: 'ในคลัง' },
     { h: '#/wh/locs', i: 'shelf', t: 'โลเคชั่น', s: 'โลเคชั่น' },
+    prdNavItem(c),   /* V7.17: ไลน์ผลิต — ใบเบิก (คลังจ่ายแล้ว) · ของสั่งทำได้รับแล้ว */
   ];
+  if (area === 'prd') return S.user.role === 'warehouse' ? navFor('wh') : S.user.role === 'purchasing' ? navFor('pur') : [prdNavItem(c)];   /* V7.17 */
   const k = conCounts(curCid());
   return [
     { h: '#/con/open', i: 'inbox', t: 'รายการรอใส่ราคา', s: 'รอใส่ราคา', n: k.open, tip: NAV_TIP.open },
@@ -1815,6 +1882,7 @@ function counts() {
     ihTodo: st.filter((x) => x === 'ih_wait' || x === 'ih_sign').length, whDue: r === 'admin' || r === 'warehouse' ? whDueOrders().length : 0,
     drafts: DB.orders.filter((o) => !o.confirmedAt && (r !== 'sale' || o.saleId === S.user.id)).length,
     payDue: r === 'admin' || r === 'accounting' ? DB.orders.map(payOf).filter((p) => p && p.left > 0).length : 0,
+    prd: prdNavCount(),   /* V7.17: ไลน์ผลิต — ตัวเลขตามบทบาท (คลัง: ใบเบิกรอจ่าย · ผลิต: รอรับ · จัดซื้อ: งานสั่งทำยังไม่สั่ง) */
     signups: (DB.signups || []).filter((g) => g.status === 'pending').length };
 }
 function curCid() {
@@ -1833,9 +1901,10 @@ function conCounts(cid) {
     pay: os.filter((o) => { if (!o.award || o.award.cid !== cid) return false; const p = payOf(o); return !!p && p.left > 0; }).length,   /* V7.12: ถึงงวดแล้วยังไม่ได้รับ */
   };
 }
-const AREA_ROLE = { admin: 'admin', sale: 'sale', pur: 'purchasing', con: 'contractor', acc: 'accounting', ins: 'installer', wh: 'warehouse' };
-const AREA_NAME = { sale: ' Sale', pur: 'จัดซื้อ', con: 'ผู้รับเหมา', acc: 'บัญชี', ins: 'หัวหน้าช่างติดตั้ง', wh: 'คลังสินค้า' };
-function canSee(area) { return S.user.role === 'admin' || AREA_ROLE[area] === S.user.role; }
+const AREA_ROLE = { admin: 'admin', sale: 'sale', pur: 'purchasing', con: 'contractor', acc: 'accounting', ins: 'installer', wh: 'warehouse', prd: 'production' };
+const AREA_NAME = { sale: ' Sale', pur: 'จัดซื้อ', con: 'ผู้รับเหมา', acc: 'บัญชี', ins: 'หัวหน้าช่างติดตั้ง', wh: 'คลังสินค้า', prd: 'ไลน์ผลิต' };
+/* V7.17: หน้าไลน์ผลิตเปิดได้ทั้งฝ่ายผลิต · คลัง · จัดซื้อ (แต่ละบทบาทกดได้เฉพาะขั้นของตัวเอง — Server ตรวจซ้ำ) */
+function canSee(area) { return S.user.role === 'admin' || AREA_ROLE[area] === S.user.role || (area === 'prd' && canPrd()); }
 
 async function forceLogout(msg) {
   await signOut(); DB = null; S.user = null; lastState = ''; FURL.clear(); closeOverlay();
@@ -1869,9 +1938,10 @@ function shell(area, active, inner) {
 }
 on('navToggle', () => { S.navOpen = !S.navOpen; rerender(); });
 /* V7.12.2: ตัวเลขในเมนูมีคำอธิบาย (ชี้ค้าง) · เข้าหน้าแล้วมีแถบบอกว่าตัวเลขเตือนเรื่องอะไร */
-const NAV_TIP = { dispatch: 'Order รอจัดซื้อเลือกช่องทางติดตั้ง', toApprove: 'งานเปิดรับราคา / หมดเวลารอเลือกผู้รับเหมา', ihWait: 'งานช่างโรงงานรอจัดทีม', check: 'ใบส่งมอบรอตรวจ',
+const NAV_TIP = { dispatch: 'Order รอหัวหน้าช่างเลือกช่องทางติดตั้ง', toApprove: 'งานเปิดรับราคา / หมดเวลารอเลือกผู้รับเหมา', ihWait: 'งานช่างโรงงานรอจัดทีม', check: 'ใบส่งมอบรอตรวจ',
   payDue: 'งานมียอดค้างจ่ายผู้รับเหมา', signups: 'คำขอลงทะเบียนรออนุมัติ', drafts: 'Order ร่างยังไม่ยืนยัน', open: 'งานรอใส่ราคา', sent: 'งานเสนอราคาแล้ว รออนุมัติ', work: 'งานที่ยังไม่ส่งมอบ', pay: 'งานมียอดถึงงวดที่ยังไม่ได้รับ',
-  whDue: 'Order ใกล้วันติดตั้ง (ภายใน 3 วัน) ยังมีห่อในคลัง' };
+  whDue: 'Order ใกล้วันติดตั้ง (ภายใน 3 วัน) ยังมีห่อในคลัง',
+  prd: { warehouse: 'ใบเบิกรอคลังจ่าย', production: 'ใบเบิกที่คลังจ่ายแล้ว รอผลิตรับ', purchasing: 'รายการงานสั่งทำที่ยังไม่สั่ง' } };
 /* V7.13: ตัวเลขเมนูงานช่างโรงงาน = รอจัดทีม + ติดตั้งเสร็จรอแนบใบส่งมอบ */
 const ihTip = (c) => 'งานช่างโรงงานรอดำเนินการ (รอจัดทีม ' + c.ihWait + ' · รอแนบใบส่งมอบ ' + c.ihSign + ')';
 const cntTip = (n) => n.tip ? ' title="' + esc(n.n + ' ' + n.tip) + '" aria-label="' + esc(n.n + ' ' + n.tip) + '"' : '';
@@ -2057,6 +2127,8 @@ const canReview = () => S.user.role === 'admin' || S.user.role === 'accounting';
 const canManage = () => S.user.role === 'admin' || S.user.role === 'purchasing';  /* อนุมัติ / แก้วันติดตั้ง / ยกเลิกการอนุมัติ / เลือกช่องทาง */
 const seePay = () => S.user.role === 'admin' || S.user.role === 'accounting';     /* การเงินผู้รับเหมา */
 const canInhouse = () => S.user.role === 'admin' || S.user.role === 'installer';  /* จัดทีมช่างติดตั้งโรงงาน */
+/* V7.17 (ผู้ใช้ 14/11): Sale ยืนยัน → หัวหน้าช่างติดตั้งโรงงานเลือกช่องทาง (ช่างโรงงาน / ผู้รับเหมา = เปิดรับราคาทันที) · จัดซื้อไม่ต้องเลือกแล้ว · เปลี่ยนช่องทางทีหลัง = Admin เท่านั้น */
+const canPick = () => S.user.role === 'admin' || S.user.role === 'installer';
 const teamById = (id) => ((DB && DB.teams) || []).find((t) => t.id === id) || { id, name: id || '—', size: null };
 const ihStarted = (o) => o.channel === 'inhouse' && !!o.inhouse && o.inhouse.stage !== 'not_started';
 /* V7.16: เปลี่ยนช่องทางได้จนกว่าจะเริ่มงานจริง — ผู้รับเหมา: ยังไม่เข้าหน้างาน · ไม่มีใบส่งมอบ · ไม่มีการจ่ายเงิน (มีราคาเสนอ / อนุมัติแล้วก็เปลี่ยนได้)
@@ -2071,7 +2143,7 @@ function progCell(o, s) {
   if (o.cancelledAt) return '<span class="small">' + esc(o.cancelReason || '') + '</span><div class="sub">' + fmtDT(o.cancelledAt) + (o.cancelledBy ? ' · ' + esc(o.cancelledBy) : '') + '</div>';
   if (s === 'open' || s === 'expired') return cdHtml(o, true) + '<div class="sub">ผู้รับเหมาเสนอแล้ว ' + o.bids.length + ' ราย</div>';
   if (s === 'draft') return '<span class="muted small">ยังไม่ยืนยัน</span>';
-  if (s === 'dispatch') return '<span class="small" style="color:#8A6420">รอจัดซื้อเลือกช่องทางติดตั้ง</span><div class="sub">Sale ยืนยัน ' + timeAgo(o.confirmedAt) + '</div>';
+  if (s === 'dispatch') return '<span class="small" style="color:#8A6420">รอหัวหน้าช่างเลือกช่องทางติดตั้ง</span><div class="sub">Sale ยืนยัน ' + timeAgo(o.confirmedAt) + '</div>';
   if (o.channel === 'inhouse') { const x = o.inhouse || {}; return x.teamId ? '<b class="small">' + icon('hammer', 'xs') + ' ' + esc(teamById(x.teamId).name) + '</b><div class="sub">ติดตั้ง ' + fmtRange(x.start, x.end) + '</div>' : '<span class="small">ช่างโรงงาน · รอหัวหน้าช่างจัดทีม</span><div class="sub">ลูกค้าต้องการ ' + fmtRange(o.wantFrom, o.wantTo) + '</div>'; }
   if (o.award) return '<b class="small">' + esc(shortCo(conById(o.award.cid).company)) + '</b><div class="sub">ติดตั้ง ' + fmtRange(o.award.start, o.award.end) + '</div>';
   return '<span class="muted small">—</span>';
@@ -2098,8 +2170,8 @@ function orderActs(o) {
   if (canEditOrder(o)) b.push('<a class="btn sm" href="#/sale/edit/' + o.id + '">' + icon('edit', 'sm') + (o.confirmedAt ? ' แก้ไข Order' : ' แก้ไข / ยืนยัน') + '</a>');
   if (canEditOrder(o) && !o.confirmedAt) b.push('<button class="btn sm danger" data-act="ordDel" data-id="' + o.id + '">' + icon('trash', 'sm') + ' ลบร่าง</button>');
   if (!canEditOrder(o) && canEditDraw(o)) b.push('<a class="btn sm" href="' + drawEditHref(o) + '">' + icon('drawing', 'sm') + ' แก้ไขแบบงาน</a>');
-  if (canManage() && st === 'dispatch') b.push('<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทางติดตั้ง</button>');
-  if (canManage() && !o.cancelledAt && st !== 'dispatch' && canSwitch(o)) b.push('<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('refresh', 'sm') + ' เปลี่ยนช่องทางติดตั้ง</button>');
+  if (canPick() && st === 'dispatch') b.push('<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทางติดตั้ง</button>');
+  if (isAdmin() && !o.cancelledAt && st !== 'dispatch' && canSwitch(o)) b.push('<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('refresh', 'sm') + ' เปลี่ยนช่องทางติดตั้ง</button>');
   if (canInhouse() && o.channel === 'inhouse' && !o.cancelledAt && st !== 'ih_done' && st !== 'ih_sign') b.push('<button class="btn sm primary" data-act="ihAssign" data-id="' + o.id + '">' + icon('users', 'sm') + (o.inhouse && o.inhouse.teamId ? ' แก้ทีม / วันติดตั้ง' : ' จัดทีมช่าง') + '</button>');
   if (canInhouse() && st === 'ih_booked' && !packStat(o).total) b.push('<button class="btn sm" data-act="ihStage" data-id="' + o.id + '" data-s="in_progress">' + icon('hammer', 'sm') + ' เริ่มงาน</button>');   /* V7.16: มีห่อ = เริ่มด้วยการยิงรับของ */
   if (canInhouse() && ['ih_booked', 'ih_installing', 'ih_sign', 'ih_done'].indexOf(st) >= 0) b.push(ihJobBtn(o, st));   /* V7.13 */
@@ -2122,8 +2194,8 @@ function openOrder(id) {
   const bids = o.bids.slice().sort((a, b) => a.price - b.price), acts = orderActs(o), ref = fee(o);
   const log = (o.log || []).filter((l) => !/^อนุมัติ /.test(l.what)).map((l) => [l.at, l.what, l.by]);
   const logHas = (re) => log.some((l) => re.test(l[1])), x = o.channel === 'inhouse' ? o.inhouse : null;
-  const tl = [[o.createdAt, 'Sale สร้าง Order', userById(o.saleId).name], o.confirmedAt ? [o.confirmedAt, 'Sale ยืนยัน Order · ส่งให้จัดซื้อ', ''] : null,
-    o.dispatchedAt && !logHas(/^จัดซื้อส่งให้/) ? [o.dispatchedAt, o.channel === 'inhouse' ? 'จัดซื้อส่งให้ช่างติดตั้งโรงงาน' : 'จัดซื้อส่งให้ผู้รับเหมาเสนอราคา ' + bidDaysOf(o) + ' วัน', o.dispatchedBy || ''] : null,
+  const tl = [[o.createdAt, 'Sale สร้าง Order', userById(o.saleId).name], o.confirmedAt ? [o.confirmedAt, 'Sale ยืนยัน Order · ส่งให้หัวหน้าช่างเลือกช่องทาง', ''] : null,
+    o.dispatchedAt && !logHas(/^(จัดซื้อ|หัวหน้าช่าง|Admin ?)ส่งให้/) ? [o.dispatchedAt, o.channel === 'inhouse' ? 'ส่งให้ช่างติดตั้งโรงงาน' : 'ส่งให้ผู้รับเหมาเสนอราคา ' + bidDaysOf(o) + ' วัน', o.dispatchedBy || ''] : null,
     x && x.teamId && x.assignedAt && !logHas(/^จัดทีมช่างโรงงาน/) ? [x.assignedAt, 'หัวหน้าช่างจัดทีม ' + teamById(x.teamId).name + ' · ' + fmtRange(x.start, x.end), x.assignedBy || ''] : null,
     x && x.startedAt && !logHas(/^ช่างโรงงาน: กำลัง/) ? [x.startedAt, 'ช่างโรงงานเริ่มติดตั้ง', ''] : null,
     x && x.doneAt && !logHas(/^ช่างโรงงาน: ติดตั้งเสร็จ/) ? [x.doneAt, 'ช่างโรงงานติดตั้งเสร็จ', ''] : null,
@@ -2165,8 +2237,8 @@ function openOrder(id) {
 function chanHtml(o) {
   if (!o.confirmedAt || S.user.role === 'contractor') return '';
   const x = o.channel === 'inhouse' ? o.inhouse || {} : null;
-  return '<div class="divider"></div><div class="row between"><h3>ช่องทางติดตั้ง</h3>' + (o.channel ? '<span class="badge plain ' + (o.channel === 'inhouse' ? 't-violet' : 't-blue') + '">' + CHANNELS[o.channel] + '</span>' : '<span class="badge t-brass">รอจัดซื้อเลือก</span>') + '</div>' +
-    '<dl class="dl" style="margin-top:8px">' + (o.dispatchedAt ? '<dt>จัดซื้อส่งเมื่อ</dt><dd>' + fmtDT(o.dispatchedAt) + (o.dispatchedBy ? ' · ' + esc(o.dispatchedBy) : '') + '</dd>' : '<dt>Sale ยืนยันเมื่อ</dt><dd>' + fmtDT(o.confirmedAt) + ' <span class="xs muted">(' + timeAgo(o.confirmedAt) + ')</span></dd>') +
+  return '<div class="divider"></div><div class="row between"><h3>ช่องทางติดตั้ง</h3>' + (o.channel ? '<span class="badge plain ' + (o.channel === 'inhouse' ? 't-violet' : 't-blue') + '">' + CHANNELS[o.channel] + '</span>' : '<span class="badge t-brass">รอหัวหน้าช่างเลือก</span>') + '</div>' +
+    '<dl class="dl" style="margin-top:8px">' + (o.dispatchedAt ? '<dt>เลือกช่องทางเมื่อ</dt><dd>' + fmtDT(o.dispatchedAt) + (o.dispatchedBy ? ' · ' + esc(o.dispatchedBy) : '') + '</dd>' : '<dt>Sale ยืนยันเมื่อ</dt><dd>' + fmtDT(o.confirmedAt) + ' <span class="xs muted">(' + timeAgo(o.confirmedAt) + ')</span></dd>') +
     (o.channel === 'contractor' ? '<dt>เปิดรับราคา</dt><dd>' + bidDaysOf(o) + ' วัน · หมดเวลา ' + fmtDT(deadline(o)) + '</dd>' : '') +
     (x ? '<dt>ทีมช่าง</dt><dd>' + (x.teamId ? '<b>' + esc(teamById(x.teamId).name) + '</b>' + (teamById(x.teamId).size ? ' <span class="xs muted">(' + teamById(x.teamId).size + ' คน)</span>' : '') : '<span class="muted">รอหัวหน้าช่างจัดทีม</span>') + '</dd>' +
       (x.teamId ? '<dt>ช่วงติดตั้ง</dt><dd>' + fmtRange(x.start, x.end) + ' (' + x.days + ' วัน)</dd>' : '') + '<dt>สถานะ</dt><dd>' + STAGES[x.stage || 'not_started'] + '</dd>' +
@@ -2209,7 +2281,7 @@ function dpSwitchNote(o) {
     '<textarea class="textarea" id="dp-reason" rows="2" placeholder="เช่น ราคาสูงเกินงบ / ให้ช่างเราทำเพื่อความรวดเร็ว"></textarea><div class="help">' + (need ? 'อย่างน้อย 5 ตัวอักษร · ' : '') + 'เก็บไว้ในประวัติ Order — ผู้รับเหมาไม่เห็น</div></div>';
 }
 on('dispatch', (el) => {
-  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o || !canManage() || o.cancelledAt || !o.confirmedAt) return;
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o || !(o.channel ? isAdmin() : canPick()) || o.cancelledAt || !o.confirmedAt) return;   /* V7.17: เลือก = หัวหน้าช่าง / Admin · เปลี่ยน = Admin */
   if (o.channel && !canSwitch(o)) { toast(o.channel === 'contractor' ? 'ผู้รับเหมารับของ (เริ่มงาน) / ส่งมอบ / ได้รับเงินแล้ว — เปลี่ยนช่องทางไม่ได้' : 'ทีมช่างโรงงานรับของ (เริ่มงาน) แล้ว — เปลี่ยนช่องทางไม่ได้', 'err'); return; }
   const sw0 = !!o.channel, pick = sw0 ? (o.channel === 'inhouse' ? 'contractor' : 'inhouse') : '';
   S.dpDays = bidDaysOf(o);
@@ -2217,9 +2289,10 @@ on('dispatch', (el) => {
   modal({ title: icon('send') + (sw0 ? ' เปลี่ยนช่องทางติดตั้ง' : ' เลือกช่องทางติดตั้ง'), sub: esc(o.id) + ' · ' + esc(o.title),
     body: '<dl class="dl"><dt>ลูกค้า / สถานที่</dt><dd>' + esc(o.customer) + ' · ' + esc(o.siteName) + ' จ.' + esc(o.province) + '</dd><dt>ลูกค้าพร้อมให้ติดตั้ง</dt><dd><b>' + fmtRange(o.wantFrom, o.wantTo) + '</b> (' + daysIncl(o.wantFrom, o.wantTo) + ' วัน)</dd><dt>จำนวนตู้</dt><dd>' + num(o.cabinets) + ' ตู้ · ' + sw(o.type) + '</dd><dt>Sale</dt><dd>' + esc(userById(o.saleId).name) + ' · ยืนยัน ' + fmtDT(o.confirmedAt) + '</dd></dl>' +
       '<div class="divider"></div><h3>ให้ใครติดตั้งงานนี้</h3><div class="pay-opts dp-opts" role="radiogroup" aria-label="ช่องทางติดตั้ง" style="margin-top:8px">' +
-      card('inhouse', 'ช่างติดตั้งเรา (ช่างติดตั้งโรงงาน)', 'ส่งให้หัวหน้าช่างติดตั้งเลือกทีมและคิว — ผู้รับเหมาไม่เห็นงานนี้', 'hammer') +
-      card('contractor', 'ผู้รับเหมาติดตั้ง', 'เปิดให้ผู้รับเหมาทุกคนเสนอราคา — เริ่มนับเวลาตอนกดยืนยันนี้', 'users') + '</div>' +
-      '<div id="dp-bd" class="field' + (pick === 'contractor' ? '' : ' hidden') + '" style="margin-top:12px"><label for="dp-days">' + icon('clock', 'sm') + ' เปิดรับราคา <span class="req">*</span></label><div class="addon" style="max-width:220px"><input class="input" id="dp-days" inputmode="numeric" value="' + bidDaysOf(o) + '" data-inp="dpCalc"><span>วัน</span></div><div class="help" id="dp-help"></div></div>' +
+      card('inhouse', 'ช่างติดตั้งเรา (ช่างติดตั้งโรงงาน)', 'เป็นงานช่างโรงงาน — จัดทีมและวันติดตั้งต่อที่หน้างานช่างติดตั้งโรงงาน · ผู้รับเหมาไม่เห็นงานนี้', 'hammer') +
+      card('contractor', 'ผู้รับเหมาติดตั้ง', 'เปิดให้ผู้รับเหมาทุกคนเสนอราคาทันที (นับเวลาตอนกดยืนยันนี้) — จัดซื้อเลือก / อนุมัติผู้รับเหมาต่อ', 'users') + '</div>' +
+      (isAdmin() ? '<div id="dp-bd" class="field' + (pick === 'contractor' ? '' : ' hidden') + '" style="margin-top:12px"><label for="dp-days">' + icon('clock', 'sm') + ' เปิดรับราคา <span class="req">*</span></label><div class="addon" style="max-width:220px"><input class="input" id="dp-days" inputmode="numeric" value="' + bidDaysOf(o) + '" data-inp="dpCalc"><span>วัน</span></div><div class="help" id="dp-help"></div></div>'
+        : '<div id="dp-bd" class="dp-bd-ro' + (pick === 'contractor' ? '' : ' hidden') + '" style="margin-top:12px"><input type="hidden" id="dp-days" value="' + bidDaysOf(o) + '">' + notice('info', '<div id="dp-help"></div>', 'clock') + '</div>') +   /* V7.17: หัวหน้าช่างไม่ต้องใส่วัน — ใช้ค่าที่ Sale เลือก · จัดซื้อ / Admin ปรับได้ที่หน้าเทียบราคา */
       (sw0 ? dpSwitchNote(o) : ''),
     foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="dispatchOk" data-id="' + o.id + '">' + icon('check', 'sm') + ' ยืนยันช่องทาง</button>', onOpen: () => dpCalc() });
 });
@@ -2228,21 +2301,22 @@ function dpCalc() {
   box.classList.toggle('hidden', ch !== 'contractor');
   $$('.dp-opt').forEach((x) => x.classList.toggle('on', x.querySelector('input').checked));
   const n = parseNum(($('#dp-days') || {}).value), ok = n >= 1 && n <= 60 && Math.floor(n) === n;
+  if (h && !isAdmin()) { h.innerHTML = 'เปิดรับราคา <b>' + S.dpDays + ' วัน</b> ตามที่ Sale เลือก · หมดเวลาเสนอราคา <b>' + fmtDT(nowMs() + S.dpDays * DAY) + '</b> (นับจากกดยืนยันตอนนี้)<div class="xs" style="margin-top:4px">จัดซื้อปรับเพิ่ม / ลดวันได้ทีหลังที่หน้าเทียบราคา</div>'; return; }
   if (h) h.innerHTML = ok ? 'หมดเวลาเสนอราคา <b>' + fmtDT(nowMs() + n * DAY) + '</b> (นับจากกดยืนยันตอนนี้) · ค่าที่ Sale เลือกไว้ ' + S.dpDays + ' วัน · ใส่ได้ 1–60 วัน' : '<span style="color:var(--red)">ใส่ 1–60 วัน</span>';
 }
 Acts.dpPick = dpCalc; Acts.dpCalc = dpCalc;
 on('dispatchOk', async (el) => {
   const ch = ($('[name=dpCh]:checked') || {}).value, id = el.dataset.id;
   if (!ch) { toast('เลือกช่องทางติดตั้ง: ช่างติดตั้งโรงงาน หรือ ผู้รับเหมาติดตั้ง', 'err'); return; }
-  const n = parseNum(($('#dp-days') || {}).value);
+  const n = isAdmin() ? parseNum(($('#dp-days') || {}).value) : S.dpDays;
   if (ch === 'contractor' && !(n >= 1 && n <= 60 && Math.floor(n) === n)) { toast('ใส่จำนวนวันเปิดรับราคา 1–60 วัน', 'err'); $('#dp-days').focus(); return; }
   const o = DB.orders.find((x) => x.id === id) || {}, rs = (($('#dp-reason') || {}).value || '').trim();
   if (o.channel === 'contractor' && o.award && rs.length < 5) { toast('อนุมัติผู้รับเหมาแล้ว — ระบุเหตุผลที่เปลี่ยน (อย่างน้อย 5 ตัวอักษร)', 'err'); $('#dp-reason').focus(); return; }
   const closed = o.channel === 'contractor' ? o.bids.length : 0, wasTeam = o.channel === 'inhouse' && o.inhouse && o.inhouse.teamId;
-  const args = { p_order: id, p_channel: ch, p_bid_days: ch === 'contractor' ? n : null }; if (rs) args.p_reason = rs;   /* ไม่มีเหตุผล = เรียกแบบเดิม (ใช้ได้แม้ยังไม่รัน SQL V7.16) */
+  const args = { p_order: id, p_channel: ch, p_bid_days: ch === 'contractor' && isAdmin() ? n : null };   /* V7.17: หัวหน้าช่าง → Server ใช้วันที่ Sale เลือก */ if (rs) args.p_reason = rs;   /* ไม่มีเหตุผล = เรียกแบบเดิม (ใช้ได้แม้ยังไม่รัน SQL V7.16) */
   await rpc('cn_dispatch', args);
-  await afterChange(ch === 'contractor' ? (o.channel ? 'เปลี่ยน ' + id + ' เป็นผู้รับเหมาแล้ว' + (wasTeam ? ' — ยกเลิกทีมช่างโรงงานให้แล้ว' : '') + ' · เปิดรับราคา ' + n + ' วัน' : 'ส่ง ' + id + ' ให้ผู้รับเหมาเสนอราคาแล้ว — เปิดรับราคา ' + n + ' วัน')
-    : (o.channel ? 'เปลี่ยน ' + id + ' เป็นช่างติดตั้งโรงงานแล้ว' + (closed ? ' — ปิดรับราคาและแจ้งผู้รับเหมาที่เสนอ ' + closed + ' รายแล้ว' : '') : 'ส่ง ' + id + ' ให้ช่างติดตั้งโรงงานแล้ว — รอหัวหน้าช่างจัดทีม'));
+  await afterChange(ch === 'contractor' ? (o.channel ? 'เปลี่ยน ' + id + ' เป็นผู้รับเหมาแล้ว' + (wasTeam ? ' — ยกเลิกทีมช่างโรงงานให้แล้ว' : '') + ' · เปิดรับราคา ' + n + ' วัน' : 'ส่ง ' + id + ' ให้ผู้รับเหมาเสนอราคาแล้ว — เปิดรับราคา ' + n + ' วัน · แจ้งจัดซื้อแล้ว')
+    : (o.channel ? 'เปลี่ยน ' + id + ' เป็นช่างติดตั้งโรงงานแล้ว' + (closed ? ' — ปิดรับราคาและแจ้งผู้รับเหมาที่เสนอ ' + closed + ' รายแล้ว' : '') : 'ส่ง ' + id + ' ให้ช่างติดตั้งโรงงานแล้ว — ' + (S.user.role === 'installer' ? 'จัดทีม / วันติดตั้งต่อได้ที่ งานช่างติดตั้งโรงงาน' : 'รอหัวหน้าช่างจัดทีม')));
 });
 /* หลังแก้ข้อมูลจากหน้ารายละเอียด: เปิดหน้าเดิมซ้ำให้เห็นผลทันที */
 async function afterChange(msg, reopenId) {
@@ -2369,7 +2443,7 @@ route(/^\/admin\/home$/, 'admin', () => {
   /* V7.16.11: งานเลยกำหนดเสร็จ (ผู้รับเหมา / ช่างโรงงาน) — ขึ้นบนสุด · เลยมากสุดก่อน */
   DB.orders.filter((o) => lateDays(o)).sort((a, b) => lateDays(b) - lateDays(a)).forEach((o) => todo.push(['clock', 'red', 'เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน: ' + o.id, lateWho(o) + ' · ' + o.title + ' · ต้องเสร็จ ' + fmtDate(dueEnd(o)), o.channel === 'inhouse' ? '#/admin/inhouse' : '#/admin/install']));
   (DB.signups || []).filter((g) => g.status === 'pending').forEach((g) => todo.push(['user', 'violet', 'คำขอลงทะเบียนรออนุมัติ: ' + g.name, (ROLES[g.role] ? ROLES[g.role].label : g.role) + ' · ' + g.username + (g.company ? ' · ' + g.company : ''), '#/admin/users']));
-  st.filter((x) => x.s === 'dispatch').forEach((x) => todo.push(['send', 'brass', 'รอจัดซื้อเลือกช่องทางติดตั้ง: ' + x.o.id, x.o.title + ' · Sale ยืนยัน ' + timeAgo(x.o.confirmedAt), '#/admin/inbox']));
+  st.filter((x) => x.s === 'dispatch').forEach((x) => todo.push(['send', 'brass', 'รอหัวหน้าช่างเลือกช่องทางติดตั้ง: ' + x.o.id, x.o.title + ' · Sale ยืนยัน ' + timeAgo(x.o.confirmedAt), '#/admin/inbox']));
   st.filter((x) => x.s === 'ih_wait').forEach((x) => todo.push(['users', 'amber', 'ช่างโรงงาน รอหัวหน้าช่างจัดทีม: ' + x.o.id, x.o.title + ' · ลูกค้าต้องการ ' + fmtRange(x.o.wantFrom, x.o.wantTo), '#/admin/inhouse']));
   st.filter((x) => x.s === 'ih_sign').forEach((x) => todo.push(['sign', 'orange', 'ช่างโรงงาน รอแนบใบส่งมอบ: ' + x.o.id, x.o.title + ' · ' + teamById(x.o.inhouse.teamId).name, '#/admin/inhouse']));
   st.filter((x) => x.s === 'expired').forEach((x) => todo.push(['scale', 'amber', 'หมดเวลาเสนอราคา รอเลือกผู้รับเหมา: ' + x.o.id, x.o.bids.length + ' ราย · ' + x.o.title, '#/admin/bids/' + x.o.id]));
@@ -2696,7 +2770,7 @@ route(/^\/sale\/orders$/, 'sale', () => {
       '<td data-l="ช่องทาง/ผู้ติดตั้ง">' + progCell(o, s) + '</td>' +
       '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + actsOf(o, s) + '</span></td></tr>'; };
   const head = '<thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาขาย</th><th>สถานะ</th><th>ช่องทาง / ผู้ติดตั้ง</th><th class="r">จัดการ</th></tr></thead>';
-  return { nav: '#/sale/orders', after: () => applyFilter('sale'), html: pageHead('Sale Order ของฉัน', 'สร้าง Order แนบแบบงาน แล้วกดยืนยัน — ส่งให้จัดซื้อเลือกช่องทางติดตั้ง (ช่างติดตั้งโรงงาน / ผู้รับเหมา) · ถ้าส่งผู้รับเหมา เปิดรับราคาตามจำนวนวันที่เลือก (ค่าเริ่มต้น ' + bidDaysNow() + ' วัน) · แก้ไขได้จนกว่าจะอนุมัติผู้รับเหมาหรือช่างโรงงานเริ่มติดตั้ง', '<a class="btn primary" href="#/sale/new">' + icon('plus') + ' สร้าง Sale Order</a>') +
+  return { nav: '#/sale/orders', after: () => applyFilter('sale'), html: pageHead('Sale Order ของฉัน', 'สร้าง Order แนบแบบงาน แล้วกดยืนยัน — ส่งให้หัวหน้าช่างติดตั้งเลือกช่องทาง (ช่างติดตั้งโรงงาน / ผู้รับเหมา) · ถ้าส่งผู้รับเหมา เปิดรับราคาตามจำนวนวันที่เลือก (ค่าเริ่มต้น ' + bidDaysNow() + ' วัน) · แก้ไขได้จนกว่าจะอนุมัติผู้รับเหมาหรือช่างโรงงานเริ่มติดตั้ง', '<a class="btn primary" href="#/sale/new">' + icon('plus') + ' สร้าง Sale Order</a>') +
     alertBar(mine.filter((o) => !o.confirmedAt).length, mine.filter((o) => !o.confirmedAt).length + ' Order ร่าง ยังไม่ยืนยัน', 'จัดซื้อ / ผู้รับเหมายังไม่เห็น — กด <b>แก้ไข / ยืนยัน</b> ในแถวที่มีแถบสีส้มเมื่อข้อมูลครบ', '', 'info') +
     (all.length ? '<div class="row" style="margin-bottom:10px">' + searchBox('sale', 'ค้นหา เลข Order / เลข StarNexus / ชื่องาน / ลูกค้า') + '<span class="xs muted" id="sbox-info"></span></div>' : '') +
     '<div class="card"><div class="table-wrap"><table class="t resp">' + head + '<tbody>' +
@@ -2753,9 +2827,9 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
     : (o ? '<button class="btn danger" data-act="ordDel" data-id="' + o.id + '">' + icon('trash', 'sm') + ' ลบร่าง</button>' : '') + '<button class="btn" data-act="saleSave" data-c="0">' + icon('check', 'sm') + ' บันทึกร่าง</button><button class="btn primary" data-act="saleSave" data-c="1">' + icon('send', 'sm') + ' ยืนยัน Order</button>';
   return { nav: m[1] ? '#/sale/orders' : '#/sale/new', after: () => { saleCalc(); renderSfFiles(); snCheck(); snbPaint(); drPaint(); mapChk(); bdChk(); odooAfter(); }, html: pageHead(o ? 'แก้ไข Sale Order ' + o.id + (live ? ' ' + badge(ost(o)) : '') : 'สร้าง Sale Order', 'แนบแบบงานติดตั้งและลิงก์แบบงานผลิต กรอกรายละเอียดงาน เลือกประเภทงาน 1 ประเภท และใส่ราคาขาย', btns, '<a href="#/sale/orders">Sale Order ของฉัน</a> › ' + (o ? o.id : 'สร้างใหม่')) +
     (live ? '<div style="margin-bottom:14px">' + notice('warn', o.channel === 'contractor' && o.dispatchedAt
-      ? '<b>Order นี้ยืนยันแล้ว จัดซื้อส่งให้ผู้รับเหมาแล้ว</b> — แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ · หมดเวลาเสนอราคา ' + fmtDT(deadline(o)) + ' (แก้จำนวนวันเปิดรับราคาได้ ต้องเหลืออย่างน้อย 1 วัน)<br>ถ้าแก้ราคาขายหรือประเภทงาน ราคาตั้งต้นจะคำนวณใหม่ และผู้รับเหมาจะเห็นป้าย "ราคาตั้งต้นมีการแก้ไข" · มีผู้รับเหมาเสนอราคาแล้ว ' + o.bids.length + ' ราย'
-      : o.channel === 'inhouse' ? '<b>Order นี้ยืนยันแล้ว จัดซื้อส่งให้ช่างติดตั้งโรงงานแล้ว</b> — แก้ไขได้จนกว่าช่างโรงงานจะเริ่มติดตั้ง · ผู้รับเหมาไม่เห็นงานนี้'
-      : '<b>Order นี้ยืนยันแล้ว รอจัดซื้อเลือกช่องทางติดตั้ง</b> — แก้ไขได้ · ผู้รับเหมายังไม่เห็นงานนี้') + '</div>' : '') +
+      ? '<b>Order นี้ยืนยันแล้ว ส่งให้ผู้รับเหมาแล้ว</b> — แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ · หมดเวลาเสนอราคา ' + fmtDT(deadline(o)) + ' (แก้จำนวนวันเปิดรับราคาได้ ต้องเหลืออย่างน้อย 1 วัน)<br>ถ้าแก้ราคาขายหรือประเภทงาน ราคาตั้งต้นจะคำนวณใหม่ และผู้รับเหมาจะเห็นป้าย "ราคาตั้งต้นมีการแก้ไข" · มีผู้รับเหมาเสนอราคาแล้ว ' + o.bids.length + ' ราย'
+      : o.channel === 'inhouse' ? '<b>Order นี้ยืนยันแล้ว ส่งให้ช่างติดตั้งโรงงานแล้ว</b> — แก้ไขได้จนกว่าช่างโรงงานจะเริ่มติดตั้ง · ผู้รับเหมาไม่เห็นงานนี้'
+      : '<b>Order นี้ยืนยันแล้ว รอหัวหน้าช่างเลือกช่องทางติดตั้ง</b> — แก้ไขได้ · ผู้รับเหมายังไม่เห็นงานนี้') + '</div>' : '') +
     '<form id="sf" onsubmit="return false" novalidate><div id="odoo-ban"></div>' +
     '<div class="card sn-card"><div class="card-b"><div class="field" data-f="snOrder"><label for="sf-sn">' + icon('link', 'sm') + ' เลขที่ Order (StarNexus)</label>' +
       '<input class="input mono sn-in" id="sf-sn" name="snOrder" value="' + esc(d.snOrder || '') + '" placeholder="เช่น 2609170003 หรือ 2609170003_FOREST_J_PANTRY" autocomplete="off" autocapitalize="characters" spellcheck="false" data-inp="snCheck">' +
@@ -2892,7 +2966,7 @@ function bdChk() {
   const n = parseNum(el.value), ok = n >= 1 && n <= 60 && Math.floor(n) === n, o = SF.live && SF.id ? DB.orders.find((x) => x.id === SF.id) : null;
   h.innerHTML = !ok ? 'ใส่ 1–60 วัน' : o && deadline(o)
     ? 'หมดเวลาเสนอราคา <b>' + fmtDT(Date.parse(o.dispatchedAt) + n * DAY) + '</b>' + (n !== bidDaysOf(o) ? ' (เดิม ' + bidDaysOf(o) + ' วัน · ' + fmtDT(deadline(o)) + ')' : '') + ' · ใส่ได้ ' + bdMin() + '–60 วัน'
-    : 'ใช้เมื่อจัดซื้อส่งให้ผู้รับเหมา (นับจากจัดซื้อกดยืนยัน · จัดซื้อปรับได้ตอนส่ง) · ค่าเริ่มต้น ' + bidDaysNow() + ' วัน (Admin ตั้ง) · 1–60 วัน';
+    : 'ใช้เมื่อหัวหน้าช่างส่งให้ผู้รับเหมา (นับจากตอนกดเลือก · จัดซื้อปรับได้ทีหลัง) · ค่าเริ่มต้น ' + bidDaysNow() + ' วัน (Admin ตั้ง) · 1–60 วัน';
 }
 on('bdChk', bdChk);
 on('sfDel', (el) => { SF.files.splice(Number(el.dataset.i), 1); renderSfFiles(); });
@@ -3025,13 +3099,13 @@ on('saleSave', async (el) => {
     await refresh(); toast('บันทึกร่าง ' + id + ' แล้ว — ผู้รับเหมายังไม่เห็น'); saleOwnerWarn(id, payload); go('#/sale/orders'); return;
   }
   const nd = d.bidDays, fv = admin ? feeOf(d.type, d.sale) : null;
-  modal({ title: icon('send') + ' ยืนยัน Order?', body: '<p>เมื่อยืนยันแล้ว:</p><ul style="margin:0 0 12px;padding-left:20px;line-height:1.9"><li>Order <b>ส่งให้จัดซื้อ</b> เลือกช่องทางติดตั้ง: <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b></li><li>ถ้าจัดซื้อเลือกผู้รับเหมา: ผู้รับเหมา<b>ทุกคน</b>เห็นงานและเสนอราคาได้ <b>' + nd + ' วัน</b> นับจากจัดซื้อกดยืนยัน (นับรวมวันอาทิตย์และวันหยุด · จัดซื้อปรับวันได้)</li>' +
+  modal({ title: icon('send') + ' ยืนยัน Order?', body: '<p>เมื่อยืนยันแล้ว:</p><ul style="margin:0 0 12px;padding-left:20px;line-height:1.9"><li>Order <b>ส่งให้หัวหน้าช่างติดตั้งโรงงาน</b> เลือกช่องทาง: <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b></li><li>ถ้าเลือกผู้รับเหมา: ผู้รับเหมา<b>ทุกคน</b>เห็นงานและเสนอราคาได้ <b>' + nd + ' วัน</b> นับจากตอนเลือก (นับรวมวันอาทิตย์และวันหยุด) · จัดซื้อเลือก / อนุมัติผู้รับเหมาต่อ (ปรับวันเปิดรับราคาได้)</li>' +
       (fv != null ? '<li>ผู้รับเหมาเห็นราคาตั้งต้น <b>' + money(fv) + '</b> (' + TYPE_BY[d.type].name + ' ' + rateNow(d.type) + '%) — ไม่เห็นราคาขาย</li>' : '<li>ผู้รับเหมาเห็นเฉพาะราคาตั้งต้นที่ระบบคำนวณ — ไม่เห็นราคาขาย</li>') +
       '<li>แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ — ถ้าแก้ราคา ผู้รับเหมาจะเห็นว่าราคาตั้งต้นมีการแก้ไข</li></ul>',
     foot: '<button class="btn" data-act="closeOv">กลับไปตรวจ</button><button class="btn primary" data-act="saleConfirmOk">' + icon('send', 'sm') + ' ยืนยัน Order</button>' });
   Acts.saleConfirmOk = async () => {
     const id = await rpc('cn_save_order', { p: payload, p_confirm: true }); SF.id = id;
-    await refresh(); closeOverlay(); toast('ยืนยัน ' + id + ' แล้ว — ส่งให้จัดซื้อเลือกช่องทางติดตั้ง'); saleOwnerWarn(id, payload); go('#/sale/orders');
+    await refresh(); closeOverlay(); toast('ยืนยัน ' + id + ' แล้ว — ส่งให้หัวหน้าช่างติดตั้งเลือกช่องทาง'); saleOwnerWarn(id, payload); go('#/sale/orders');
   };
 });
 
@@ -3039,16 +3113,19 @@ on('saleSave', async (el) => {
 /* ===================== V7.12 จัดซื้อ: Order รอจัดซื้อ (หน้าแรกของจัดซื้อ) ===================== */
 route(/^\/pur\/inbox$/, 'pur', () => inboxPage('#/pur/inbox'));
 route(/^\/admin\/inbox$/, 'admin', () => inboxPage('#/admin/inbox'));
+route(/^\/ins\/inbox$/, 'ins', () => inboxPage('#/ins/inbox'));   /* V7.17: หัวหน้าช่างเลือกช่องทาง */
 const INBOX_F = { wait: ['รอเลือกช่องทาง', (o) => ost(o) === 'dispatch'], contractor: ['ส่งผู้รับเหมาแล้ว', (o) => o.channel === 'contractor' && !!o.dispatchedAt], inhouse: ['ส่งช่างโรงงานแล้ว', (o) => o.channel === 'inhouse'], all: ['ทั้งหมด', () => true] };
 function inboxPage(nav) {
   const nWait = DB.orders.filter((o) => ost(o) === 'dispatch'), oldest = nWait.slice().sort((a, b) => String(a.confirmedAt).localeCompare(String(b.confirmedAt)))[0];
   if (navJumped(nav) && nWait.length) S.inboxF = 'wait';
-  const f = INBOX_F[S.inboxF] ? S.inboxF : 'wait', base = DB.orders.filter((o) => o.confirmedAt && !o.cancelledAt);
+  const ins = S.user.role === 'installer', pick = canPick(), keys = Object.keys(INBOX_F).filter((k) => !(ins && k === 'contractor'));   /* V7.17: หัวหน้าช่างไม่เห็นงานที่ส่งผู้รับเหมาไปแล้ว */
+  const f = keys.indexOf(S.inboxF) >= 0 ? S.inboxF : 'wait', base = DB.orders.filter((o) => o.confirmedAt && !o.cancelledAt);
   const rows = base.filter(INBOX_F[f][1]).sort((a, b) => (f === 'wait' ? String(a.confirmedAt).localeCompare(String(b.confirmedAt)) : String(b.dispatchedAt || b.confirmedAt).localeCompare(String(a.dispatchedAt || a.confirmedAt))));
-  return { nav, after: () => applyFilter('inbox'), html: pageHead('Order รอจัดซื้อ', 'Sale ยืนยัน Order แล้ว — เลือกว่าจะให้ <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b> · เลือกผู้รับเหมา = เริ่มนับเวลาเสนอราคาตอนกดยืนยัน (ปรับจำนวนวันได้)') +
-    alertBar(nWait.length, nWait.length + ' Order รอเลือกช่องทางติดตั้ง', 'Sale ยืนยันแล้ว รอจัดซื้อเลือก "ช่างติดตั้งโรงงาน" หรือ "ผู้รับเหมาติดตั้ง" — กด <b>เลือกช่องทาง</b> ในแถวที่มีแถบสีส้ม' + (oldest ? ' · รอนานสุด ' + esc(oldest.id) + ' (' + timeAgo(oldest.confirmedAt) + ')' : ''), f !== 'wait' ? jumpBtn('inboxF', 'data-f="wait"', 'ไปแท็บรอเลือกช่องทาง') : '') +
+  return { nav, after: () => applyFilter('inbox'), html: pageHead(pick ? 'Order รอเลือกช่องทาง' : 'Order ที่ Sale ยืนยัน', pick ? 'Sale ยืนยัน Order แล้ว — เลือกว่าจะให้ <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b> · เลือกผู้รับเหมา = เปิดให้ผู้รับเหมาเสนอราคาทันที แล้วจัดซื้อเลือก / อนุมัติผู้รับเหมาต่อ' + (isAdmin() ? ' · เปลี่ยนช่องทางทีหลังได้เฉพาะ Admin' : '')
+      : 'หัวหน้าช่างติดตั้งโรงงานเป็นคนเลือกช่องทาง — งานที่ส่งให้ผู้รับเหมาอยู่ที่ <a href="#/pur/bids">งานรอผู้รับเหมาเสนอราคา</a>') +
+    alertBar(pick ? nWait.length : 0, nWait.length + ' Order รอเลือกช่องทางติดตั้ง', 'Sale ยืนยันแล้ว รอเลือก "ช่างติดตั้งโรงงาน" หรือ "ผู้รับเหมาติดตั้ง" — กด <b>เลือกช่องทาง</b> ในแถวที่มีแถบสีส้ม' + (oldest ? ' · รอนานสุด ' + esc(oldest.id) + ' (' + timeAgo(oldest.confirmedAt) + ')' : ''), f !== 'wait' ? jumpBtn('inboxF', 'data-f="wait"', 'ไปแท็บรอเลือกช่องทาง') : '') +
     '<div class="row" style="margin-bottom:10px">' + searchBox('inbox', 'ค้นหา เลข Order / เลข StarNexus / ชื่องาน / ลูกค้า') + '<span class="xs muted" id="sbox-info"></span></div>' +
-    '<div class="chips" style="margin-bottom:12px">' + Object.keys(INBOX_F).map((k) => '<button class="fchip ' + (f === k ? 'on' : '') + '" data-act="inboxF" data-f="' + k + '">' + INBOX_F[k][0] + ' <span class="n">' + base.filter(INBOX_F[k][1]).length + '</span></button>').join('') + '</div>' +
+    '<div class="chips" style="margin-bottom:12px">' + keys.map((k) => '<button class="fchip ' + (f === k ? 'on' : '') + '" data-act="inboxF" data-f="' + k + '">' + INBOX_F[k][0] + ' <span class="n">' + base.filter(INBOX_F[k][1]).length + '</span></button>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ลูกค้าพร้อมให้ติดตั้ง</th><th>สถานที่</th><th>Sale</th><th>สถานะ</th><th class="r"></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const st = ost(o);
       return '<tr' + (st === 'dispatch' ? ' class="need"' : '') + qAttr(o) + '><td class="main"><a href="javascript:void(0)" data-act="order" data-id="' + o.id + '" class="mono strong">' + o.id + '</a>' + snTag(o) + '<div class="sub" style="max-width:300px">' + esc(o.title) + '</div><div class="sub">' + esc(o.customer) + '</div></td>' +
@@ -3056,7 +3133,7 @@ function inboxPage(nav) {
         '<td data-l="สถานที่" class="small">' + esc(o.siteName) + '<div class="sub">จ.' + esc(o.province) + '</div></td>' +
         '<td data-l="Sale" class="small">' + esc(userById(o.saleId).name) + '<div class="sub">ยืนยัน ' + fmtDT(o.confirmedAt) + '</div></td>' +
         '<td data-l="สถานะ">' + badge(st) + lateTag(o) + (st === 'dispatch' ? '<div class="sub">รอมาแล้ว ' + timeAgo(o.confirmedAt).replace('ที่แล้ว', '') + '</div>' : '<div class="sub">' + progCell(o, st).replace(/<\/?div[^>]*>/g, ' ') + '</div>') + '</td>' +
-        '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + drawBtns(o) + (st === 'dispatch' && canManage() ? '<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทาง</button>' : '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>') + '</span></td></tr>'; }).join('')
+        '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px">' + drawBtns(o) + (st === 'dispatch' && pick ? '<button class="btn sm primary" data-act="dispatch" data-id="' + o.id + '">' + icon('send', 'sm') + ' เลือกช่องทาง</button>' : '<button class="btn sm" data-act="order" data-id="' + o.id + '">ดู</button>') + '</span></td></tr>'; }).join('')
       : '<tr><td colspan="6">' + empty('inbox', f === 'wait' ? 'ไม่มี Order รอเลือกช่องทาง' : 'ไม่มีรายการ', f === 'wait' ? 'Order ที่ Sale กดยืนยันจะมาอยู่ที่นี่' : '') + '</td></tr>') + '</tbody></table></div></div>' };
 }
 on('inboxF', (el) => { S.inboxF = el.dataset.f; rerender(); });
@@ -3067,6 +3144,7 @@ route(/^\/admin\/inhouse$/, 'admin', () => inhousePage('#/admin/inhouse'));
 const IH_TABS = [['ih_wait', 'รอจัดทีม'], ['ih_booked', 'รอเข้าติดตั้ง'], ['ih_installing', 'กำลังติดตั้ง'], ['ih_sign', 'รอแนบใบส่งมอบ'], ['ih_done', 'ส่งมอบแล้ว']];
 function inhousePage(nav) {
   const all = DB.orders.filter((o) => o.channel === 'inhouse' && !o.cancelledAt), nIh = all.filter((o) => ost(o) === 'ih_wait').length, nSg = all.filter((o) => ost(o) === 'ih_sign').length;
+  const nPick = DB.orders.filter((o) => ost(o) === 'dispatch').length;   /* V7.17: Order ใหม่รอหัวหน้าช่างเลือกช่องทาง */
   /* V7.16.4: เปิดแท็บที่มีงาน — เดิมค้างที่ “รอจัดทีม” แม้ไม่มีงาน (งานอยู่แท็บอื่น ดูเหมือนไม่มี Order ให้เลือก) · กดแท็บเองแล้วไม่สลับให้ */
   const cnt = {}; IH_TABS.forEach((x) => { cnt[x[0]] = all.filter((o) => ost(o) === x[0]).length; });
   const firstT = () => ['ih_wait', 'ih_sign', 'ih_installing', 'ih_booked', 'ih_done'].find((k) => cnt[k]) || 'ih_wait';
@@ -3077,9 +3155,10 @@ function inhousePage(nav) {
   const tabName = (k) => (IH_TABS.find((x) => x[0] === k) || ['', ''])[1];
   const rows = all.filter((o) => ost(o) === t).sort((a, b) => String((a.inhouse && a.inhouse.start) || a.wantFrom).localeCompare(String((b.inhouse && b.inhouse.start) || b.wantFrom)));
   const teams = (DB.teams || []).filter((x) => x.active), lateO = all.filter((o) => lateDays(o)).sort((a, b) => lateDays(b) - lateDays(a));
-  return { nav, html: pageHead('งานช่างติดตั้งโรงงาน', 'งานที่จัดซื้อส่งให้ช่างโรงงาน — เลือกทีมและวันติดตั้ง (ทีมเดียวกันห้ามคิวซ้อน) · แยกจากผู้รับเหมาทั้งหมด', '<a class="btn sm" href="' + (nav.indexOf('/admin/') === 0 || nav.indexOf('#/admin/') === 0 ? '#/admin/ibooking' : '#/ins/booking') + '">' + icon('calendar', 'sm') + ' Booking ช่างโรงงาน</a>') +
+  return { nav, html: pageHead('งานช่างติดตั้งโรงงาน', 'งานช่างโรงงาน — เลือกทีมและวันติดตั้ง (ทีมเดียวกันห้ามคิวซ้อน) · แยกจากผู้รับเหมาทั้งหมด', '<a class="btn sm" href="' + (nav.indexOf('/admin/') === 0 || nav.indexOf('#/admin/') === 0 ? '#/admin/ibooking' : '#/ins/booking') + '">' + icon('calendar', 'sm') + ' Booking ช่างโรงงาน</a>') +
     (!teams.length ? '<div style="margin-bottom:12px">' + notice('warn', 'ยังไม่มีทีมช่างติดตั้ง — ' + (S.user.role === 'installer' || isAdmin() ? '<a href="#/ins/teams">เพิ่มทีมก่อน</a> แล้วจัดทีมให้งานได้' : 'ให้หัวหน้าช่างเพิ่มทีม')) + '</div>' : '') +
-    alertBar(nIh + nSg, (nIh + nSg) + ' งานช่างโรงงานรอดำเนินการ', [nIh ? '<b>รอจัดทีม ' + nIh + ' งาน</b> — จัดซื้อส่งมาแล้ว ยังไม่ได้เลือกทีม / วันติดตั้ง: กด <b>จัดทีม</b> หรือคลิกช่องวันใน Booking ช่างโรงงาน' : '',
+    (nPick ? alertBar(nPick, nPick + ' Order ใหม่รอเลือกช่องทาง', 'Sale ยืนยันแล้ว — เลือก ช่างติดตั้งโรงงาน หรือ ผู้รับเหมา', '<a class="btn sm primary ab-go" href="' + (nav.indexOf('admin') >= 0 ? '#/admin/inbox' : '#/ins/inbox') + '">' + icon('send', 'sm') + ' เลือกช่องทาง</a>') : '') +
+    alertBar(nIh + nSg, (nIh + nSg) + ' งานช่างโรงงานรอดำเนินการ', [nIh ? '<b>รอจัดทีม ' + nIh + ' งาน</b> — ยังไม่ได้เลือกทีม / วันติดตั้ง: กด <b>จัดทีม</b> หรือคลิกช่องวันใน Booking ช่างโรงงาน' : '',
       nSg ? '<b>รอแนบใบส่งมอบ ' + nSg + ' งาน</b> — ติดตั้งเสร็จแล้ว ยังไม่แนบใบที่ลูกค้าเซ็น: กด <b>แนบใบส่งมอบ</b>' : ''].filter(Boolean).join('<br>'),
       (nIh && t !== 'ih_wait' ? jumpBtn('ihTab', 'data-t="ih_wait"', 'ไปแท็บรอจัดทีม') : '') + (nSg && t !== 'ih_sign' ? jumpBtn('ihTab', 'data-t="ih_sign"', 'ไปแท็บรอแนบใบส่งมอบ') : '')) +
     alertBar(lateO.length, lateO.length + ' งานเลยกำหนดเสร็จ', lateO.map((o) => '<b>' + esc(o.id) + '</b> ทีม ' + esc(teamById(o.inhouse.teamId).name) + ' · ' + esc(o.title) + ' — เลย ' + lateDays(o) + ' วัน').join('<br>') + '<br>ติดตั้งเสร็จแล้ว — กด <b>ติดตั้งเสร็จ</b> แล้วแนบใบส่งมอบ · ยังไม่เสร็จ — กด <b>แก้ทีม/วัน</b> เลื่อนวัน', '', 'red') +
@@ -3296,7 +3375,7 @@ route(/^\/admin\/bids$/, 'admin', () => bidsList('#/admin'));
 function bidsList(base) {
   const rows = DB.orders.filter((o) => ['open', 'expired'].indexOf(ost(o)) >= 0).sort((a, b) => (ost(a) === 'expired' ? 0 : 1) - (ost(b) === 'expired' ? 0 : 1) || deadline(a) - deadline(b));
   const recent = DB.orders.filter((o) => o.award && !o.cancelledAt).sort((a, b) => b.award.at.localeCompare(a.award.at)).slice(0, 4);
-  return { nav: base + '/bids', html: pageHead('งานรอผู้รับเหมาเสนอราคา', 'Order ที่จัดซื้อส่งให้ผู้รับเหมาแล้ว เปิดให้ผู้รับเหมาทุกคนเสนอราคาตามจำนวนวันของแต่ละ Order — กดเพื่อเปรียบเทียบราคา ตรวจคิว และอนุมัติ') +
+  return { nav: base + '/bids', html: pageHead('งานรอผู้รับเหมาเสนอราคา', 'Order ที่หัวหน้าช่างติดตั้งส่งให้ผู้รับเหมาแล้ว เปิดให้ผู้รับเหมาทุกคนเสนอราคาตามจำนวนวันของแต่ละ Order — กดเพื่อเปรียบเทียบราคา ตรวจคิว และอนุมัติ') +
     bidsAlert(rows) +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>Order</th><th>ประเภท</th><th class="r">ราคาตั้งต้น</th><th>นับถอยหลัง</th><th class="c">เสนอแล้ว</th><th class="r">ราคาต่ำสุด</th><th>สถานะ</th><th></th></tr></thead><tbody>' +
     (rows.length ? rows.map((o) => { const lo = o.bids.length ? Math.min.apply(null, o.bids.map((b) => b.price)) : null;
@@ -3313,6 +3392,34 @@ function bidsAlert(rows) {
     (ex.length ? '<b>' + ex.length + ' งานหมดเวลาแล้ว — ต้องเลือกผู้รับเหมา</b> (แถวที่มีแถบสีส้ม)' : 'ยังไม่มีงานหมดเวลา') +
     (op.length ? ' · ' + op.length + ' งานยังเปิดรับราคา' + (ob.length ? ' (มีผู้เสนอแล้ว ' + ob.length + ' งาน — อนุมัติก่อนหมดเวลาได้)' : '') + (soon.length ? ' · <b>ใกล้หมดเวลาใน 24 ชม. ' + soon.length + ' งาน</b>' : '') : ''), '', ex.length ? '' : 'info');
 }
+/* V7.17: จัดซื้อ / Admin ปรับวันเปิดรับราคา (ค่าตั้งต้น = ที่ Sale เลือก) · ยังไม่อนุมัติ · ต้องเหลือเวลาเสนอราคาอย่างน้อย 1 วัน · หมดเวลาแล้วขยาย = เปิดรับราคาต่อ */
+const canBidDays = (o) => !!o && (S.user.role === 'admin' || S.user.role === 'purchasing') && o.channel === 'contractor' && !!o.dispatchedAt && !o.award && !o.cancelledAt;
+const bdAdjMin = (o) => Math.max(1, Math.ceil((nowMs() + DAY - Date.parse(o.dispatchedAt)) / DAY));
+on('bdAdj', (el) => {
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!canBidDays(o)) return;
+  const mn = bdAdjMin(o), past = nowMs() >= deadline(o);
+  modal({ title: icon('clock') + ' ปรับวันเปิดรับราคา', sub: esc(o.id) + ' · ' + esc(o.title),
+    body: '<dl class="dl"><dt>เปิดรับราคาตอนนี้</dt><dd><b>' + bidDaysOf(o) + ' วัน</b> · ' + (past ? '<span style="color:var(--red)">หมดเวลาแล้ว</span> ' : 'ปิดรับราคา ') + fmtDT(deadline(o)) + '</dd><dt>เริ่มนับจาก</dt><dd>' + fmtDT(o.dispatchedAt) + (o.dispatchedBy ? ' (' + esc(o.dispatchedBy) + ' ส่งให้ผู้รับเหมา)' : '') + '</dd><dt>ราคาที่เสนอแล้ว</dt><dd>' + o.bids.length + ' ราย — ยังอยู่ครบ</dd></dl>' +
+      '<div class="field" style="margin-top:12px"><label for="bda-days">เปิดรับราคาทั้งหมด <span class="req">*</span></label><div class="addon" style="max-width:220px"><input class="input" id="bda-days" inputmode="numeric" value="' + Math.max(mn, bidDaysOf(o)) + '" data-inp="bdAdjCalc" data-id="' + o.id + '"><span>วัน</span></div><div class="help" id="bda-help"></div></div>' +
+      '<div class="xs muted" style="margin-top:8px">นับจากเวลาที่ส่งให้ผู้รับเหมา (วันปฏิทิน) · ใส่ได้ ' + mn + '–60 วัน (ต้องเหลือเวลาเสนอราคาอย่างน้อย 1 วัน)' + (past ? ' · ขยายแล้วผู้รับเหมาเสนอราคาต่อได้' : '') + ' · ผู้รับเหมาเห็นเวลาปิดรับราคาใหม่ทันที</div>',
+    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="bdAdjOk" data-id="' + o.id + '">' + icon('check', 'sm') + ' บันทึก</button>', onOpen: () => bdAdjCalc() });
+});
+function bdAdjCalc() {
+  const el = $('#bda-days'), h = $('#bda-help'); if (!el || !h) return;
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!o) return;
+  const n = parseNum(el.value), mn = bdAdjMin(o), ok = n >= mn && n <= 60 && Math.floor(n) === n;
+  h.innerHTML = !ok ? '<span style="color:var(--red)">ใส่ ' + mn + '–60 วัน</span>' : n === bidDaysOf(o) ? 'เท่าเดิม (' + n + ' วัน)' : 'ปิดรับราคาใหม่ <b>' + fmtDT(Date.parse(o.dispatchedAt) + n * DAY) + '</b> (เดิม ' + bidDaysOf(o) + ' วัน · ' + fmtDT(deadline(o)) + ')';
+}
+Acts.bdAdjCalc = bdAdjCalc;
+on('bdAdjOk', async (el) => {
+  const o = DB.orders.find((x) => x.id === el.dataset.id); if (!canBidDays(o)) return;
+  const n = parseNum(($('#bda-days') || {}).value), mn = bdAdjMin(o);
+  if (!(n >= mn && n <= 60 && Math.floor(n) === n)) { toast('ใส่จำนวนวัน ' + mn + '–60 วัน (ต้องเหลือเวลาเสนอราคาอย่างน้อย 1 วัน)', 'err'); $('#bda-days').focus(); return; }
+  if (n === bidDaysOf(o)) { toast('เปิดรับราคา ' + n + ' วันอยู่แล้ว', 'err'); return; }
+  const was = bidDaysOf(o);
+  await rpc('cn_bid_days', { p_order: o.id, p_days: n });
+  await afterChange('ปรับเปิดรับราคา ' + o.id + ' ' + was + ' → ' + n + ' วันแล้ว · ปิดรับราคา ' + fmtDT(Date.parse(o.dispatchedAt) + n * DAY));
+});
 route(/^\/pur\/bids\/([^/]+)$/, 'pur', (m) => bidReview('#/pur', m[0]));
 route(/^\/admin\/bids\/([^/]+)$/, 'admin', (m) => bidReview('#/admin', m[0]));
 function bidReview(base, id) {
@@ -3323,8 +3430,8 @@ function bidReview(base, id) {
   const canApprove = st === 'open' || st === 'expired';
   const dec = !o.award && !o.cancelledAt ? (o.log || []).filter((l) => / ไม่รับเงื่อนไข /.test(' ' + l.what + ' ')).slice(-1)[0] : null;   /* V7.16.2 */
   const ackN = ackPending(o) ? notice('warn', '<b>รอผู้รับเหมายืนยันเงื่อนไขการชำระเงิน</b> — อนุมัติ ' + esc((PAY_OPTS[o.award.payOpt] || {}).label || '-') + ' ต่างจากที่ผู้รับเหมาเสนอ (' + esc((PAY_OPTS[o.award.bidPayOpt] || {}).label || '-') + ') · ถ้าไม่รับ งานจะกลับมาให้เลือกรายอื่นที่หน้านี้') : '';
-  const decN = dec ? notice('warn', '<b>ผู้รับเหมาไม่รับเงื่อนไข</b> (' + fmtDT(dec.at) + ') — ' + esc(dec.what) + '<div class="xs" style="margin-top:4px">เลือกผู้รับเหมารายอื่นด้านล่าง · หมดเวลาเสนอราคาแล้ว → Sale / Admin ขยายวันเปิดรับราคาในฟอร์ม Order ได้</div>') : '';
-  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + (ackN || decN ? '<div style="margin-bottom:12px">' + (ackN || decN) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st) + lateTag(o), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>' + (canManage() && o.channel === 'contractor' && canSwitch(o) ? '<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('hammer', 'sm') + ' เปลี่ยนเป็นช่างโรงงาน</button>' : ''), '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
+  const decN = dec ? notice('warn', '<b>ผู้รับเหมาไม่รับเงื่อนไข</b> (' + fmtDT(dec.at) + ') — ' + esc(dec.what) + '<div class="xs" style="margin-top:4px">เลือกผู้รับเหมารายอื่นด้านล่าง · หมดเวลาเสนอราคาแล้ว → กด “ปรับวันเปิดรับราคา” ด้านบนเพื่อเปิดรับราคาต่อ</div>') : '';
+  return { nav: base + '/bids', html: (o.cancelledAt ? '<div style="margin-bottom:12px">' + cancelNote(o) + '</div>' : '') + (ackN || decN ? '<div style="margin-bottom:12px">' + (ackN || decN) + '</div>' : '') + pageHead(esc(o.id) + ' ' + badge(st) + lateTag(o), esc(o.title) + (o.snOrder ? ' · StarNexus <span class="mono">' + esc(o.snOrder) + '</span>' : ''), drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">รายละเอียด Order</button>' + (canBidDays(o) ? '<button class="btn sm" data-act="bdAdj" data-id="' + o.id + '">' + icon('clock', 'sm') + ' ปรับวันเปิดรับราคา</button>' : '') + (isAdmin() && o.channel === 'contractor' && canSwitch(o) ? '<button class="btn sm" data-act="dispatch" data-id="' + o.id + '">' + icon('hammer', 'sm') + ' เปลี่ยนเป็นช่างโรงงาน</button>' : ''), '<a href="' + base + '/bids">งานรอผู้รับเหมาเสนอราคา</a> › ' + esc(o.id)) +
     '<div class="grid g3"><div class="card card-b"><div class="small muted">นับถอยหลัง ' + bidDaysOf(o) + ' วัน (เวลาเดียวกับที่ผู้รับเหมาเห็น)</div><div style="margin-top:6px">' + cdHtml(o) + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="money" style="font-size:24px;color:var(--teal)">' + money(ref) + '</div><div class="xs muted">' + sw(o.type) + (S.user.role === 'admin' ? ' ' + rateOf(o) + '% ของราคาขาย' : '') + '</div></div>' +
     '<div class="card card-b"><div class="small muted">ลูกค้าต้องการติดตั้ง</div><div class="strong" style="font-size:18px">' + fmtRange(o.wantFrom, o.wantTo) + '</div><div class="xs muted">' + esc(o.siteName) + ' จ.' + esc(o.province) + ' · ' + o.cabinets + ' ตู้</div></div></div>' +
@@ -4359,6 +4466,7 @@ window.addEventListener('message', (ev) => {
     if (d.ev === 'cur') { SNB.cur = String(d.oid || ''); if (!SNB.list && !SNB.det && !SNB.loading) snbPaint(); }
     if (d.ev === 'pick') snbPick(String(d.oid || ''), !!d.copied);
     if (d.ev === 'odoo' && d.order && typeof d.order === 'object') odooApply(d.order, { lock: d.lock !== false });   /* V7.12: Sale Order จาก Odoo (เตรียมไว้) */
+    if (d.ev === 'prd') prdSync(true);   /* V7.17: Production กด “ส่งเข้าไลน์ผลิต” / บันทึกเอกสาร → ส่งขึ้นทันที */
     if (d.ev === 'ping') { const h = SNB.hidden; SNB.hidden = false; poll(); SNB.hidden = h; snbSumSoon(); } /* หน้าเลือกขอตัวเลขล่าสุด */
   }
 });
@@ -4485,7 +4593,7 @@ function snbAllScroll() {
   box.addEventListener('scroll', () => { if (box.scrollTop + box.clientHeight >= box.scrollHeight - 80) { const A = SNB.all; if (A && !A.busy && (A.show < snbAllRows().length || !A.done)) snbAllMore(false); } }, { passive: true });
 }
 /* สรุปตัวเลขงานให้การ์ด Contractor Nexus บนหน้าเลือก (ไม่มีราคา) */
-function snbSumSoon() { if (!SNB_FRAMED || !SNB.on) return; snbSync(); clearTimeout(SNB.sumT); SNB.sumT = setTimeout(snbSumNow, 400); }
+function snbSumSoon() { if (!SNB_FRAMED || !SNB.on) return; snbSync(); prdSync();   /* V7.17: เอกสารไลน์ผลิต (≤ 1 ครั้ง / 30 วิ) */ clearTimeout(SNB.sumT); SNB.sumT = setTimeout(snbSumNow, 400); }
 function snbSumNow() {
   const data = { user: null, items: [] };
   try {
@@ -4494,12 +4602,12 @@ function snbSumNow() {
       const st = DB.orders.filter((o) => !o.cancelledAt).map(ost), n = (k) => st.filter((x) => x === k).length;
       data.user = { name: S.user.name, role: (ROLES[r] && ROLES[r].label) || r };
       if (r === 'contractor') { const k = conCounts(curCid()); data.items = [{ t: 'รอใส่ราคา', n: k.open }, { t: 'เสนอแล้ว รออนุมัติ', n: k.sent }, { t: 'งานของฉัน', n: k.work }, { t: 'รอรับเงิน', n: k.pay }]; }
-      else if (r === 'installer') data.items = [{ t: 'รอจัดทีม', n: n('ih_wait'), w: true }, { t: 'รอเข้าติดตั้ง / กำลังติดตั้ง', n: n('ih_booked') + n('ih_installing') }, { t: 'รอแนบใบส่งมอบ', n: n('ih_sign'), w: true }, { t: 'ส่งมอบแล้ว', n: n('ih_done') }];   /* V7.12 · V7.13 */
+      else if (r === 'installer') data.items = [{ t: 'รอเลือกช่องทาง', n: c.dispatch, w: true }, { t: 'รอจัดทีม', n: n('ih_wait'), w: true }, { t: 'รอเข้าติดตั้ง / กำลังติดตั้ง', n: n('ih_booked') + n('ih_installing') }, { t: 'รอแนบใบส่งมอบ', n: n('ih_sign'), w: true }, { t: 'ส่งมอบแล้ว', n: n('ih_done') }];   /* V7.12 · V7.13 */
       else if (r === 'warehouse') data.items = [{ t: 'ห่อในคลัง', n: whIn().length }, { t: 'ใกล้วันติดตั้ง ยังไม่จ่ายออก', n: c.whDue, w: true }];   /* V7.13 */
       else if (r === 'accounting') data.items = [{ t: 'รอตรวจใบส่งมอบ', n: c.check, w: true }, { t: 'ค้างจ่ายผู้รับเหมา', n: c.payDue, w: true }];
       else {
         data.items = [{ t: 'เปิดรับราคา', n: n('open') }, { t: 'หมดเวลา รอเลือกผู้รับเหมา', n: n('expired'), w: true }, { t: 'รอเข้าติดตั้ง / กำลังติดตั้ง', n: n('booked') + n('installing') }, { t: 'รอตรวจใบส่งมอบ', n: c.check, w: true }];
-        if (r === 'purchasing' || r === 'admin' || r === 'sale') data.items.unshift({ t: 'รอจัดซื้อเลือกช่องทาง', n: c.dispatch, w: r !== 'sale' });   /* V7.12 */
+        if (r === 'admin' || r === 'sale') data.items.unshift({ t: 'รอหัวหน้าช่างเลือกช่องทาง', n: c.dispatch, w: r === 'admin' });   /* V7.12 · V7.17 หัวหน้าช่างเลือก */
         if (r === 'sale') data.items.push({ t: 'ร่าง', n: n('draft') });
         if (r === 'admin' && c.payDue) data.items.push({ t: 'ค้างจ่ายผู้รับเหมา', n: c.payDue, w: true });
         if (r === 'admin' && c.signups) data.items.push({ t: 'คำขอลงทะเบียน', n: c.signups, w: true });
@@ -5492,7 +5600,7 @@ route(/^\/admin\/settings$/, 'admin', () => {
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="paySet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     /* V7.11: ระยะเวลาเปิดรับราคา — Admin ตั้ง · ล็อกกับ Order ตอนยืนยัน */
     '<div class="card"><div class="card-h"><h2>' + icon('clock') + ' ระยะเวลาเปิดรับราคา (ค่าเริ่มต้น)</h2><span class="xs muted">ผู้รับเหมาเปลี่ยนไม่ได้</span></div><div class="card-b"><div id="bd" class="form-grid">' +
-      '<div class="field c6"><label>ค่าเริ่มต้นของ Order ใหม่</label><div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + bidDaysNow() + '" aria-label="ระยะเวลาเปิดรับราคา (วัน)"><span>วัน</span></div><div class="help">1–60 วัน · นับจากเวลาที่จัดซื้อกดยืนยันส่งให้ผู้รับเหมา (วันปฏิทิน รวมวันหยุด)</div></div></div>' +
+      '<div class="field c6"><label>ค่าเริ่มต้นของ Order ใหม่</label><div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + bidDaysNow() + '" aria-label="ระยะเวลาเปิดรับราคา (วัน)"><span>วัน</span></div><div class="help">1–60 วัน · Sale เปลี่ยนได้รายงาน · นับจากเวลาที่หัวหน้าช่างเลือกส่งให้ผู้รับเหมา (วันปฏิทิน รวมวันหยุด) · จัดซื้อปรับรายงานได้ที่หน้าเทียบราคา</div></div></div>' +
       '<div class="small muted" style="margin-top:10px">Sale เลือกจำนวนวันรายงานได้ในฟอร์ม Sale Order (1–60 วัน · เริ่มที่ค่านี้) · จัดซื้อปรับได้อีกครั้งตอนส่งให้ผู้รับเหมา · แก้ได้จนกว่าจัดซื้อจะอนุมัติ (ต้องเหลือเวลาอย่างน้อย 1 วัน) · <b>เปลี่ยนค่านี้ไม่กระทบ Order ที่มีอยู่</b></div></div>' +
       '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="bidSet">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     /* V7.16.12: ต้องเสร็จภายใน = ลูกค้าพร้อมให้ติดตั้ง + N วัน (ค่ามาตรฐานในฟอร์ม Sale Order · Sale แก้วันรายงานได้) */
@@ -5681,7 +5789,7 @@ function whInstDate(o) { return (o.inhouse && o.inhouse.start) || (o.award && o.
 function whWho(o) {
   if (o.channel === 'inhouse') return o.inhouse && o.inhouse.teamId ? teamById(o.inhouse.teamId).name : 'ช่างโรงงาน · รอจัดทีม';
   if (o.award && o.award.cid && o.award.cid !== '__other') return shortCo(conById(o.award.cid).company);
-  return o.channel === 'contractor' ? 'ผู้รับเหมา · ยังไม่อนุมัติ' : 'รอจัดซื้อเลือกช่องทาง';
+  return o.channel === 'contractor' ? 'ผู้รับเหมา · ยังไม่อนุมัติ' : 'รอหัวหน้าช่างเลือกช่องทาง';
 }
 /* ตัวเลขเมนู "ยิงจ่ายออก": Order ที่ติดตั้งภายใน 3 วัน (หรือเลยมาแล้ว) แต่ยังมีห่อในคลัง */
 function whDueOrders() { const lim = addDays(todayStr(), 3); return ((DB && DB.orders) || []).filter((o) => !o.cancelledAt && o.wh && o.wh.in > 0 && whInstDate(o) && whInstDate(o) <= lim); }
@@ -6582,7 +6690,7 @@ function ppShortNote(o, got) {
    V7.16.5: จัดซื้อ: Order ใหม่รอเลือกช่องทาง · หมดเวลาเสนอราคา · ผู้รับเหมาไม่รับเงื่อนไข (sql/06_push_pur.sql)
             แถบ “ติดตั้งแอปลงหน้าจอ” ทุกหน้าบนมือถือ · กระดิ่งมุมขวาบน = เปิด / ปิดแจ้งเตือน + เสียง + ส่งทดสอบ ในแอปเลย */
 const PUSH = { reg: null, sub: null, perm: 'default', inst: null, installed: false, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
-const PUSH_ROLES = { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1 };   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
+const PUSH_ROLES = { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1, production: 1, warehouse: 1 };   /* V7.17: + ฝ่ายผลิต / คลัง (ไลน์ผลิต) */   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
 function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
 function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
 function pwaStandalone() { try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
@@ -6637,8 +6745,10 @@ function pushBadgeCount() {
     const fix = DB.orders.filter((o) => conVisible(o, cid) && !o.cancelledAt && o.award && o.award.cid === cid && o.install && o.install.handover && o.install.handover.review && o.install.handover.review.ok === false).length;
     return k.open + fix;
   }
-  if (S.user.role === 'installer') { const c = counts(); return c.ihWait + c.ihSign; }
-  if (S.user.role === 'purchasing') { const st = DB.orders.map(ost); return st.filter((x) => x === 'dispatch' || x === 'expired').length; }   /* = cn_push_badge_for('purchasing') */
+  if (S.user.role === 'installer') { const c = counts(); return c.ihWait + c.ihSign + c.dispatch; }   /* V7.17 + รอเลือกช่องทาง */
+  if (S.user.role === 'purchasing') { const st = DB.orders.map(ost); return st.filter((x) => x === 'expired').length; }   /* = cn_push_badge_for('purchasing') · V7.17 ไม่นับรอเลือกช่องทาง (หัวหน้าช่างเลือก) */
+  if (S.user.role === 'production') return prdList().reduce((n, b) => n + (+b.rqPaid || 0), 0);   /* V7.17 = cn_push_badge_for('production') */
+  if (S.user.role === 'warehouse') return prdList().reduce((n, b) => n + (+b.rqWait || 0), 0);   /* V7.17 = cn_push_badge_for('warehouse') */
   return 0;
 }
 function pushBadge() {
@@ -6649,10 +6759,12 @@ function pushBadge() {
 /* กล่อง “รับแจ้งเตือนในมือถือ” บนหน้าแรกของผู้รับเหมา / หัวหน้าช่างโรงงาน */
 const PUSH_WHAT = {
   contractor: 'งานใหม่ให้เสนอราคา · ใกล้หมดเวลาเสนอราคา · ได้รับอนุมัติ · เปลี่ยนวันติดตั้ง · ใบส่งมอบต้องแก้ · บันทึกจ่ายเงิน',
-  installer: 'งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · งานย้ายไปผู้รับเหมา / ยกเลิก',
-  purchasing: 'Order ใหม่รอเลือกช่องทางติดตั้ง · หมดเวลาเสนอราคา รอเลือกผู้รับเหมา · ผู้รับเหมาไม่รับเงื่อนไข · ผู้รับเหมาเสนอราคา (เลือกเปิดได้)',
+  installer: 'Order ใหม่รอเลือกช่องทาง · งานใหม่รอจัดทีม · พรุ่งนี้มีงานติดตั้ง · งานย้ายไปผู้รับเหมา / ยกเลิก',
+  purchasing: 'งานใหม่ส่งให้ผู้รับเหมา (หัวหน้าช่างเลือก) · หมดเวลาเสนอราคา รอเลือกผู้รับเหมา · ผู้รับเหมาไม่รับเงื่อนไข · ผู้รับเหมาเสนอราคา (เลือกเปิดได้)',
   sale: 'Order ของคุณ: ได้ช่างติดตั้ง + วันติดตั้ง · เริ่มงานที่หน้างาน · ติดตั้งเสร็จ · Order ถูกยกเลิก',
   admin: 'ทุกขั้นตอนของทุกฝ่าย: Sale ยืนยัน Order · จัดซื้อส่งงาน · ผู้รับเหมาเสนอราคา / ได้งาน / เข้าหน้างาน / ส่งใบส่งมอบ · บัญชีตรวจ / จ่ายเงิน · ช่างโรงงานจัดทีม / เริ่ม / เสร็จ — บอกด้วยว่าแจ้งถึงใคร',
+  production: 'คลังจ่ายของตามใบเบิกแล้ว (มารับได้) · ของสั่งทำมาถึง / มาครบ',   /* V7.17 */
+  warehouse: 'ใบเบิกใหม่จาก Production รอคลังจ่าย'
 };
 function pushCardHtml() {
   const u = S.user;
@@ -6678,19 +6790,22 @@ function pushCardHtml() {
   return '<div class="pushcard">' + icon('bell') + '<div class="pc-b"><b>รับแจ้งเตือนในมือถือ</b><div class="pc-what">ไม่ต้องเปิดเว็บค้างไว้ · เด้งเตือนพร้อมเสียงของเครื่อง (ปิดเสียงได้) · เลขสีแดงบนไอคอน = งานที่รอท่าน</div>' + what + '</div>' +
     '<div class="pc-act">' + inst + (PUSH_TOPICS[u.role] ? '<button class="btn sm" data-act="pushSheet">' + icon('settings', 'sm') + ' เลือกเรื่องที่แจ้ง</button>' : '') + '<button class="btn sm primary" data-act="pushOn"' + (PUSH.busy ? ' disabled' : '') + '>' + icon('bell', 'sm') + ' เปิดการแจ้งเตือน</button></div></div>';
 }
-const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue', purchasing: '/pur/inbox', sale: '/sale/orders' };
+const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue', purchasing: '/pur/bids', sale: '/sale/orders', production: '/prd/orders', warehouse: '/prd/orders' };   /* V7.17: คลังเปิดแจ้งเตือนที่หน้าไลน์ผลิต (หน้าคลังเดิมไม่เปลี่ยน) */
 /* V7.16.5: หัวข้อที่จัดซื้อ / Sale เลือกเปิด-ปิดได้ (ตรงกับ cn_push_topics ใน SQL) — เก็บที่ Server ใช้กับทุกเครื่องของบัญชี */
 const PUSH_TOPICS = {
-  purchasing: [['p_new', 'Order ใหม่เข้า', 'Sale ยืนยันแล้ว รอเลือกช่องทางติดตั้ง'], ['p_expire', 'หมดเวลาเสนอราคา', 'ปิดรับราคาแล้ว รอเลือกผู้รับเหมา (บอกจำนวนที่เสนอ)'],
-    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_late', 'งานติดตั้งเลยกำหนดเสร็จ', 'เช้าวันถัดจากวันครบกำหนด ถ้ายังไม่ส่งใบส่งมอบ / ยังไม่กดเสร็จ'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)']],
+  purchasing: [['p_new', 'งานใหม่ส่งให้ผู้รับเหมา', 'หัวหน้าช่างเลือกผู้รับเหมา — เปิดรับราคาแล้ว (V7.17)'], ['p_expire', 'หมดเวลาเสนอราคา', 'ปิดรับราคาแล้ว รอเลือกผู้รับเหมา (บอกจำนวนที่เสนอ)'],
+    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_late', 'งานติดตั้งเลยกำหนดเสร็จ', 'เช้าวันถัดจากวันครบกำหนด ถ้ายังไม่ส่งใบส่งมอบ / ยังไม่กดเสร็จ'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)'], ['p_mo', 'งานสั่งทำใหม่รอสั่ง', 'Production ส่งใบรายการสั่งทำเข้าไลน์ผลิต (V7.17)']],
   sale: [['s_booked', 'ได้ช่างติดตั้ง + วันติดตั้ง', 'รวมเปลี่ยนวันติดตั้ง / ยกเลิกช่าง — ไว้แจ้งลูกค้า'], ['s_start', 'เริ่มงานที่หน้างาน', 'ช่างยิงรับของห่อแรก / กดเริ่มงาน'],
     ['s_done', 'ติดตั้งเสร็จ', 'ช่างส่งใบส่งมอบงานแล้ว'], ['s_cancel', 'Order ถูกยกเลิก', 'เมื่อคนอื่นยกเลิก Order ของคุณ']],
   /* V7.16.6: ผู้รับเหมา / หัวหน้าช่างโรงงาน (ตรงกับ cn_push_topics ใน SQL 07 / 12 · ค่าเริ่มต้นเปิดหมด · V7.16.11 + c_due / i_due / p_late) */
   contractor: [['c_open', 'งานใหม่ให้เสนอราคา', 'จัดซื้อเปิดงานให้ผู้รับเหมาเสนอราคา'], ['c_remind', 'ใกล้หมดเวลาเสนอราคา', 'เหลือ 1 วัน — งานที่ยังไม่ได้เสนอ'],
     ['c_result', 'ผลการเสนอราคา', 'ได้รับอนุมัติงาน / ปิดรับราคาแล้ว (ไม่ได้งาน)'], ['c_change', 'เปลี่ยนวันติดตั้ง / ยกเลิกงาน', 'เลื่อนวัน · ยกเลิกการอนุมัติ · งานถูกยกเลิก'],
     ['c_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่ส่งใบส่งมอบ'], ['c_hand', 'ใบส่งมอบต้องแก้ไข', 'ใบส่งมอบถูกส่งกลับให้แก้'], ['c_pay', 'บันทึกจ่ายเงิน', 'บริษัทบันทึกจ่ายเงินงวดแล้ว']],
-  installer: [['i_new', 'งานใหม่รอจัดทีม', 'จัดซื้อส่งงานให้ช่างโรงงาน'], ['i_tomorrow', 'พรุ่งนี้มีงานติดตั้ง', 'เตือนล่วงหน้า 1 วัน + ชื่อทีม'],
-    ['i_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่กดเสร็จ'], ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']]
+  installer: [['i_pick', 'Order ใหม่รอเลือกช่องทาง', 'Sale ยืนยันแล้ว — เลือกช่างติดตั้งโรงงาน หรือ ผู้รับเหมา (V7.17)'], ['i_new', 'งานใหม่รอจัดทีม', 'งานช่างโรงงานที่ยังไม่ได้จัดทีม'], ['i_tomorrow', 'พรุ่งนี้มีงานติดตั้ง', 'เตือนล่วงหน้า 1 วัน + ชื่อทีม'],
+    ['i_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่กดเสร็จ'], ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']],
+  /* V7.17: ไลน์ผลิต (ตรงกับ cn_push_topics ใน SQL 15) */
+  production: [['f_rq', 'คลังจ่ายของตามใบเบิกแล้ว', 'มารับของได้ — กด “ผลิตรับแล้ว” เมื่อได้ของ'], ['f_mo', 'ของสั่งทำมาถึง', 'จัดซื้อ / คลังกด “ได้รับแล้ว” — บอกว่าครบหรือยังขาดกี่รายการ']],
+  warehouse: [['w_rq', 'ใบเบิกใหม่รอจ่าย', 'Production ออกใบเบิกให้ไลน์ผลิต — เตรียมของแล้วกด “คลังจ่ายแล้ว”']]
 };
 function pushAfter(path) {
   pushBadge();
@@ -7016,6 +7131,305 @@ on('pushAdmAll', async (el) => {
   finally { el.disabled = false; }
 });
 lgInstPaint();   /* V7.16.18: หน้าเข้าระบบที่วาดไว้ก่อนไฟล์นี้โหลด → ใส่ปุ่มติดตั้ง */
+
+/* =====================================================================
+   V7.17 ไลน์ผลิต — ดูเอกสาร + สถานะผ่านแอป (ลดกระดาษ)
+   ผู้ใช้ 14/11: “สถานะผลิต เอาแค่ สถานะใบเบิก · สถานะงานสั่งทำ · รายการรวม — ผลิตคลิกเข้าไปแล้วเห็นเอกสารกับสถานะ”
+   · รายการรวม (#/prd/orders) — ทุก Order ที่ Production ส่งเอกสาร / ใบรายการสั่งทำมา + สถานะย่อ · ค้น · กรอง
+   · หน้า Order (#/prd/o/<เลข>) — ใบเบิก (ออกใบ → คลังจ่ายแล้ว → ผลิตรับแล้ว) · ใบปิดผิว (ดูอย่างเดียว + แตก BOM)
+     · งานสั่งทำ (รหัสสั่งตัด · กระจกสั่งตามขนาด · งานแผ่น: ยังไม่สั่ง → สั่งแล้ว → ได้รับแล้ว)
+   · ใครกดอะไร: คลัง “คลังจ่ายแล้ว” · ฝ่ายผลิต “ผลิตรับแล้ว” · จัดซื้อ “สั่งแล้ว / ได้รับแล้ว” · คลัง “ได้รับแล้ว” · Admin ทุกขั้น (Server ตรวจซ้ำ)
+   · ข้อมูลมาจาก Production: เปิด CN ในแท็บ Production → prdSync (คำสั่ง prd ของตัวกลาง · V270) → cn_prd_sync · ไม่มีราคา
+   ===================================================================== */
+const PRD_ROLES = { admin: 1, production: 1, warehouse: 1, purchasing: 1 };
+function canPrd() { return !!S.user && !!PRD_ROLES[S.user.role]; }
+const PRD = { det: {}, sig: {}, loading: {}, err: {}, q: '', f: '', tab: {}, sel: {} };
+function prdList() { return (DB && Array.isArray(DB.prd)) ? DB.prd : []; }
+const prdSum = (k) => prdList().reduce((n, b) => n + (+b[k] || 0), 0);
+function prdNavCount() {
+  const r = S.user && S.user.role;
+  return r === 'warehouse' ? prdSum('rqWait') : r === 'production' ? prdSum('rqPaid') : r === 'purchasing' ? prdSum('moNone') : 0;
+}
+function prdNavItem(c) {
+  const r = S.user && S.user.role;
+  return { h: '#/prd/orders', i: 'factory', t: r === 'production' ? 'รายการรวม · เอกสาร & สถานะ' : 'ไลน์ผลิต · ใบเบิก / งานสั่งทำ', s: r === 'production' ? 'รายการรวม' : 'ไลน์ผลิต',
+    n: c ? c.prd : prdNavCount(), w: true, tip: (NAV_TIP.prd || {})[r] || '' };
+}
+/* งานที่บทบาทนี้ต้องทำใน Order นี้ */
+function prdTodo(b, r) {
+  r = r || (S.user && S.user.role);
+  if (r === 'warehouse') return +b.rqWait > 0;
+  if (r === 'production') return +b.rqPaid > 0;
+  if (r === 'purchasing') return +b.moNone > 0 || +b.moOrd > 0;
+  return +b.rqWait > 0 || +b.rqPaid > 0 || +b.moNone > 0 || +b.moOrd > 0;
+}
+const prdDone = (b) => !(+b.rqWait || +b.rqPaid || +b.moNone || +b.moOrd);
+const PRD_TODO_T = { warehouse: 'รอคลังจ่าย', production: 'รอผลิตรับ', purchasing: 'ต้องสั่ง / รอของ', admin: 'ยังไม่จบ' };
+const prdQ = (b) => [b.oid, b.title, b.iid].join(' ').toUpperCase();
+function prdD(v) { return v ? fmtDate(v) : '—'; }
+function prdIso(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '')); if (!m) return ''; const y = +m[1] > 2400 ? +m[1] - 543 : +m[1]; return fmtDate(y + '-' + m[2] + '-' + m[3]); }
+function prdQty(n) { const v = Math.round((+n || 0) * 100) / 100; return v.toLocaleString('th-TH', { maximumFractionDigits: 2 }); }
+
+/* ---------- สรุปย่อของ Order (ใช้ทั้งรายการรวม / หัวหน้า Order) ---------- */
+function prdRqPills(b) {
+  if (!+b.rq) return '<span class="xs muted">ไม่มีใบเบิก</span>';
+  return '<div class="prd-pills">' + (+b.rqWait ? '<span class="badge t-amber">รอคลังจ่าย ' + b.rqWait + '</span> ' : '') + (+b.rqPaid ? '<span class="badge t-blue">รอผลิตรับ ' + b.rqPaid + '</span> ' : '') +
+    (+b.rqRecv ? '<span class="badge t-green">' + icon('check', 'xs') + ' รับแล้ว ' + b.rqRecv + '</span>' : '') + '</div>';
+}
+function prdMoBar(b) {
+  if (!+b.mo) return '<span class="xs muted">' + (b.moAt ? 'ไม่มีรายการ' : 'ยังไม่ส่งใบสั่งทำ') + '</span>';
+  const pct = Math.round(+b.moRecv / +b.mo * 100);
+  return '<div class="prd-mob"><div class="prd-mo"><div class="prog"><i style="width:' + pct + '%"></i></div><span class="small"><b>' + b.moRecv + '</b>/' + b.mo + ' ได้รับ</span></div>' +
+    '<div class="prd-pills">' + (+b.moNone ? '<span class="badge t-red">ยังไม่สั่ง ' + b.moNone + '</span> ' : '') + (+b.moOrd ? '<span class="badge t-amber">สั่งแล้ว รอของ ' + b.moOrd + '</span>' : '') +
+    (+b.moRecv === +b.mo ? '<span class="badge t-green">' + icon('check', 'xs') + ' ครบแล้ว</span>' : '') + '</div></div>';
+}
+
+/* ---------- รายการรวม ---------- */
+route(/^\/prd\/orders$/, 'prd', () => {
+  const r = S.user.role, L = prdList();
+  const f = PRD.f || (r === 'admin' ? 'all' : 'todo');
+  const nTodo = L.filter((b) => prdTodo(b)).length, nWait = L.filter((b) => !prdDone(b)).length, nDone = L.filter(prdDone).length;
+  const rows = L.filter((b) => (f === 'todo' ? prdTodo(b) : f === 'wait' ? !prdDone(b) : f === 'done' ? prdDone(b) : true));
+  const kpi = (ico, tone, k, val, s) => '<div class="card kpi accent" style="--k:var(--' + tone + ')"><div class="k">' + icon(ico, 'sm') + k + '</div><div class="v">' + val + '</div><div class="s">' + s + '</div></div>';
+  const sub = r === 'production' ? 'ดูเอกสารใบปิดผิว / ใบเบิก และสถานะของแต่ละ Order — ได้ของจากคลังแล้วกด “ผลิตรับแล้ว”'
+    : r === 'warehouse' ? 'ใบเบิกจาก Production — เตรียมของแล้วกด “คลังจ่ายแล้ว” · ของสั่งทำมาถึงกด “ได้รับแล้ว”'
+    : r === 'purchasing' ? 'งานสั่งทำจาก Production — สั่งแล้วกด “สั่งแล้ว” · ของมาถึงกด “ได้รับแล้ว”' : 'เอกสาร + สถานะไลน์ผลิตทุก Order';
+  return { nav: '#/prd/orders', after: () => prdQApply(),
+    html: pageHead(r === 'production' ? 'รายการรวม — ไลน์ผลิต' : 'ไลน์ผลิต — ใบเบิก & งานสั่งทำ', sub, (SNB_FRAMED ? '<button class="btn sm" data-act="prdSyncNow">' + icon('refresh', 'sm') + ' ดึงจาก Production</button>' : '')) +
+      '<div class="grid g4">' + kpi('file', 'amber', 'ใบเบิกรอคลังจ่าย', prdSum('rqWait'), 'คลังกด “คลังจ่ายแล้ว”') + kpi('box', 'blue', 'รอผลิตรับ', prdSum('rqPaid'), 'คลังจ่ายแล้ว — ผลิตกด “ผลิตรับแล้ว”') +
+        kpi('tool', 'red', 'งานสั่งทำยังไม่สั่ง', prdSum('moNone'), 'รายการ · จัดซื้อกด “สั่งแล้ว”') + kpi('clock', 'teal', 'สั่งแล้ว รอของ', prdSum('moOrd'), 'รายการ · ได้รับแล้วกด “ได้รับแล้ว”') + '</div>' +
+      prdSyncNote() +
+      '<div class="card" style="margin-top:16px"><div class="card-b">' +
+        '<div class="sbox">' + icon('search', 'sm') + '<input class="input" type="search" id="prd-q" data-inp="prdQ" value="' + esc(PRD.q) + '" placeholder="ค้นเลข Order / ชื่องาน / Item Id" aria-label="ค้นหา Order"></div>' +
+        '<div class="chips" style="margin:12px 0 4px">' + [['todo', PRD_TODO_T[r] || 'ต้องทำ', nTodo], ['wait', 'ยังไม่ครบ', nWait], ['done', 'ครบแล้ว', nDone], ['all', 'ทั้งหมด', L.length]]
+          .map((x) => '<button class="fchip ' + (f === x[0] ? 'on' : '') + '" data-act="prdF" data-f="' + x[0] + '">' + x[1] + ' <span class="n">' + x[2] + '</span></button>').join('') + '</div></div>' +
+        '<div class="table-wrap"><table class="t resp prd-tbl"><thead><tr><th>Order</th><th>ใบปิดผิว</th><th>ใบเบิก</th><th>งานสั่งทำ</th><th>อัปเดต</th></tr></thead><tbody>' +
+          (rows.length ? rows.map((b) => '<tr class="prd-row' + (prdTodo(b) ? ' todo' : '') + '" data-act="prdOpen" data-oid="' + esc(b.oid) + '" data-pq="' + esc(prdQ(b)) + '" tabindex="0"><td class="main"><a href="#/prd/o/' + encodeURIComponent(b.oid) + '" class="mono strong">' + esc(b.oid) + '</a>' +
+              (b.title && b.title !== b.oid ? '<div class="sub">' + esc(b.title) + '</div>' : '') + (b.iid ? '<div class="sub mono">' + esc(b.iid) + '</div>' : '') + '</td>' +
+            '<td data-l="ใบปิดผิว">' + (+b.lm ? '<span><b>' + b.lm + '</b> ใบ</span>' : '<span class="xs muted">—</span>') + '</td>' +
+            '<td data-l="ใบเบิก">' + prdRqPills(b) + '</td><td data-l="งานสั่งทำ">' + prdMoBar(b) + '</td>' +
+            '<td data-l="อัปเดต" class="small">' + fmtDT(b.moAt && b.moAt > b.at ? b.moAt : b.at) + '</td></tr>').join('')
+            : '<tr><td colspan="5">' + (L.length ? empty('search', 'ไม่มี Order ในกลุ่มนี้', 'เลือก “ทั้งหมด” เพื่อดูทุก Order')
+              : empty('factory', 'ยังไม่มีเอกสารจาก Production', 'เปิด Contractor Nexus ในแท็บ Production ที่คอมออฟฟิศ (เข้าสู่ระบบค้างไว้) — ใบปิดผิว / ใบเบิก และใบรายการสั่งทำที่กด “ส่งเข้าไลน์ผลิต” จะขึ้นที่นี่เอง')) + '</td></tr>') +
+        '<tr id="prd-none" class="hidden"><td colspan="5">' + empty('search', 'ไม่พบ Order ที่ค้น', 'ลองคำค้นอื่น หรือเลือก “ทั้งหมด”') + '</td></tr>' +
+        '</tbody></table></div></div>' };
+});
+/* ค้น: ซ่อน / แสดงแถวเอง (ไม่วาดหน้าใหม่ — พิมพ์ต่อได้ลื่น) */
+Acts.prdQ = (el) => { PRD.q = el.value; prdQApply(); };
+function prdQApply() {
+  const words = PRD.q.trim().toUpperCase().split(/\s+/).filter(Boolean); let n = 0;
+  $$('#app tr.prd-row').forEach((tr) => { const hit = words.every((w) => tr.dataset.pq.indexOf(w) >= 0); tr.classList.toggle('hidden', !hit); if (hit) n++; });
+  const nm = $('#prd-none'); if (nm) nm.classList.toggle('hidden', n > 0 || !$$('#app tr.prd-row').length);
+}
+on('prdF', (el) => { PRD.f = el.dataset.f; rerender(); });
+on('prdOpen', (el) => { go('#/prd/o/' + encodeURIComponent(el.dataset.oid)); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('prd-row')) go('#/prd/o/' + encodeURIComponent(e.target.dataset.oid)); });
+
+/* ---------- หน้า Order ---------- */
+function prdBrief(oid) { return prdList().find((b) => b.oid === oid) || null; }
+function prdSigOf(oid) { const b = prdBrief(oid); return b ? [b.at, b.moAt, b.rqWait, b.rqPaid, b.rqRecv, b.moNone, b.moOrd, b.moRecv, b.mo, b.lm, b.rq].join('|') : ''; }
+async function prdLoad(oid, force) {
+  if (PRD.loading[oid]) return;
+  const sig = prdSigOf(oid);
+  if (!force && PRD.det[oid] && PRD.sig[oid] === sig) return;
+  PRD.loading[oid] = true;
+  try { PRD.det[oid] = await rpc('cn_prd_order', { p_oid: oid }); PRD.sig[oid] = sig; PRD.err[oid] = ''; }
+  catch (e) { if (e.code === 'session') { forceLogout(e.message); return; } PRD.err[oid] = e.message; }
+  finally { PRD.loading[oid] = false; }
+  if (curPath() === '/prd/o/' + oid && !isEditing()) rerender();
+}
+function prdDefTab(r, D) {
+  const rq = D.docs.filter((d) => d.kind === 'rq').length, lm = D.docs.filter((d) => d.kind === 'lm').length, mo = D.items.length;
+  if (r === 'purchasing') return mo ? 'mo' : rq ? 'rq' : 'lm';
+  if (r === 'production') return rq ? 'rq' : lm ? 'lm' : 'mo';
+  return rq ? 'rq' : mo ? 'mo' : 'lm';
+}
+route(/^\/prd\/o\/(.+)$/, 'prd', (m) => {
+  let oid = m[0]; try { oid = decodeURIComponent(oid); } catch (e) { /* ใช้ตามที่พิมพ์ */ }
+  const D = PRD.det[oid], b = prdBrief(oid), r = S.user.role;
+  setTimeout(() => prdLoad(oid), 0);
+  const back = '<a class="btn sm" href="#/prd/orders">' + icon('chevLeft', 'sm') + ' รายการรวม</a>';
+  if (!D) {
+    return { nav: '#/prd/orders', html: pageHead(esc(oid), b ? esc(b.title || '') : '', back, 'ไลน์ผลิต') +
+      '<div class="card"><div class="card-b">' + (PRD.err[oid] ? notice('danger', esc(PRD.err[oid])) + '<button class="btn" style="margin-top:10px" data-act="prdReload" data-oid="' + esc(oid) + '">' + icon('refresh', 'sm') + ' ลองใหม่</button>'
+        : '<div class="small muted">กำลังโหลดเอกสาร…</div>') + '</div></div>' };
+  }
+  const tab = PRD.tab[oid] || prdDefTab(r, D);
+  const rq = D.docs.filter((d) => d.kind === 'rq'), lm = D.docs.filter((d) => d.kind === 'lm'), live = (d) => !d.cancelled && !d.gone;
+  const nRq = rq.filter(live).length, nLm = lm.filter(live).length, nMo = D.items.filter((i) => !i.gone).length;
+  const o = D.order;
+  const tabs = '<div class="seg prd-seg" role="tablist">' + [['rq', 'ใบเบิก', nRq], ['lm', 'ใบปิดผิว', nLm], ['mo', 'งานสั่งทำ', nMo]]
+    .map((x) => '<button type="button" role="tab" aria-selected="' + (tab === x[0]) + '" class="' + (tab === x[0] ? 'on' : '') + '" data-act="prdTab" data-oid="' + esc(oid) + '" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + x[2] + '</span></button>').join('') + '</div>';
+  const head = '<div class="card prd-head"><div class="card-b"><div class="prd-hrow"><div class="prd-hb"><div class="xs muted">ใบเบิก</div>' + (b ? prdRqPills(b) : '—') + '</div>' +
+    '<div class="prd-hb"><div class="xs muted">งานสั่งทำ</div>' + (b ? prdMoBar(b) : '—') + '</div>' +
+    '<div class="prd-hb"><div class="xs muted">ใบปิดผิว</div><span><b>' + nLm + '</b> ใบ</span></div></div>' +
+    (o.iid ? '<div class="xs muted" style="margin-top:8px">Item Id Set <span class="mono">' + esc(o.iid) + '</span></div>' : '') + '</div></div>';
+  const body = tab === 'rq' ? prdRqHtml(oid, rq, r) : tab === 'lm' ? prdLmHtml(lm) : prdMoHtml(oid, D, r);
+  return { nav: '#/prd/orders', html: pageHead('<span class="mono">' + esc(oid) + '</span>', esc(o.title && o.title !== oid ? o.title : ''), back + '<button class="btn sm" data-act="prdReload" data-oid="' + esc(oid) + '" aria-label="โหลดใหม่">' + icon('refresh', 'sm') + '</button>', 'ไลน์ผลิต') +
+    head + '<div class="prd-tabs">' + tabs + '</div>' + body };
+});
+on('prdTab', (el) => { PRD.tab[el.dataset.oid] = el.dataset.t; rerender(); });
+on('prdReload', async (el) => { const oid = el.dataset.oid; PRD.err[oid] = ''; await refresh(); await prdLoad(oid, true); rerender(); });
+
+/* ใบเบิก: ออกใบ → คลังจ่ายแล้ว → ผลิตรับแล้ว */
+function prdTrack(d) {
+  const st = (on, cur, t, s) => '<div class="pt' + (on ? ' done' : cur ? ' cur' : '') + '"><i>' + (on ? icon('check', 'xs') : '') + '</i><b>' + t + '</b><span>' + (s || '') + '</span></div>';
+  return '<div class="prd-trk">' + st(true, false, 'ออกใบ', prdD(d.issuedAt)) +
+    st(!!d.paidAt, !d.paidAt, 'คลังจ่ายแล้ว', d.paidAt ? fmtDT(d.paidAt) + '<br>' + esc(d.paidBy || '') : 'รอคลัง') +
+    st(!!d.recvAt, !!d.paidAt && !d.recvAt, 'ผลิตรับแล้ว', d.recvAt ? fmtDT(d.recvAt) + '<br>' + esc(d.recvBy || '') : d.paidAt ? 'รอผลิตรับ' : '') + '</div>';
+}
+function prdRqHtml(oid, docs, r) {
+  if (!docs.length) return '<div class="card">' + empty('file', 'ยังไม่มีใบเบิกของ Order นี้', 'ใบเบิกที่ออกในแท็บเอกสารของ Production จะขึ้นที่นี่') + '</div>';
+  const live = docs.filter((d) => !d.cancelled && !d.gone), dead = docs.filter((d) => d.cancelled || d.gone);
+  const canPay = r === 'admin' || r === 'warehouse', canRecv = r === 'admin' || r === 'production';
+  const card = (d) => {
+    const h = d.head || {}, off = d.cancelled || d.gone;
+    const acts = off ? '' : (canPay && !d.paidAt ? '<button class="btn primary" data-act="prdRq" data-id="' + esc(d.id) + '" data-a="pay">' + icon('check', 'sm') + ' คลังจ่ายแล้ว</button>' : '') +
+      (canRecv && d.paidAt && !d.recvAt ? '<button class="btn ok" data-act="prdRq" data-id="' + esc(d.id) + '" data-a="recv">' + icon('check', 'sm') + ' ผลิตรับแล้ว</button>' : '') +
+      (canRecv && d.recvAt ? '<button class="btn sm ghost" data-act="prdRqBack" data-id="' + esc(d.id) + '" data-a="unrecv">' + icon('undo', 'xs') + ' ยกเลิก “ผลิตรับแล้ว”</button>' : '') +
+      (canPay && d.paidAt && !d.recvAt ? '<button class="btn sm ghost" data-act="prdRqBack" data-id="' + esc(d.id) + '" data-a="unpay">' + icon('undo', 'xs') + ' ยกเลิก “คลังจ่ายแล้ว”</button>' : '') +
+      (!canPay && !d.paidAt ? '<span class="xs muted">รอคลังกด “คลังจ่ายแล้ว”</span>' : '') + (!canRecv && d.paidAt && !d.recvAt ? '<span class="xs muted">รอฝ่ายผลิตกด “ผลิตรับแล้ว”</span>' : '');
+    return '<div class="card prd-doc' + (off ? ' off' : d.recvAt ? ' ok' : '') + '"><div class="card-h"><h2><span class="mono">' + esc(d.no) + '</span> ' +
+        (off ? '<span class="badge t-gray">' + (d.gone ? 'ลบใน Production แล้ว' : 'ยกเลิกแล้ว') + '</span>' : d.recvAt ? '<span class="badge t-green">ผลิตรับแล้ว</span>' : d.paidAt ? '<span class="badge t-blue">รอผลิตรับ</span>' : '<span class="badge t-amber">รอคลังจ่าย</span>') + '</h2>' +
+        '<span class="small muted">' + d.lines.length + ' รายการ</span></div><div class="card-b">' +
+      (off ? '' : prdTrack(d)) +
+      '<div class="prd-wh small">' + icon('truck', 'sm') + ' จาก <b>' + esc(h.fromName || h.from || '—') + '</b>' + (h.from && h.fromName ? ' <span class="mono xs">' + esc(h.from) + '</span>' : '') + ' → <b>' + esc(h.toName || h.to || '—') + '</b>' + (h.to && h.toName ? ' <span class="mono xs">' + esc(h.to) + '</span>' : '') +
+        (h.ax ? ' · AX <span class="mono">' + esc(h.ax) + '</span>' : '') + (h.note ? '<div class="xs muted">' + esc(h.note) + '</div>' : '') + '</div>' +
+      '<div class="table-wrap"><table class="t resp prd-lines"><thead><tr><th>รหัส</th><th>รายการ</th><th class="r">จำนวน</th><th>โลเคชั่น</th></tr></thead><tbody>' +
+        d.lines.map((l) => '<tr><td class="main mono strong">' + esc(l.code) + '</td><td data-l="รายการ">' + esc(l.name || '') + '</td><td data-l="จำนวน" class="r"><span><b>' + prdQty(l.qty) + '</b> ' + esc(l.unit || '') + '</span></td><td data-l="โลเคชั่น" class="small mono">' + esc(l.loc || '—') + '</td></tr>').join('') +
+      '</tbody></table></div>' + (acts ? '<div class="prd-acts">' + acts + '</div>' : '') + '</div></div>';
+  };
+  return live.map(card).join('') + (dead.length ? '<details class="prd-dead"><summary>ใบที่ยกเลิก / ลบแล้ว ' + dead.length + ' ใบ</summary>' + dead.map(card).join('') + '</details>' : '');
+}
+on('prdRq', async (el) => {
+  const d = await rpc('cn_prd_rq', { p_id: el.dataset.id, p_act: el.dataset.a });
+  PRD.det[d.order.oid] = d; await refresh(); PRD.sig[d.order.oid] = prdSigOf(d.order.oid);
+  toast(el.dataset.a === 'pay' ? 'บันทึก “คลังจ่ายแล้ว” — แจ้งฝ่ายผลิตแล้ว' : 'บันทึก “ผลิตรับแล้ว”'); rerender();
+});
+on('prdRqBack', (el) => {
+  const pay = el.dataset.a === 'unpay';
+  modal({ title: icon('undo') + ' ยกเลิก “' + (pay ? 'คลังจ่ายแล้ว' : 'ผลิตรับแล้ว') + '”?', body: '<p>ใช้เมื่อกดผิด — สถานะจะกลับเป็น “' + (pay ? 'รอคลังจ่าย' : 'รอผลิตรับ') + '”</p>',
+    foot: '<button class="btn" data-act="closeOv">ไม่ใช่</button><button class="btn danger" data-act="prdRqBackOk" data-id="' + esc(el.dataset.id) + '" data-a="' + esc(el.dataset.a) + '">ยกเลิกสถานะ</button>' });
+});
+on('prdRqBackOk', async (el) => {
+  const d = await rpc('cn_prd_rq', { p_id: el.dataset.id, p_act: el.dataset.a });
+  PRD.det[d.order.oid] = d; closeOverlay(); await refresh(); PRD.sig[d.order.oid] = prdSigOf(d.order.oid); toast('ยกเลิกสถานะแล้ว'); rerender();
+});
+
+/* ใบปิดผิว (ดูอย่างเดียว) */
+function prdLmHtml(docs) {
+  if (!docs.length) return '<div class="card">' + empty('file', 'ยังไม่มีใบปิดผิวของ Order นี้', 'ใบปิดผิว (รายการไม้ปิดผิว) ที่ออกใน Production จะขึ้นที่นี่') + '</div>';
+  const live = docs.filter((d) => !d.cancelled && !d.gone), dead = docs.filter((d) => d.cancelled || d.gone);
+  const card = (d) => {
+    const h = d.head || {}, off = d.cancelled || d.gone, tot = d.lines.reduce((n, l) => n + (+l.qty || 0), 0);
+    return '<div class="card prd-doc' + (off ? ' off' : '') + '"><div class="card-h"><h2><span class="mono">' + esc(d.no) + '</span>' + (off ? ' <span class="badge t-gray">' + (d.gone ? 'ลบใน Production แล้ว' : 'ยกเลิกแล้ว') + '</span>' : '') + (+d.orders > 1 ? ' <span class="badge t-violet">รวม ' + d.orders + ' Order</span>' : '') + '</h2>' +
+        '<span class="small muted">ออกใบ ' + prdD(d.issuedAt) + '</span></div><div class="card-b">' +
+      '<div class="prd-lmh">' + (h.due ? '<div class="prd-due"><span>วันกำหนดเสร็จ (ปิดผิว)</span><b>' + prdIso(h.due) + '</b>' + (h.endDate ? '<span class="xs">End Date ' + prdIso(h.endDate) + '</span>' : '') + '</div>' : '') +
+        '<dl class="prd-dl">' + (h.lot ? '<dt>LOT</dt><dd class="mono">' + esc(h.lot) + '</dd>' : '') + (h.prodPool ? '<dt>Prod Pool</dt><dd>' + esc(h.prodPool) + '</dd>' : '') + (h.pdPool ? '<dt>PD Pool</dt><dd>' + esc(h.pdPool) + '</dd>' : '') +
+        (h.note ? '<dt>หมายเหตุ</dt><dd>' + esc(h.note) + '</dd>' : '') + '</dl></div>' +
+      '<div class="table-wrap"><table class="t resp prd-lines"><thead><tr><th>รหัสไม้</th><th>รายละเอียด</th><th class="r">จำนวน</th></tr></thead><tbody>' +
+        d.lines.map((l) => '<tr><td class="main mono strong">' + esc(l.code) + '</td><td data-l="รายละเอียด"><div>' + esc(l.name || '') +
+            (l.bom && l.bom.length ? '<details class="prd-bom"><summary>แตก BOM ' + l.bom.length + ' รายการ</summary><ul>' + l.bom.map((x) => '<li><span class="mono">' + esc(x.code) + '</span> ' + esc(x.name || '') + ' — <b>' + prdQty(x.qty) + '</b> ' + esc(x.unit || '') + '</li>').join('') + '</ul></details>' : '') + '</div></td>' +
+          '<td data-l="จำนวน" class="r"><span><b>' + prdQty(l.qty) + '</b> ' + esc(l.unit || 'แผ่น') + '</span></td></tr>').join('') +
+        '<tr class="prd-tot"><td colspan="2">รวม ' + d.lines.length + ' รายการ<span class="prd-tot-m"> · <b>' + prdQty(tot) + '</b> แผ่น</span></td><td class="r prd-tot-n"><span><b>' + prdQty(tot) + '</b> แผ่น</span></td></tr>' +
+      '</tbody></table></div></div></div>';
+  };
+  return live.map(card).join('') + (dead.length ? '<details class="prd-dead"><summary>ใบที่ยกเลิก / ลบแล้ว ' + dead.length + ' ใบ</summary>' + dead.map(card).join('') + '</details>' : '');
+}
+
+/* งานสั่งทำ: ยังไม่สั่ง → สั่งแล้ว (จัดซื้อ) → ได้รับแล้ว (จัดซื้อ / คลัง) · ฝ่ายผลิตดูอย่างเดียว */
+const PRD_SEC = { cut: ['รหัสสั่งตัด (มือจับ / อลูมิเนียม / ไฟ ฯลฯ)', 'tool'], glass: ['กระจก — สั่งตามขนาด', 'image'], sheet: ['งานตัดแผ่น / อื่น ๆ', 'file'] };
+const PRD_ST = { none: ['ยังไม่สั่ง', 't-red'], ordered: ['สั่งแล้ว รอของ', 't-amber'], received: ['ได้รับแล้ว', 't-green'] };
+function prdCanMo(r, st) {
+  if (r === 'admin' || r === 'purchasing') return true;
+  if (r === 'warehouse') return st !== 'none';   /* คลัง: กดได้รับแล้ว / ย้อนได้รับ */
+  return false;
+}
+function prdSel(oid) { if (!PRD.sel[oid]) PRD.sel[oid] = new Set(); return PRD.sel[oid]; }
+function prdMoHtml(oid, D, r) {
+  const items = D.items.filter((i) => !i.gone), gone = D.items.filter((i) => i.gone), o = D.order, sel = prdSel(oid);
+  Array.from(sel).forEach((k) => { if (!items.some((i) => i.key === k)) sel.delete(k); });
+  if (!items.length && !gone.length) return '<div class="card">' + empty('tool', 'ยังไม่ได้ส่งใบรายการสั่งทำ', 'ใน Production เปิด Order นี้ → แท็บ “📋 ใบรายการสั่งทำ” → กด “📤 ส่งเข้าไลน์ผลิต”') + '</div>';
+  const edit = r !== 'production';
+  const nSel = sel.size, selItems = items.filter((i) => sel.has(i.key));
+  const canOrd = (r === 'admin' || r === 'purchasing') && selItems.some((i) => i.st === 'none');
+  const canRecv = (r === 'admin' || r === 'purchasing' || r === 'warehouse') && selItems.some((i) => i.st !== 'received');
+  const canBack = selItems.some((i) => i.st === 'received' || (i.st === 'ordered' && (r === 'admin' || r === 'purchasing')));
+  const bar = edit ? '<div class="prd-bar' + (nSel ? ' on' : '') + '"><span class="small">' + (nSel ? 'เลือก <b>' + nSel + '</b> รายการ' : 'ติ๊กเลือกรายการ แล้วกดเปลี่ยนสถานะ') + '</span><span class="spacer"></span>' +
+      ((r === 'admin' || r === 'purchasing') ? '<button class="btn sm primary" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="ordered"' + (canOrd ? '' : ' disabled') + '>สั่งแล้ว</button>' : '') +
+      '<button class="btn sm ok" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="received"' + (canRecv ? '' : ' disabled') + '>' + icon('check', 'xs') + ' ได้รับแล้ว</button>' +
+      '<button class="btn sm ghost" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="back"' + (canBack ? '' : ' disabled') + '>' + icon('undo', 'xs') + ' ย้อน 1 ขั้น</button></div>' : '';
+  const secs = ['cut', 'glass', 'sheet'].map((sec) => {
+    const L = items.filter((i) => i.sec === sec); if (!L.length) return '';
+    const pick = L.filter((i) => prdCanMo(r, i.st)), all = pick.length && pick.every((i) => sel.has(i.key));
+    const rec = L.filter((i) => i.st === 'received').length;
+    return '<div class="card prd-sec"><div class="card-h"><h2>' + icon(PRD_SEC[sec][1]) + ' ' + PRD_SEC[sec][0] + ' <span class="muted small">' + rec + '/' + L.length + ' ได้รับ</span></h2>' +
+        (edit && pick.length ? '<label class="small prd-all"><input type="checkbox" data-chg="prdSelAll" data-oid="' + esc(oid) + '" data-sec="' + sec + '"' + (all ? ' checked' : '') + '> เลือกทั้งหมด</label>' : '') + '</div>' +
+      '<div class="table-wrap"><table class="t resp prd-lines prd-mo-t"><thead><tr>' + (edit ? '<th style="width:30px"></th>' : '') + '<th>รหัส</th><th>รายการ</th><th class="r">จำนวน</th><th>ตู้</th><th>สถานะ</th></tr></thead><tbody>' +
+        L.map((i) => '<tr class="st-' + i.st + (sel.has(i.key) ? ' sel' : '') + '">' + (edit ? '<td class="ck">' + (prdCanMo(r, i.st) ? '<input type="checkbox" data-chg="prdSelOne" data-oid="' + esc(oid) + '" data-k="' + esc(i.key) + '"' + (sel.has(i.key) ? ' checked' : '') + ' aria-label="เลือก ' + esc(i.code) + '">' : '') + '</td>' : '') +
+          '<td class="main mono strong">' + esc(i.code) + '</td><td data-l="รายการ"><div>' + esc(i.name || '') + (i.spec ? '<div class="sub">' + esc(i.spec) + '</div>' : '') + '</div></td>' +
+          '<td data-l="จำนวน" class="r"><span><b>' + prdQty(i.qty) + '</b> ' + esc(i.unit || 'EA') + '</span></td><td data-l="ตู้" class="small">' + esc(i.cab || '—') + '</td>' +
+          '<td data-l="สถานะ"><div><span class="badge ' + PRD_ST[i.st][1] + '">' + PRD_ST[i.st][0] + '</span>' +
+            (i.st === 'received' ? '<div class="sub">' + fmtDT(i.recvAt) + ' · ' + esc(i.recvBy || '') + '</div>' : i.st === 'ordered' ? '<div class="sub">' + fmtDT(i.orderedAt) + ' · ' + esc(i.orderedBy || '') + '</div>' : '') + '</div></td></tr>').join('') +
+      '</tbody></table></div></div>';
+  }).join('');
+  return '<div class="prd-moh small muted">' + icon('clock', 'sm') + '<span>ส่งจาก Production ' + (o.moAt ? fmtDT(o.moAt) + (o.moBy ? ' · ' + esc(o.moBy) : '') : '—') + (r === 'production' ? ' · ฝ่ายผลิตดูอย่างเดียว (จัดซื้อ / คลังเป็นคนกด)' : '') + '</span></div>' +
+    bar + secs + (gone.length ? '<details class="prd-dead"><summary>ไม่อยู่ในใบล่าสุดแล้ว ' + gone.length + ' รายการ</summary><div class="card"><div class="card-b small">' +
+      gone.map((i) => '<div><span class="mono">' + esc(i.code) + '</span> ' + esc(i.name || '') + ' — ' + PRD_ST[i.st][0] + '</div>').join('') + '</div></div></details>' : '');
+}
+on('prdSelOne', (el) => { const s = prdSel(el.dataset.oid); if (el.checked) s.add(el.dataset.k); else s.delete(el.dataset.k); rerender(); });
+on('prdSelAll', (el) => {
+  const oid = el.dataset.oid, s = prdSel(oid), D = PRD.det[oid]; if (!D) return;
+  D.items.filter((i) => !i.gone && i.sec === el.dataset.sec && prdCanMo(S.user.role, i.st)).forEach((i) => { if (el.checked) s.add(i.key); else s.delete(i.key); });
+  rerender();
+});
+on('prdMo', async (el) => {
+  const oid = el.dataset.oid, st = el.dataset.st, s = prdSel(oid); if (!s.size) return;
+  const d = await rpc('cn_prd_mo', { p_oid: oid, p_keys: Array.from(s), p_st: st });
+  PRD.det[oid] = d; s.clear(); await refresh(); PRD.sig[oid] = prdSigOf(oid);
+  toast(st === 'ordered' ? 'บันทึก “สั่งแล้ว”' : st === 'received' ? 'บันทึก “ได้รับแล้ว” — แจ้งฝ่ายผลิตแล้ว' : 'ย้อนสถานะแล้ว'); rerender();
+});
+
+/* ---------- ซิงก์จาก Production (เปิด CN ในแท็บ Production · ผู้ใช้ภายใน) ---------- */
+const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0 };
+const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'from', 'fromName', 'to', 'toName', 'ax', 'who'];
+function prdClean(x) {   /* ส่งเฉพาะช่องที่กำหนด (Server ตัดซ้ำ) — ไม่มีราคา */
+  const pick = (o, ks) => { const r = {}; ks.forEach((k) => { if (o && o[k] != null && typeof o[k] !== 'object') r[k] = o[k]; }); return r; };
+  const out = pick(x, ['oid', 'title', 'itemIdSet', 'sig']);
+  out.docs = (Array.isArray(x.docs) ? x.docs : []).slice(0, 200).map((d) => Object.assign(pick(d, ['no', 'type', 'at', 'cancel', 'orders']), { head: pick(d.head, PRD_HEAD),
+    lines: (Array.isArray(d.lines) ? d.lines : []).slice(0, 400).map((l) => Object.assign(pick(l, ['code', 'name', 'qty', 'unit', 'loc', 'pool']),
+      Array.isArray(l.bom) ? { bom: l.bom.slice(0, 30).map((b) => pick(b, ['code', 'name', 'qty', 'unit'])) } : {})) })).filter((d) => d.type === 'lm' || d.type === 'rq');
+  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: (Array.isArray(x.mo.items) ? x.mo.items : []).slice(0, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab'])) });
+  return out;
+}
+async function prdSync(force) {
+  if (!snsOk() || PRDS.busy || (!force && (Date.now() - PRDS.at < 30000 || Date.now() < PRDS.off))) return;
+  PRDS.busy = true; PRDS.at = Date.now();
+  try {
+    if (!PRDS.sigs || Date.now() - PRDS.sigsAt > 600000) { PRDS.sigs = (await rpc('cn_prd_sigs')) || {}; PRDS.sigsAt = Date.now(); }
+    let n = 0;
+    for (let round = 0; round < 10; round++) {
+      let r;
+      try { r = await snbCall('prd', { have: PRDS.sigs }, 30000); }
+      catch (e) { if (/ไม่รู้จักคำสั่ง/.test(e.message)) PRDS.off = Date.now() + 600000; throw e; }   /* Production รุ่นก่อน V270 */
+      const rows = ((r && r.rows) || []).slice(0, 40).map(prdClean).filter((x) => x.oid);
+      if (!rows.length) break;
+      const out = await rpc('cn_prd_sync', { p_rows: rows });
+      Object.assign(PRDS.sigs, (out && out.sigs) || {}); n += rows.length;
+      if (!(r && r.more)) break;
+    }
+    PRDS.last = { at: Date.now(), n };
+    if (n) { await refresh(); if (/^\/prd\//.test(curPath()) && !isEditing() && !$('#overlay.on')) rerender(); }
+  } catch (e) { PRDS.last = Object.assign({}, PRDS.last || {}, { err: e.message, errAt: Date.now() }); } finally { PRDS.busy = false; }
+}
+if (SNB_FRAMED) setInterval(() => { prdSync(); }, 30000);
+function prdSyncNote() {
+  if (!SNB_FRAMED) return '';
+  const L = PRDS.last;
+  return '<div class="xs muted prd-sync">' + icon('refresh', 'xs') + ' ' + (!SNB.on ? 'ยังไม่ได้เชื่อม Production' : L && L.err && (!L.at || L.errAt > L.at) ? 'ส่งจาก Production ไม่สำเร็จ: ' + esc(L.err)
+    : L ? 'ส่งเอกสารจาก Production ล่าสุด ' + fmtTime(L.at) + (L.n ? ' (' + L.n + ' Order)' : ' — ไม่มีอะไรเปลี่ยน') : 'กำลังส่งเอกสารจาก Production…') + '</div>';
+}
+on('prdSyncNow', async () => { PRDS.sigsAt = 0; PRDS.off = 0; await prdSync(true); if (PRDS.last && PRDS.last.err && PRDS.last.errAt >= PRDS.last.at) toast(PRDS.last.err, 'err'); else toast('ดึงจาก Production แล้ว'); rerender(); });
 
 })();
 
