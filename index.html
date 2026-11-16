@@ -980,7 +980,7 @@ body.slv-on{overflow:hidden}
 .r-production{background:#7A3E12}
 .prd-tbl tr.prd-row{cursor:pointer}
 .prd-tbl tr.prd-row:hover td{background:var(--surface-2)}
-.prd-tbl tr.prd-row.todo td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
+.prd-tbl tr.prd-row.prd-todo td:first-child{box-shadow:inset 3px 0 0 var(--amber)}   /* V7.17.1: ชื่อคลาสไม่ชน .todo ของหน้าแรก (แถวเคยกลายเป็น flex) */
 .prd-tbl tr.prd-row:focus-visible{outline:2px solid var(--action);outline-offset:-2px}
 .prd-mo{display:flex;align-items:center;gap:8px;min-width:150px}.prd-mo .prog{flex:1;min-width:60px}
 .prd-pills{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
@@ -1026,16 +1026,249 @@ body.slv-on{overflow:hidden}
 .prd-mo-t td.ck{width:30px}.prd-mo-t td.ck input,.prd-all input{width:20px;height:20px}
 .prd-mo-t tr.sel td{background:var(--blue-bg)}
 .prd-mo-t tr.st-received td.main{color:var(--green)}
+/* V7.17.1 ไลน์ผลิต 3 แท็บ */
+.prd-lt{max-width:760px}
+.prd-lt button{display:flex;align-items:center;justify-content:center;gap:6px}
+.prd-trk4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prd-sw{display:inline-block;width:11px;height:11px;border-radius:3px;background:hsl(var(--h) 55% 52%);border:1px solid rgba(0,0,0,.18);flex:none}
+.prd-cc{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;background:var(--surface);white-space:nowrap}
+.prd-paint{border-top:3px solid var(--teal,#0f766e)}
+.prd-paint .prd-big{font-size:22px;color:var(--teal,#0f766e)}
+.prd-mosum{margin-bottom:12px}.prd-mosum .card-b{display:flex;flex-direction:column;gap:6px}
+.prd-cut-t td{vertical-align:middle}
+.prd-flt{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px}.prd-flt .chips{margin:0}
+.prd-sort{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}.fchip.sm{padding:3px 10px;font-size:12.5px}
+.prd-lt.prd-lt4{max-width:860px}.prd-dt4,.prd-dt3{max-width:760px}
+.prd-hrow.prd-hrow4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.prd-late{color:var(--red)}.prd-due.late{border-color:var(--red)}.prd-due.late b{color:var(--red)}
+.prd-q{display:flex;flex-direction:column;gap:10px;padding:0 16px 16px}
+.prd-qc{display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:14px;align-items:start;border:1px solid var(--line);border-left:4px solid var(--amber);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.prd-qc.st-got{border-left-color:var(--blue)}.prd-qc.st-doing{border-left-color:var(--violet)}.prd-qc.st-done{border-left-color:var(--green);opacity:.85}
+.qc-due{display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--ink);border-radius:10px;padding:6px 4px;text-align:center;min-height:74px}
+.qc-due span{font-size:11px;color:var(--text-2)}.qc-due b{font-size:20px;line-height:1.15;color:var(--ink)}.qc-due.late{border-color:var(--red)}.qc-due.late b,.qc-due.late span:first-child{color:var(--red)}
+.qc-h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:15px}
+.qc-lines{width:100%;border-collapse:collapse;margin:8px 0 6px;font-size:13.5px}.qc-lines td{padding:3px 6px;border-bottom:1px solid var(--line)}.qc-lines td.mono{white-space:nowrap;font-size:12.5px}.qc-lines td.r{text-align:right;white-space:nowrap}
+.qc-act{display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:150px}
+.prd-actc{white-space:nowrap}.prd-actc .btn{margin:2px 0 2px 4px}
+.prd-tbl td.prd-actc{position:relative;z-index:1}
+.prd-stn{margin-top:16px}.prd-stn summary{cursor:pointer;list-style:none}.prd-stn summary::-webkit-details-marker{display:none}.prd-stn td.c,.prd-stn th.c{text-align:center}.prd-stn input{width:20px;height:20px}
+.prd-paintbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.prd-pc{color:var(--teal,#0f766e)}
+/* V7.17.1 ภาพรวม */
+.prd-lt.prd-lt5{max-width:none}
+.prd-pipe{display:grid;grid-template-columns:repeat(4,minmax(86px,1fr));gap:6px}
+.prd-pipe .pp{display:flex;flex-direction:column;gap:1px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);position:relative;min-width:0}
+.prd-pipe .pp i{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff}
+.prd-pipe .pp b{font-size:13px}.prd-pipe .pp .ps{font-size:13px;font-weight:600;line-height:1.3}.prd-pipe .pp .pd{font-size:11.5px;color:var(--text-2);line-height:1.3}
+.prd-tbl-all td.prd-nw{white-space:nowrap}.prd-tbl-all .prd-pipe-td{min-width:420px}
+.prd-pipe .pp-na{opacity:.5}.prd-pipe .pp-na .ps{font-weight:400}.prd-pipe .pp-sent{background:var(--amber-bg);border-color:transparent}.prd-pipe .pp-got{background:var(--blue-bg);border-color:transparent}
+.prd-pipe .pp-doing{background:var(--violet-bg);border-color:transparent}.prd-pipe .pp-done{background:var(--green-bg);border-color:transparent}.prd-pipe .pp-done i{background:var(--green)}
+.prd-now{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:13.5px;white-space:nowrap}
+.pn-sent{background:var(--amber-bg);color:var(--amber)}.pn-got{background:var(--blue-bg);color:var(--blue)}.pn-doing{background:var(--violet-bg);color:var(--violet)}.pn-done{background:var(--green-bg);color:var(--green)}
+.prd-at{margin-top:8px;align-items:center}
+.prd-ov-d{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+.prd-ov-d>summary{cursor:pointer;padding:10px 12px;font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px;min-height:44px}
+.prd-ov-f{border-top:1px solid var(--line);padding:6px 10px}
+.prd-ov-r{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px dashed var(--line)}
+.prd-ov-r:last-child{border-bottom:0}.prd-ov-r.off .prd-ov-s{opacity:.5}
+.prd-ov-k{display:flex;align-items:center;gap:8px;min-width:96px;min-height:40px;cursor:pointer;font-size:15px}
+.prd-ov-k input,.prd-tick input{width:20px;height:20px;accent-color:var(--ink);margin:0}
+.prd-ov-s{display:flex;gap:6px;flex-wrap:wrap}
+.prd-tick{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:4px 12px;border:1px solid var(--line-2);border-radius:999px;background:#fff;cursor:pointer;font-size:13.5px;user-select:none}
+.prd-tick .n{opacity:.7}.prd-tick.zero{opacity:.55}
+.prd-tick.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:700}
+.prd-tick.pt-sent.on{background:var(--amber-bg)}.prd-tick.pt-got.on{background:var(--blue-bg)}.prd-tick.pt-doing.on{background:var(--violet-bg)}.prd-tick.pt-done.on{background:var(--green-bg)}.prd-tick.pt-near.on{background:var(--red-bg,#FDECEC)}
+.prd-ov-x{justify-content:space-between}
+.prd-chase{display:flex;align-items:center;gap:12px;margin-top:12px;padding:12px 14px;border-radius:10px;background:#FFF4E5;border:1px solid #F2C27A;color:#7A4A06}
+.prd-chase>div{flex:1;min-width:0}.prd-chase b{font-size:15.5px}
+.prd-cutof{margin-top:6px;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.prd-kpi{margin-top:12px}.prd-kp{text-align:left;cursor:pointer;font:inherit;color:inherit}.prd-kp.on{outline:2px solid var(--action);outline-offset:-2px}
+/* V7.17.1 ผู้ใช้ 13:51: ปุ่มสำคัญใหญ่ (คนทำอายุ 35–50+) */
+.btn.prd-act{min-height:52px;padding:0 22px;font-size:17px;font-weight:700;border-radius:12px;gap:8px;letter-spacing:.2px}
+.btn.prd-act .ico{width:20px;height:20px}
+.prd-actc .btn.prd-act{min-height:48px;font-size:16px;padding:0 18px}
+.btn.prd-back,.btn.prd-skip{min-height:40px;font-size:13.5px;margin-left:10px}
+.prd-donemark{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-weight:700;font-size:16px}
+.prd-doclink{font-size:15px;font-weight:600;padding:8px 0;display:inline-flex;align-items:center;gap:4px}
+.prd-lt button{min-height:54px;font-size:16.5px}
+.prd-lt button .n{font-size:13px;min-width:24px}
+.prd-flt .fchip{min-height:38px;font-size:14.5px;padding:6px 14px}
+.qc-h{font-size:16.5px}.qc-lines{font-size:15px}.qc-lines td.mono{font-size:13.5px}
+.prd-acts .btn.prd-act{min-width:180px}
+.prd-soon{color:var(--amber)}.prd-set{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}.prd-set .small{flex-basis:100%}.prd-h3{font-size:15px;margin:6px 0 8px}
+.prd-stage .card-h h2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prd-tbl td.prd-go{white-space:nowrap;text-align:right;color:var(--action);font-size:13px;font-weight:600}.prd-tbl td.prd-go .ico{vertical-align:-3px}
+.prd-tbl tr.prd-row:hover td.prd-go{text-decoration:underline}
 @media (max-width:760px){
   .prd-head .prd-hrow{grid-template-columns:1fr}
   .prd-seg{max-width:none}
   .prd-trk .pt span{font-size:11px}
+  .t.resp td.prd-go{justify-content:flex-end;padding-top:6px}.t.resp td.prd-go::before{display:none}
+  .prd-hrow.prd-hrow4{grid-template-columns:1fr 1fr}
+  .prd-qc{grid-template-columns:70px minmax(0,1fr);gap:10px;padding:10px}.qc-act{grid-column:1 / -1;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;min-width:0}
+  .qc-act .btn.prd-act,.prd-acts .btn.prd-act{flex:1 1 100%;min-height:56px;font-size:18px}
+  .t.resp td.prd-actc .btn.prd-act{flex:1 1 auto;min-height:52px}
+  .prd-lt button{min-height:60px;font-size:15px}
+  .prd-pipe{grid-template-columns:1fr 1fr !important;width:100%}.t.resp td.prd-pipe-td{display:block}.prd-tbl-all .prd-pipe-td{min-width:0}.prd-pipe .pp{text-align:left}.prd-tbl-all td.prd-nw>div{text-align:right}.prd-tbl-all td.prd-nw{white-space:normal}.t.resp td.prd-pipe-td::before{display:block;margin-bottom:4px}
+  .prd-lt.prd-lt5 button{font-size:13px;padding:8px 2px}
+  .prd-ov-k{min-width:0;width:100%}.prd-tick{min-height:42px}.prd-chase{flex-wrap:wrap}.prd-chase .btn{width:100%}
+  .qc-due b{font-size:17px}.prd-q{padding:0 10px 12px}
+  .t.resp td.prd-actc{justify-content:flex-end;flex-wrap:wrap}
+  .prd-trk4 .pt b{font-size:12px}.prd-lt button{font-size:13px;padding:9px 4px;flex-direction:column;gap:2px}
   .prd-mo-t td.ck{display:block;float:right;width:auto;padding:0}
   .prd-bar{top:56px}
   .prd-due{min-width:0;width:100%}
   .prd-lines tr.prd-tot td[colspan]{padding:6px 0}.prd-lines tr.prd-tot .prd-tot-m{display:inline}.prd-lines tr.prd-tot td.prd-tot-n{display:none}
   .t.resp td .prd-mob,.t.resp td .prd-pills{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 }
+/* V7.17.2 ย้อน / ยกเลิกสถานะที่กดผิด · Admin จัดการรายการไลน์ผลิต */
+.toast.prd-undo{max-width:520px;flex-wrap:wrap;padding:10px 10px 10px 14px}
+.toast.prd-undo>span{flex:1 1 180px}
+.toast .btn.pu-b{background:#fff;color:var(--ink);border-color:#fff;min-height:36px;font-weight:600;white-space:nowrap}
+.toast .btn.pu-b .pu-n{display:inline-block;min-width:2ch;text-align:center;font-variant-numeric:tabular-nums;color:var(--text-3);font-weight:500}
+.prd-bk-now{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.prd-bk-l{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.btn.prd-bk{justify-content:flex-start;text-align:left;min-height:54px;padding:8px 14px;gap:10px;width:100%;white-space:normal;height:auto}
+.btn.prd-bk>span{display:flex;flex-direction:column;line-height:1.35}
+.btn.prd-bk>span .xs{font-weight:400;opacity:.85}
+.btn.prd-bk.prd-bk-f{border-style:dashed}
+.prd-stlog{margin-top:6px}
+.prd-admtag{font-weight:500}
+.prd-anote{margin-top:6px;padding:5px 9px;border-radius:8px;background:var(--violet-bg);color:var(--ink-text);display:inline-block}
+.prd-anote2{color:var(--violet)}
+.prd-adm{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 12px;margin:0 0 12px;border:1px dashed #C9BCEB;border-radius:10px;background:#FAF8FE}
+.prd-adm-t{font-weight:600;color:var(--violet);white-space:nowrap}
+.prd-adm-s{flex:1 1 220px;font-size:13.5px}
+.prd-adm-a,.prd-admb{display:inline-flex;gap:4px;flex-wrap:wrap;align-items:center}
+.prd-admb{margin-left:8px}
+.btn.prd-del{color:var(--red)}
+.prd-admrow{display:flex;justify-content:flex-end;margin:0 0 8px}
+.prd-admth{width:1%;white-space:nowrap}
+.prd-admc{white-space:nowrap}
+.prd-was{display:block;color:var(--violet);font-weight:400}
+.prd-rmd summary{color:var(--red)}
+.prd-rml{display:flex;flex-direction:column;gap:12px}
+.prd-rmg{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.prd-rmh{margin-bottom:6px}
+.prd-rmr{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)}
+.prd-rmg .prd-rmr:first-of-type{border-top:0}
+.prd-rmul{margin:0;padding-left:20px}.prd-rmul li{margin:4px 0}
+.prd-aform .field{margin-bottom:12px}.prd-aform textarea.input{min-height:64px;resize:vertical}
+@media (max-width:700px){
+  .prd-admb{margin-left:0;margin-top:6px;display:flex}
+  .toast .btn.pu-b{flex:1 1 100%;min-height:44px}
+  .t.resp td.prd-admc{display:flex;justify-content:space-between}
+}
+/* ===== Starmark SPN V1.0 (Support Production Nexus) — ไลน์ผลิต 4 สถานี · ติ๊กสถานะรายการ · ความคืบหน้า ===== */
+.spn-logo{flex:none;width:34px;height:34px;border-radius:9px;background:#F0A63A;color:#14233B;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;letter-spacing:.3px;line-height:1}
+.spn-logo.sm{width:28px;height:28px;font-size:10px;border-radius:7px}
+.spn-logo.big{width:52px;height:52px;font-size:16px;border-radius:13px}
+.spn-lg-h{display:flex;gap:12px;align-items:center}
+.login.spn-login .spn-logo.big{margin:0 auto}.login.spn-login .spn-lg-h .spn-logo.big{margin:0}
+.spn-go{display:flex;gap:16px;align-items:flex-start}
+.spn-tabs{display:grid;gap:4px;background:var(--ink);padding:5px;border-radius:12px;margin:0 0 10px}
+.spn-tabs.spn-t1{grid-template-columns:repeat(1,minmax(0,1fr))}.spn-tabs.spn-t2{grid-template-columns:repeat(2,minmax(0,1fr))}.spn-tabs.spn-t3{grid-template-columns:repeat(3,minmax(0,1fr))}.spn-tabs.spn-t4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.spn-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:50px;border:0;border-radius:9px;background:transparent;color:#C9D4E3;font-size:15px;font-weight:600;cursor:pointer;padding:6px 8px}
+.spn-tabs button.on{background:#fff;color:var(--ink)}
+.spn-tabs button .n{font-size:12px;font-weight:700;min-width:24px;padding:0 7px;border-radius:999px;line-height:19px;background:#22324B;color:#C9D4E3}
+.spn-tabs button.on .n{background:var(--gray-bg);color:var(--gray)}
+.spn-tabs button .n.w{background:#BE3A31;color:#fff}
+.spn-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+a.spn-row{display:flex;gap:12px;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;color:inherit;text-decoration:none;box-shadow:0 1px 2px rgba(20,35,59,.05)}
+a.spn-row:hover{border-color:var(--line-2);box-shadow:var(--shadow);text-decoration:none}
+a.spn-row.hidden{display:none}
+.spn-due{flex:none;width:84px;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 4px;text-align:center}
+.spn-due .dl{font-size:11.5px;line-height:1.2;overflow-wrap:anywhere}.spn-due b{font-size:26px;line-height:1.1}.spn-due .dm{font-size:12.5px;line-height:1.2}.spn-due .dleft{font-size:12px;font-weight:700;margin-top:3px}
+.spn-due.t-ok{background:#EEF1F5;color:#334155}.spn-due.t-soon{background:#FDF1DA;color:#8A4304}.spn-due.t-late{background:#FBE7E5;color:#A3271F}.spn-due.t-done{background:#E3F3E9;color:#1D6A40}.spn-due.t-none{background:#F6F8FA;color:#5B6575}
+.sr-b{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+.sr-h{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.sr-h b{font-size:14.5px;color:var(--ink)}
+.sr-j{font-size:14px;line-height:1.35}.sr-m,.sr-c{font-size:12.5px;color:var(--text-2);line-height:1.35}
+.sr-w{font-size:12.5px;color:#8A4304;background:#FDF1DA;border-radius:6px;padding:2px 8px;align-self:flex-start;line-height:1.5}
+.sr-p{display:flex;align-items:center;gap:8px;margin-top:3px}.sr-p b{font-size:13.5px;min-width:40px;text-align:right}
+.sr-go{align-self:center;color:var(--text-3)}
+.spn-bar{flex:1;display:flex;height:10px;border-radius:999px;background:#E4E8EE;overflow:hidden;min-width:60px}
+.spn-bar.big{height:14px;width:100%;flex:none}
+.spn-bar i{display:block;height:100%}.spn-bar .b-done,.spn-lg .b-done{background:#237A4B}.spn-bar .b-doing,.spn-lg .b-doing{background:repeating-linear-gradient(135deg,#9C86DE 0 5px,#B9A9EA 5px 10px)}.spn-bar .b-got,.spn-lg .b-got{background:#8FB3E3}.spn-lg .b-none{background:#B8C2CE}
+.spn-wh .card-b{display:flex;flex-direction:column;gap:12px}
+.spn-wt{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}.spn-wt b.mono{font-size:15px;color:var(--ink)}
+.spn-wd{display:flex;gap:14px;align-items:stretch}
+.spn-wp{flex:1;display:flex;flex-direction:column;gap:7px;justify-content:center;min-width:0}
+.spn-wp-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13.5px}.spn-wp-h>b{font-size:22px;color:#1D6A40}.spn-wp-h b.n{font-size:13.5px;color:inherit}
+.spn-lg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px}.spn-lg span{display:inline-flex;align-items:center;gap:5px}.spn-lg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.spn-items{overflow:hidden}
+.spn-ih{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 14px;border-bottom:1px solid var(--line);min-height:52px;flex-wrap:wrap}
+.si-all{display:flex;align-items:center;gap:10px;min-height:44px;font-weight:600;font-size:14px;cursor:pointer}
+.spn-items input[type=checkbox]{width:22px;height:22px;accent-color:var(--ink);flex:none;cursor:pointer}
+.spn-item{display:flex;align-items:flex-start;border-bottom:1px solid #EEF1F5}.spn-item:last-child{border-bottom:0}
+.spn-item.sel{background:#F2F6FC}
+.si-l{display:flex;align-items:flex-start;gap:12px;flex:1;min-width:0;padding:11px 14px;min-height:48px;cursor:pointer}
+.si-b{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}.si-b b.mono{font-size:13.5px}
+.si-d{font-size:13px;color:var(--text-2);line-height:1.4}
+.si-s{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+.si-q{font-size:15px;font-weight:700;white-space:nowrap;text-align:right;padding-top:1px}
+.btn.spn-x{width:44px;height:44px;padding:0;margin:8px 10px 0 0;flex:none;color:var(--red);border-color:#E4B4AF}
+.spn-drop .card-b{display:flex;flex-direction:column;gap:6px;border-left:0}.spn-drop b{color:var(--red)}
+.spn-dr{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap}
+.spn-act{position:sticky;bottom:0;z-index:15;background:#fff;border:1px solid var(--line);border-radius:14px 14px 0 0;padding:10px 12px 12px;margin:14px -4px 0;box-shadow:0 -8px 22px rgba(20,35,59,.10);display:flex;flex-direction:column;gap:8px}
+.spn-act-h{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--text-2);flex-wrap:wrap}.spn-act-h b{color:var(--ink-text)}
+.spn-tgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.spn-tg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:78px;border-radius:12px;border:2px solid #9AA6B4;background:#fff;color:var(--ink-text);cursor:pointer;padding:6px 4px;font:inherit}
+.spn-tg b{font-size:15.5px;line-height:1.2}.spn-tg .sub{font-size:12px;color:var(--text-2)}
+.spn-tg .bx{width:26px;height:26px;border-radius:7px;border:2px solid #9AA6B4;display:flex;align-items:center;justify-content:center;color:transparent;background:#fff}
+.spn-tg.on{color:#fff}.spn-tg.on .sub{color:#fff;opacity:.92}.spn-tg.on .bx{border-color:#fff}
+.spn-tg.s1.on{background:#1E5BA8;border-color:#1E5BA8}.spn-tg.s1.on .bx{color:#1E5BA8}
+.spn-tg.s2.on{background:#6A4BC4;border-color:#6A4BC4}.spn-tg.s2.on .bx{color:#6A4BC4}
+.spn-tg.s3.on{background:#237A4B;border-color:#237A4B}.spn-tg.s3.on .bx{color:#237A4B}
+.spn-tg:disabled{opacity:.5;cursor:not-allowed}
+.spn-tg:focus-visible{outline:3px solid #6FA3E8;outline-offset:2px}
+.spn-msg{font-size:13.5px;line-height:1.45;border-radius:10px;padding:7px 10px}
+.spn-msg.ok{background:#E8F0FB;color:#174B8C}.spn-msg.undo{background:#FDF1DA;color:#7A4304}.spn-msg.rm{background:#FBE7E5;color:#8C2019}
+.spn-jp{display:flex;flex-direction:column;gap:8px}
+.btn.spn-jgo{align-self:flex-start;min-height:44px;padding:0 18px;font-size:15px}
+.spn-rmi{background:#F6F8FA;border-radius:10px;padding:10px 12px}
+.shell.spn .side .brand .spn-logo{margin:0;font-size:11.5px;color:#14233B}
+@media (max-width:700px){
+  .spn-tabs button{flex-direction:column;gap:2px;min-height:58px;font-size:13px;padding:6px 2px}
+  .spn-tabs button .tl{white-space:nowrap}
+  .spn-due{width:74px}.spn-due b{font-size:22px}
+  a.spn-row{padding:10px;gap:10px}.sr-go{display:none}
+  .spn-wd{flex-direction:column}.spn-wd .spn-due{width:100%;flex-direction:row;gap:10px;justify-content:space-between;padding:10px 14px}
+  .spn-act{margin:14px -14px 0;border-radius:14px 14px 0 0;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  .content .spn-act{bottom:0}
+  .spn-go{flex-direction:column}
+}
+/* V7.18.1 · SPN V1.1 — แจ้งเตือนรายงาน (ติดตามงาน) */
+.btn.fol-b{gap:5px}.btn.fol-b.on{background:#FFF6E3;border-color:#E8B04B;color:#8A4B04}.btn.fol-b.on svg{fill:currentColor}
+.fol-mk{display:inline-flex;color:#B7791F;margin:0 2px}.fol-mk svg{fill:currentColor}.fol-mk.off{display:none}
+.fol-mode{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 4px}
+.fol-opt{display:flex;flex-direction:column;gap:3px;text-align:left;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;font:inherit;color:var(--ink)}
+.fol-opt b{font-size:13.5px}.fol-opt span{font-size:11.5px;color:var(--gray);line-height:1.4}
+.fol-opt.on{border-color:var(--navy,#14233B);background:#F2F6FC;box-shadow:inset 0 0 0 1px var(--navy,#14233B)}
+.fol-lh{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px;margin:10px 0 4px}.fol-lh b{font-size:13px}
+.fol-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:6px}
+.fol-r{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line)}.fol-r:last-child{border-bottom:0}
+.fol-go{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;color:inherit;text-decoration:none}.fol-go .xs{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.fol-go:hover b{text-decoration:underline}
+.spn-wa{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:620px){.fol-mode{grid-template-columns:1fr}}
+/* V7.18.2 · SPN V1.2 — คำอธิบายเวลาชี้ / แตะ ⓘ */
+.tip-i{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin:0 0 0 6px;padding:0;border:1px solid #C9D3E0;border-radius:50%;background:#fff;color:#3B5B85;cursor:pointer;vertical-align:middle;flex:none;line-height:1;position:relative}
+.tip-i::after{content:'';position:absolute;inset:-10px}   /* แตะง่ายบนมือถือ (พื้นที่แตะ ≥ 42px) */
+.tip-i:hover,.tip-i:focus-visible{background:#EAF1FB;border-color:#3B5B85}
+.tip-i svg{width:13px;height:13px}
+h1 .tip-i{width:24px;height:24px;margin-left:8px;transform:translateY(-2px)}
+.tip-bub{position:fixed;z-index:10050;left:0;top:0;max-width:320px;padding:10px 13px;border-radius:10px;background:#14233B;color:#F4F7FB;font-size:13.5px;line-height:1.55;font-weight:400;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 10px 28px rgba(15,23,42,.28);opacity:0;visibility:hidden;transition:opacity .12s;pointer-events:none;text-align:left;white-space:normal;letter-spacing:0}
+.tip-bub.on{opacity:1;visibility:visible}.tip-bub.pin{pointer-events:auto}
+.tip-bub b{color:#FFD58A;font-weight:700}
+.tip-bub .tb-a{position:absolute;top:-6px;width:12px;height:12px;margin-left:-6px;background:#14233B;transform:rotate(45deg)}
+.tip-bub.up .tb-a{top:auto;bottom:-6px}
+@media (prefers-reduced-motion:reduce){.tip-bub{transition:none}}
+.spn-gdc{margin-bottom:12px;border:1.5px solid #E8B04B;background:#FFFBF0}
+.spn-gd{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.spn-gd li{display:flex;gap:12px;align-items:flex-start}
+.spn-gd .n{flex:none;width:32px;height:32px;border-radius:50%;background:#14233B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.spn-gd li div{display:flex;flex-direction:column;gap:2px}.spn-gd li b{font-size:15px}.spn-gd li span{font-size:13.5px;color:var(--text-2);line-height:1.5}
+@media (min-width:900px){.spn-gd{grid-template-columns:repeat(3,1fr)}}
 
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
@@ -1059,6 +1292,7 @@ body.slv-on{overflow:hidden}
 <script>
 (function () {
 'use strict';
+const APP_KIND = 'cn';
 const ICONS = {
   dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
   list: '<path d="M9 6h12M9 12h12M9 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01" stroke-width="2.6"/>',
@@ -1193,9 +1427,14 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-const APP_NAME = 'Contractor Nexus', APP_VERSION = 'V7.17';
+/* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.2' : 'V7.18.2';
+const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
+/* V7.18: ลิงก์แอป Starmark SPN (GitHub Pages repo starmark-spn บัญชีเดียวกับ CN) · ลิงก์ที่แชร์ของแต่ละแอป */
+const SPN_URL = 'https://starmarkenuser2.github.io/starmark-spn/';
+const APP_URL = APP_KIND === 'spn' ? SPN_URL : CONTRACTOR_URL;
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
 const bidDaysOf = (o) => Math.min(60, Math.max(1, Math.floor(Number(o && o.bidDays) || BID_DAYS)));
 /* V7.16.12: ต้องเสร็จภายใน = วันลูกค้าพร้อมให้ติดตั้ง (กำหนดติดตั้ง) + N วัน — Admin ตั้ง 0–90 วัน (ตั้งค่าระบบ · ค่าเริ่มต้น 7) · Sale แก้วันรายงานได้ */
@@ -1257,7 +1496,7 @@ function payOptTag(opt) { const o = PAY_OPTS[opt]; return o ? '<span class="badg
 
 /* ---------- เชื่อมต่อ Supabase (คีย์สาธารณะเท่านั้น) ---------- */
 const CN = { url: 'https://pedpnudjzsrmstwppwjn.supabase.co', key: 'sb_publishable_ojFryD6OOx3qlhpvrC5cdg_wDRA1lNj', domain: 'contractor-nexus.local', bucket: 'cn-files' };
-const AK = 'cn_auth_v7';
+const AK = APP_KIND === 'spn' ? 'spn_auth_v1' : 'cn_auth_v7';   /* V7.18: SPN เข้าระบบแยกจาก CN (เครื่องเดียวกันใช้คนละบัญชีได้) */
 const AUTH = { s: null };
 let DB = null, SKEW = 0;
 const nowMs = () => Date.now() + SKEW; /* เวลาอิง Server — ทุกคนเห็นนับถอยหลังตรงกัน */
@@ -1599,7 +1838,7 @@ function applyFilter(key) {
   const info = $('#sbox-info'); if (info) info.textContent = q ? 'พบ ' + n + ' รายการ' : '';
 }
 Acts.tblFilter = (el) => { S.q[el.dataset.k] = el.value; applyFilter(el.dataset.k); };
-function badge(st) { const m = OST[st]; return '<span class="badge t-' + m[1] + '">' + m[0] + '</span>'; }
+function badge(st) { const m = OST[st]; return '<span class="badge t-' + m[1] + '"' + tipA(HELP_ST[st]) + '>' + m[0] + '</span>'; }   /* V7.18.2: ชี้ดูความหมายสถานะ */
 function payBadge(p) { if (!p) return '<span class="muted small">—</span>'; const m = PAYST[p.st]; return '<span class="badge t-' + m[1] + '">' + m[0] + '</span>'; }
 function sw(type) { const t = TYPE_BY[type]; return t ? '<span class="sw"><i class="mat-' + t.k + '"></i>' + t.name + '</span>' : '<span class="muted small">—</span>'; }
 /* V7.16.5: กระดิ่งการแจ้งเตือน (แถบบนมือถือ + กล่องชื่อผู้ใช้แถบซ้าย) — push.js โหลดทีหลัง: ยังไม่พร้อม = ไม่แสดง */
@@ -1607,7 +1846,7 @@ function bellSafe(cls) { try { return pushBellHtml(cls); } catch (e) { return ''
 function roleTag(r) { return '<span class="role ' + ROLES[r].cls + '">' + ROLES[r].label + '</span>'; }
 function notice(kind, html, ico) { return '<div class="notice n-' + kind + '">' + icon(ico || (kind === 'danger' ? 'alert' : kind === 'ok' ? 'checkCircle' : kind === 'secret' ? 'lock' : 'info')) + '<div>' + html + '</div></div>'; }
 function empty(ico, t, s, act) { return '<div class="empty">' + icon(ico) + '<h3>' + t + '</h3>' + (s ? '<div class="small">' + s + '</div>' : '') + (act ? '<div style="margin-top:12px">' + act + '</div>' : '') + '</div>'; }
-function pageHead(title, sub, actions, crumb) { return '<div class="page-head"><div>' + (crumb ? '<div class="crumb">' + crumb + '</div>' : '') + '<h1>' + title + '</h1>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>' + (actions ? '<div class="row">' + actions + '</div>' : '') + '</div>'; }
+function pageHead(title, sub, actions, crumb) { return '<div class="page-head"><div>' + (crumb ? '<div class="crumb">' + crumb + '</div>' : '') + '<h1>' + title + pageHelpI(title) + '</h1>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>' + (actions ? '<div class="row">' + actions + '</div>' : '') + '</div>'; }
 /* นับถอยหลัง: คำนวณจากเวลายืนยัน Order + เวลา Server — ทุกคนเห็นเวลาเดียวกัน */
 function cdHtml(o, compact) {
   const dl = deadline(o); if (!dl) return '';
@@ -1664,26 +1903,7 @@ const EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'im
 const FORIG = new Map(), FSRC = new Map();
 const srcKey = (f) => [f.name, f.size, f.lastModified || 0].join('|');
 /* V7.16.2: คำอธิบายเมื่อเอาเมาส์ชี้ (data-tip) — ลอยเหนือทุกกรอบ (ตาราง / การ์ดไม่ตัด) · แป้นพิมพ์ Tab ก็ขึ้น · มือถือแตะที่หัวข้อที่มี ⓘ */
-const TIP = { el: null, box: null, t: 0 };
-function tipShow(el) {
-  const txt = el.getAttribute('data-tip'); if (!txt) return;
-  let b = TIP.box; if (!b || !b.isConnected) { b = TIP.box = document.createElement('div'); b.id = 'tipbox'; b.setAttribute('role', 'tooltip'); document.body.appendChild(b); }
-  TIP.el = el; b.textContent = txt; b.className = 'on';
-  const r = el.getBoundingClientRect(), w = b.offsetWidth, h = b.offsetHeight, vw = document.documentElement.clientWidth;
-  const x = Math.max(8, Math.min(vw - w - 8, r.left + r.width / 2 - w / 2)); let y = r.top - h - 8;
-  if (y < 8) { y = r.bottom + 8; b.classList.add('below'); }
-  b.style.left = x + 'px'; b.style.top = y + 'px';
-}
-function tipHide() { TIP.el = null; clearTimeout(TIP.t); if (TIP.box) TIP.box.className = ''; }
-document.addEventListener('mouseover', (e) => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) { if (el !== TIP.el) tipShow(el); } else if (TIP.el) tipHide(); });
-document.addEventListener('focusin', (e) => { const el = e.target.closest && e.target.closest('[data-tip]'); if (el) tipShow(el); });
-document.addEventListener('focusout', () => tipHide());
-document.addEventListener('scroll', () => { if (TIP.el) tipHide(); }, true);
-window.addEventListener('hashchange', tipHide);
-document.addEventListener('click', (e) => {
-  const el = e.target.closest && e.target.closest('.tipq');
-  if (el && window.matchMedia && matchMedia('(hover: none)').matches) { tipShow(el); clearTimeout(TIP.t); TIP.t = setTimeout(tipHide, 5000); }
-});
+/* V7.18.2: ย้ายไปตัวกลางคำอธิบาย src/tips.js (data-tip + title เดิม + ⓘ แตะบนมือถือ) — tipShow / tipHide อยู่ที่นั่น */
 const tipq = (label, tip) => '<span class="tipq" tabindex="0" data-tip="' + esc(tip) + '">' + label + icon('info', 'xs') + '</span>';
 /* V7.16.2: สลิปโอนเงินของรายการจ่าย — กดดูได้ (บัญชี / Admin / ผู้รับเหมาเจ้าของงาน) */
 function slipHtml(o, x) {
@@ -1726,6 +1946,7 @@ function thumbHtml(f) {
 }
 function hydrate(root) {
   if (!root) return;
+  try { tipScan(root); } catch (e) { /* V7.18.2: ⓘ ชื่อช่อง — ไม่ขวางหน้าเว็บ */ }
   dpScan(root);
   $$('img[data-fsrc]', root).forEach((img) => { const p = img.dataset.fsrc; img.removeAttribute('data-fsrc'); fileUrl(p).then((u) => { if (u) img.src = u; else img.replaceWith(Object.assign(document.createElement('span'), { className: 'xs muted', textContent: 'เปิดไฟล์ไม่ได้' })); }, () => {}); });
   $$('.fview[data-fid]', root).forEach((el) => {
@@ -1834,7 +2055,7 @@ function navFor(area) {
     { h: '#/acc/review', i: 'wallet', t: 'หน้าจอบัญชี' },
     { h: '#/ins/queue', i: 'hammer', t: 'หน้าจอหัวหน้าช่างติดตั้ง' },
     { h: '#/wh/receive', i: 'box', t: 'หน้าจอคลังสินค้า' },
-    { h: '#/prd/orders', i: 'factory', t: 'หน้าจอไลน์ผลิต' },   /* V7.17 */
+    { h: '#/prd/orders', i: 'factory', t: 'ไลน์ผลิต (Starmark SPN)' },   /* V7.17 · V7.18 ย้ายไปแอป SPN — หน้านี้มีปุ่มไป SPN */
     { h: '#/con/open', i: 'tool', t: 'หน้าจอผู้รับเหมา' },
   ];
   if (area === 'sale') return [{ h: '#/sale/orders', i: 'list', t: 'Sale Order ของฉัน', n: c.drafts, tip: NAV_TIP.drafts }, { h: '#/sale/new', i: 'plus', t: 'สร้าง Sale Order' }];
@@ -1844,8 +2065,7 @@ function navFor(area) {
     { h: '#/pur/queue', i: 'users', t: 'ตรวจสอบคิวผู้รับเหมา' },
     { h: '#/pur/booking', i: 'calendar', t: 'Booking ผู้รับเหมา' },
     { h: '#/pur/ibooking', i: 'calendar', t: 'Booking ช่างโรงงาน' },
-    prdNavItem(c),   /* V7.17: ไลน์ผลิต — งานสั่งทำ (สั่งแล้ว / ได้รับแล้ว) */
-  ];
+  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark SPN (จัดซื้อไม่ต้องกดแล้ว) */
   if (area === 'acc') return [
     { h: '#/acc/review', i: 'file', t: 'ตรวจใบส่งมอบงาน', n: c.check, w: true, tip: NAV_TIP.check },
     { h: '#/acc/pay', i: 'wallet', t: 'การเงินผู้รับเหมา', n: c.payDue, w: true, tip: NAV_TIP.payDue },
@@ -1862,8 +2082,7 @@ function navFor(area) {
     { h: '#/wh/issue', i: 'truck', t: 'ยิงจ่ายออก', s: 'จ่ายออก', n: c.whDue, w: true, tip: NAV_TIP.whDue },
     { h: '#/wh/stock', i: 'box', t: 'สินค้าในคลัง', s: 'ในคลัง' },
     { h: '#/wh/locs', i: 'shelf', t: 'โลเคชั่น', s: 'โลเคชั่น' },
-    prdNavItem(c),   /* V7.17: ไลน์ผลิต — ใบเบิก (คลังจ่ายแล้ว) · ของสั่งทำได้รับแล้ว */
-  ];
+  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark SPN */
   if (area === 'prd') return S.user.role === 'warehouse' ? navFor('wh') : S.user.role === 'purchasing' ? navFor('pur') : [prdNavItem(c)];   /* V7.17 */
   const k = conCounts(curCid());
   return [
@@ -1882,7 +2101,7 @@ function counts() {
     ihTodo: st.filter((x) => x === 'ih_wait' || x === 'ih_sign').length, whDue: r === 'admin' || r === 'warehouse' ? whDueOrders().length : 0,
     drafts: DB.orders.filter((o) => !o.confirmedAt && (r !== 'sale' || o.saleId === S.user.id)).length,
     payDue: r === 'admin' || r === 'accounting' ? DB.orders.map(payOf).filter((p) => p && p.left > 0).length : 0,
-    prd: prdNavCount(),   /* V7.17: ไลน์ผลิต — ตัวเลขตามบทบาท (คลัง: ใบเบิกรอจ่าย · ผลิต: รอรับ · จัดซื้อ: งานสั่งทำยังไม่สั่ง) */
+    prd: prdNavCount(),   /* V7.17.1: ไลน์ผลิต — ตัวเลขตามบทบาท (ผลิต: ใบปิดผิวรอรับใบ · จัดซื้อ: งานสั่งทำยังไม่สั่ง · คลัง: สั่งแล้วรอของ) */
     signups: (DB.signups || []).filter((g) => g.status === 'pending').length };
 }
 function curCid() {
@@ -1941,12 +2160,12 @@ on('navToggle', () => { S.navOpen = !S.navOpen; rerender(); });
 const NAV_TIP = { dispatch: 'Order รอหัวหน้าช่างเลือกช่องทางติดตั้ง', toApprove: 'งานเปิดรับราคา / หมดเวลารอเลือกผู้รับเหมา', ihWait: 'งานช่างโรงงานรอจัดทีม', check: 'ใบส่งมอบรอตรวจ',
   payDue: 'งานมียอดค้างจ่ายผู้รับเหมา', signups: 'คำขอลงทะเบียนรออนุมัติ', drafts: 'Order ร่างยังไม่ยืนยัน', open: 'งานรอใส่ราคา', sent: 'งานเสนอราคาแล้ว รออนุมัติ', work: 'งานที่ยังไม่ส่งมอบ', pay: 'งานมียอดถึงงวดที่ยังไม่ได้รับ',
   whDue: 'Order ใกล้วันติดตั้ง (ภายใน 3 วัน) ยังมีห่อในคลัง',
-  prd: { warehouse: 'ใบเบิกรอคลังจ่าย', production: 'ใบเบิกที่คลังจ่ายแล้ว รอผลิตรับ', purchasing: 'รายการงานสั่งทำที่ยังไม่สั่ง' } };
+  prd: { warehouse: 'งานสั่งทำที่สั่งแล้ว รอของมา (กด “ได้รับแล้ว”)', production: 'ใบปิดผิวที่แผนส่งมา ยังไม่ได้กดรับใบ', purchasing: 'รายการงานสั่งทำที่ยังไม่สั่ง' } };
 /* V7.13: ตัวเลขเมนูงานช่างโรงงาน = รอจัดทีม + ติดตั้งเสร็จรอแนบใบส่งมอบ */
 const ihTip = (c) => 'งานช่างโรงงานรอดำเนินการ (รอจัดทีม ' + c.ihWait + ' · รอแนบใบส่งมอบ ' + c.ihSign + ')';
 const cntTip = (n) => n.tip ? ' title="' + esc(n.n + ' ' + n.tip) + '" aria-label="' + esc(n.n + ' ' + n.tip) + '"' : '';
 function navHtml(nav, active) {
-  return nav.map((n) => n.sec ? '<div class="sec">' + n.sec + '</div>' : '<a href="' + n.h + '" class="' + (active === n.h ? 'on' : '') + '">' + icon(n.i) + '<span>' + n.t + '</span>' + (n.n ? '<span class="cnt ' + (n.w ? 'warn' : '') + '"' + cntTip(n) + '>' + n.n + '</span>' : '') + '</a>').join('');
+  return nav.map((n) => n.sec ? '<div class="sec">' + n.sec + '</div>' : '<a href="' + n.h + '" class="' + (active === n.h ? 'on' : '') + '"' + tipA(navTip(n)) + '>' + icon(n.i) + '<span>' + n.t + '</span>' + (n.n ? '<span class="cnt ' + (n.w ? 'warn' : '') + '"' + cntTip(n) + '>' + n.n + '</span>' : '') + '</a>').join('');
 }
 function ctabsHtml(nav, active) { return nav.map((n) => '<a href="' + n.h + '" class="' + (active === n.h ? 'on' : '') + '">' + icon(n.i) + '<span>' + n.s + '</span>' + (n.n ? '<span class="cnt"' + cntTip(n) + '>' + n.n + '</span>' : '') + '</a>').join(''); }
 /* แถบ "ตัวเลขนี้เตือนอะไร" ด้านบนของหน้า — jump = ปุ่มไปแท็บ/ตัวกรองที่มีรายการนั้น (แสดงเมื่อยังไม่ได้อยู่แท็บนั้น) */
@@ -2023,19 +2242,20 @@ on('cnLinkCopy', (el) => copyText(CONTRACTOR_URL).then((ok) => {
    ลิงก์เดียวกันทุกคน (CONTRACTOR_URL) — เข้าด้วยบัญชีของตัวเอง เห็นตามสิทธิ์ · ลิงก์ไม่ใช่ตัวกันสิทธิ์ (ต้องเข้าระบบเสมอ)
    เครื่องที่มีหน้าต่างแชร์ (มือถือ / แอปที่ติดตั้ง) → เลือก LINE ฯลฯ · ไม่มี / แชร์ไม่ได้ → คัดลอกลิงก์ · คัดลอกไม่ได้ → เปิดกล่องลิงก์ให้กดค้างคัดลอกเอง
    กดยกเลิกหน้าต่างแชร์ = ไม่ทำอะไรต่อ */
-const SHARE_TEXT = APP_NAME + ' — ระบบบริหารงานติดตั้งเฟอร์นิเจอร์ STARMARK · เข้าด้วย Username / Password ของคุณ · ยังไม่มีบัญชี กด “ลงทะเบียนใช้งาน” (ใช้ได้หลัง Admin อนุมัติ)';
+const SHARE_TEXT = APP_KIND === 'spn' ? APP_SHORT + ' — ไลน์ผลิต STARMARK (ปิดผิว · ตัด · ทำสี · สั่งทำ) · เข้าด้วย Username / Password ที่ได้จาก Admin'
+  : APP_NAME + ' — ระบบบริหารงานติดตั้งเฟอร์นิเจอร์ STARMARK · เข้าด้วย Username / Password ของคุณ · ยังไม่มีบัญชี กด “ลงทะเบียนใช้งาน” (ใช้ได้หลัง Admin อนุมัติ)';
 function appShareBox() {
   modal({ title: icon('share') + ' แชร์ลิงก์โปรแกรม', sub: 'กดค้างที่ลิงก์ → คัดลอก แล้ววางส่งใน LINE / ข้อความ',
-    body: '<input class="input mono" id="share-u" type="text" readonly value="' + esc(CONTRACTOR_URL) + '" aria-label="ลิงก์โปรแกรม">' +
-      '<div class="xs muted" style="margin-top:8px;line-height:1.5">ลิงก์เดียวกันสำหรับ Sale · จัดซื้อ · ผู้รับเหมา · หัวหน้าช่าง — แต่ละคนเข้าด้วยบัญชีของตัวเอง ยังไม่มีบัญชีกด “ลงทะเบียนใช้งาน” แล้วรอ Admin อนุมัติ</div>',
+    body: '<input class="input mono" id="share-u" type="text" readonly value="' + esc(APP_URL) + '" aria-label="ลิงก์โปรแกรม">' +
+      '<div class="xs muted" style="margin-top:8px;line-height:1.5">' + (APP_KIND === 'spn' ? 'ลิงก์เดียวกันสำหรับฝ่ายผลิต · จัดซื้อ · คลัง — แต่ละคนเข้าด้วยบัญชีของตัวเอง (Admin สร้างบัญชีให้)' : 'ลิงก์เดียวกันสำหรับ Sale · จัดซื้อ · ผู้รับเหมา · หัวหน้าช่าง — แต่ละคนเข้าด้วยบัญชีของตัวเอง ยังไม่มีบัญชีกด “ลงทะเบียนใช้งาน” แล้วรอ Admin อนุมัติ') + '</div>',
     foot: '<button class="btn primary" data-act="closeOv">ปิด</button>',
     onOpen: (box) => { const i = box.querySelector('#share-u'); if (i) { i.focus(); i.select(); } } });
 }
 function appShareCopy() {
-  return copyText(CONTRACTOR_URL).then((ok) => { if (ok) toast('คัดลอกลิงก์โปรแกรมแล้ว — วางส่งใน LINE / ข้อความได้เลย'); else appShareBox(); });
+  return copyText(APP_URL).then((ok) => { if (ok) toast('คัดลอกลิงก์โปรแกรมแล้ว — วางส่งใน LINE / ข้อความได้เลย'); else appShareBox(); });
 }
 on('appShare', () => {
-  const d = { title: APP_NAME, text: SHARE_TEXT, url: CONTRACTOR_URL };
+  const d = { title: APP_NAME, text: SHARE_TEXT, url: APP_URL };
   let can = false;
   try { can = typeof navigator.share === 'function' && (typeof navigator.canShare !== 'function' || navigator.canShare(d)); } catch (e) { can = false; }
   if (S.navOpen) { S.navOpen = false; rerender(); }
@@ -2115,6 +2335,259 @@ async function poll() {
 }
 setInterval(poll, 20000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') poll(); });
+
+/* =====================================================================
+   V7.18.2 · SPN V1.2 — คำอธิบายเวลาชี้ / แตะ (ผู้ใช้ 15/11 15:34–15:36 “ให้มีคำอธิบายตอนเมาส์ไปโดน ทุกหัวข้อที่จำเป็น ·
+   ออกแบบให้ใช้งานง่าย บางคนไม่ถนัดใช้โปรแกรมทั้งในคอมและมือถือ” · เลือก: มือถือแตะ ⓘ เล็กข้างหัวข้อ)
+   - คอม: เอาเมาส์ชี้ (หรือกด Tab มาโฟกัส) ที่ปุ่ม / หัวข้อที่มีคำอธิบาย → กล่องคำอธิบายขึ้นทันที
+     ใช้ได้ทั้ง data-tip (ใหม่) และ title เดิมทุกจุด (ซ่อนกล่องเล็กของเบราว์เซอร์ที่ขึ้นช้าแทน · คืน title เมื่อเอาเมาส์ออก)
+   - มือถือ / ทุกเครื่อง: ปุ่ม ⓘ ข้างหัวข้อ (tipI) แตะแล้วกล่องค้างไว้ · แตะที่อื่น / เลื่อนจอ / Esc = ปิด · ปุ่มเดิมกดทำงานตามปกติ
+   - หัวหน้าเพจทุกหน้ามี ⓘ “หน้านี้ใช้ทำอะไร / ทำยังไง” (ลงทะเบียนด้วย helpPage) · สถานะ / เมนูมีคำอธิบาย (HELP_ST · HELP_NAV)
+   ===================================================================== */
+const TIP = { el: null, src: null, pin: false, t: 0, stash: null };
+const HELP_PAGE = [];   /* [regex เส้นทาง, ข้อความ หรือ ฟังก์ชัน(path) → ข้อความ] */
+const HELP_NAV = {};    /* href เมนู → คำอธิบาย */
+const HELP_ST = {};     /* สถานะ Order (OST) → คำอธิบาย */
+const HELP_FIELD = {};  /* ชื่อช่องกรอก (ตัด * / “ไม่บังคับ” ออก) → คำอธิบาย · tipScan ใส่ ⓘ ต่อท้ายชื่อช่องให้เองตอนวาดหน้า */
+function helpPage(re, t) { HELP_PAGE.push([re, t]); }
+function tipA(t) { return t ? ' data-tip="' + esc(t) + '"' : ''; }
+function tipI(t, label) { return t ? '<button type="button" class="tip-i" data-tip="' + esc(t) + '" aria-label="คำอธิบาย' + (label ? ': ' + esc(String(label).replace(/<[^>]*>/g, '')) : '') + '">' + icon('info', 'xs') + '</button>' : ''; }
+function pageHelpI(title) {
+  let p = ''; try { p = curPath(); } catch (e) { p = ''; }
+  for (const [re, t] of HELP_PAGE) if (re.test(p)) { const x = typeof t === 'function' ? t(p) : t; if (x) return tipI(x, 'หน้านี้ใช้ทำอะไร — ' + (title || '')); }
+  return '';
+}
+/* ⓘ ต่อท้ายชื่อช่องกรอกที่มีคำอธิบาย (หน้า + หน้าต่าง · เรียกจาก hydrate) */
+function tipFieldKey(lb) {
+  let t = '';
+  lb.childNodes.forEach((n) => { if (n.nodeType === 3) t += n.textContent; else if (n.nodeType === 1 && !n.classList.contains('tip-i') && !n.classList.contains('req') && !/^(svg|SVG)$/.test(n.tagName)) t += n.textContent; });
+  return t.replace(/\*/g, '').replace(/ไม่บังคับ.*$/, '').replace(/\s+/g, ' ').trim();
+}
+function tipScan(root) {
+  if (!root || !root.querySelectorAll) return;
+  root.querySelectorAll('.field > label').forEach((lb) => {
+    if (lb.__tipDone || lb.querySelector('.tip-i')) return;
+    lb.__tipDone = true;
+    const k = tipFieldKey(lb), t = HELP_FIELD[k] || (k.length > 3 && Object.keys(HELP_FIELD).filter((x) => x.length > 3 && k.indexOf(x) === 0).map((x) => HELP_FIELD[x])[0]);
+    if (t) lb.insertAdjacentHTML('beforeend', ' ' + tipI(t, k));
+  });
+}
+/* เมนู: คำอธิบายหน้า + ความหมายของตัวเลข (ถ้ามี) */
+function navTip(n) { return [HELP_NAV[n.h], n.tip ? (n.n ? 'ตัวเลข ' + n.n + ' = ' : 'ตัวเลข = ') + n.tip : ''].filter(Boolean).join('\n'); }
+function tipFmt(t) { return esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); }
+function tipBox() {
+  let b = document.getElementById('tipBub');
+  if (!b) { b = document.createElement('div'); b.id = 'tipBub'; b.className = 'tip-bub'; b.setAttribute('role', 'tooltip'); b.innerHTML = '<div class="tb-t"></div><i class="tb-a"></i>'; document.body.appendChild(b); }
+  return b;
+}
+function tipText(el) { return el.getAttribute('data-tip') || el.__tipT || el.getAttribute('title') || ''; }
+function tipShow(el, pin) {
+  const t = tipText(el); if (!t) return;
+  const b = tipBox(); b.querySelector('.tb-t').innerHTML = tipFmt(t);
+  b.classList.add('on'); b.classList.toggle('pin', !!pin); TIP.el = b; TIP.src = el; TIP.pin = !!pin;
+  const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = window.innerHeight, w = Math.min(320, vw - 24);
+  b.style.maxWidth = w + 'px'; b.style.left = '0px'; b.style.top = '0px';
+  const bw = b.offsetWidth, bh = b.offsetHeight, cx = r.left + r.width / 2;
+  const left = Math.max(12, Math.min(vw - bw - 12, cx - bw / 2)), below = r.bottom + 10 + bh <= vh - 8 || r.top - 10 - bh < 8;
+  b.style.left = Math.round(left) + 'px'; b.style.top = Math.round(below ? r.bottom + 10 : r.top - 10 - bh) + 'px';
+  b.classList.toggle('up', !below);
+  const a = b.querySelector('.tb-a'); a.style.left = Math.round(Math.max(12, Math.min(bw - 12, cx - left))) + 'px';
+  el.setAttribute('aria-describedby', 'tipBub');
+}
+function tipHide() {
+  clearTimeout(TIP.t);
+  if (TIP.src) { TIP.src.removeAttribute('aria-describedby'); }
+  if (TIP.stash && TIP.stash.__tipT != null && !TIP.stash.hasAttribute('title')) TIP.stash.setAttribute('title', TIP.stash.__tipT);   /* คืน title เดิม */
+  TIP.stash = null; TIP.src = null; TIP.pin = false;
+  const b = document.getElementById('tipBub'); if (b) b.classList.remove('on', 'pin');
+}
+function tipTarget(n) { return n && n.closest ? n.closest('[data-tip],[title]') : null; }
+/* คอม: ชี้ด้วยเมาส์ */
+document.addEventListener('pointerover', (e) => {
+  if (e.pointerType !== 'mouse' || TIP.pin) return;
+  const el = tipTarget(e.target); if (!el || el === TIP.src || el.closest('#tipBub')) return;
+  tipHide();
+  if (el.hasAttribute('title') && !el.hasAttribute('data-tip')) { el.__tipT = el.getAttribute('title'); el.removeAttribute('title'); TIP.stash = el; }   /* ไม่ให้กล่องเล็กของเบราว์เซอร์ขึ้นซ้อน */
+  TIP.src = el; TIP.t = setTimeout(() => { if (TIP.src === el && el.isConnected) tipShow(el, false); }, 180);
+});
+document.addEventListener('pointerout', (e) => {
+  if (e.pointerType !== 'mouse' || TIP.pin || !TIP.src) return;
+  const to = e.relatedTarget; if (to && (TIP.src.contains(to))) return;
+  tipHide();
+});
+/* แป้นพิมพ์: Tab มาโฟกัส */
+document.addEventListener('focusin', (e) => { const el = e.target && e.target.closest ? e.target.closest('[data-tip]') : null; let kb = false; try { kb = e.target.matches(':focus-visible'); } catch (x) { kb = false; } if (el && kb && !TIP.pin) tipShow(el, false); });   /* เฉพาะโฟกัสจากแป้นพิมพ์ (แตะบนมือถือไม่ขึ้น) */
+document.addEventListener('focusout', () => { if (!TIP.pin) tipHide(); });
+/* ⓘ: แตะ / คลิก = กล่องค้าง (ไม่ไปกดปุ่มหรือลิงก์ที่ ⓘ อยู่ข้างใน) */
+document.addEventListener('click', (e) => {
+  let i = e.target && e.target.closest ? e.target.closest('.tip-i') : null;
+  if (!i && e.target && e.target.closest && window.matchMedia && matchMedia('(hover: none)').matches) i = e.target.closest('.tipq');   /* V7.16.2 .tipq: มือถือแตะ = ขึ้นค้าง */
+  if (i) { e.preventDefault(); e.stopPropagation(); if (TIP.pin && TIP.src === i) tipHide(); else { tipHide(); tipShow(i, true); } return; }
+  if (TIP.pin && !(e.target.closest && e.target.closest('#tipBub'))) tipHide();
+}, true);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && TIP.src) tipHide(); });
+/* เลื่อนจอ: กล่องตามปุ่มไป (อ่านต่อได้) · ปุ่มเลื่อนพ้นจอ = ปิด */
+let tipRaf = 0;
+window.addEventListener('scroll', () => {
+  if (!TIP.src || tipRaf) return;
+  tipRaf = requestAnimationFrame(() => {
+    tipRaf = 0; const el = TIP.src; if (!el) return;
+    const r = el.isConnected ? el.getBoundingClientRect() : null;
+    if (!r || r.bottom < 0 || r.top > window.innerHeight || (!r.width && !r.height)) { tipHide(); return; }
+    tipShow(el, TIP.pin);
+  });
+}, { capture: true, passive: true });
+window.addEventListener('resize', () => { if (TIP.src) tipHide(); });
+window.addEventListener('hashchange', () => tipHide());
+
+/* =====================================================================
+   Contractor Nexus V7.18.2 — คำอธิบาย (ชี้ / แตะ ⓘ) ทุกหน้า · เมนู · สถานะ · ช่องกรอกที่สำคัญ (ผู้ใช้ 15/11 15:34–15:36)
+   ใช้ร่วมกับ src/tips.js (helpPage · HELP_NAV · HELP_ST · HELP_FIELD)
+   ⚠ ข้อความทุกตัวในไฟล์นี้ต้องไม่บอกราคาขาย / อัตรา / ต้นทุนของบริษัท ในหน้าที่ผู้รับเหมาเห็น
+     (หน้า / ช่องของ Admin · Sale อธิบายได้ เพราะแสดงเฉพาะหน้าของบทบาทนั้น)
+   ===================================================================== */
+/* ---------- สถานะ Order (ป้ายสี) — ผู้รับเหมาก็เห็นป้ายเหล่านี้: ห้ามพูดถึงราคา ---------- */
+Object.assign(HELP_ST, {
+  draft: '**ร่าง** — Sale ยังไม่กดยืนยัน\nแก้ไขได้ทุกช่อง · ยังไม่มีใครเห็นงานนี้',
+  dispatch: '**รอหัวหน้าช่างเลือกช่องทาง** — Sale ยืนยันแล้ว\nหัวหน้าช่างเลือกว่าจะให้ช่างโรงงาน หรือผู้รับเหมาติดตั้ง',
+  open: '**เปิดรับราคา** — ผู้รับเหมาเสนอราคาได้จนหมดเวลา (ดูนับถอยหลังในงาน)',
+  expired: '**หมดเวลาเสนอราคา** — รอจัดซื้อเลือกผู้รับเหมา',
+  booked: '**อนุมัติแล้ว** — รอถึงวันเข้าติดตั้ง\nผู้รับเหมายิงรับของห่อแรก = เริ่มงาน',
+  installing: '**กำลังติดตั้ง** — ผู้รับเหมายิงรับของ / เริ่มงานแล้ว\nเสร็จแล้วส่งใบส่งมอบที่ลูกค้าเซ็น',
+  check: '**รอตรวจใบส่งมอบ** — ส่งรูปใบส่งมอบแล้ว รอบัญชี / Admin ตรวจ',
+  done: '**ติดตั้งเสร็จ** — ตรวจรับใบส่งมอบแล้ว\nการจ่ายเงินดูตามงวด',
+  ih_wait: '**ช่างโรงงาน · รอจัดทีม** — หัวหน้าช่างเลือกทีมและวันติดตั้ง',
+  ih_booked: '**ช่างโรงงาน · รอเข้าติดตั้ง** — จัดทีมแล้ว รอถึงวันติดตั้ง',
+  ih_installing: '**ช่างโรงงาน · กำลังติดตั้ง**',
+  ih_sign: '**ช่างโรงงาน · รอแนบใบส่งมอบ** — ติดตั้งเสร็จแล้ว ต้องแนบรูปใบส่งมอบที่ลูกค้าเซ็น',
+  ih_done: '**ช่างโรงงาน · ติดตั้งเสร็จ** — งานจบครบ',
+  cancelled: '**ยกเลิกแล้ว** — ไม่ต้องทำอะไรต่อ'
+});
+/* ---------- เมนูด้านซ้าย (คอม) — ชี้ที่เมนูแล้วขึ้นคำอธิบาย ---------- */
+Object.assign(HELP_NAV, {
+  '#/admin/home': 'ภาพรวมทั้งระบบ — ตัวเลขแต่ละขั้น + รายการ “ต้องดำเนินการ” (กดแล้วพาไปหน้าที่ต้องทำ)',
+  '#/admin/orders': 'Order ทุกใบ ตั้งแต่ร่างจนจ่ายเงิน — ค้นหา / กรองตามขั้น · กดแถวเพื่อดูรายละเอียด',
+  '#/admin/inbox': 'Order ที่ Sale ยืนยันแล้ว รอเลือกว่าจะให้ช่างโรงงาน หรือผู้รับเหมาติดตั้ง',
+  '#/admin/bids': 'งานที่เปิดให้ผู้รับเหมาเสนอราคา — เทียบราคา ตรวจคิว แล้วอนุมัติ',
+  '#/admin/queue': 'ตรวจว่าผู้รับเหมาแต่ละรายมีงานช่วงไหนบ้าง (คิวซ้อนกันอนุมัติไม่ได้)',
+  '#/admin/booking': 'ปฏิทินงานผู้รับเหมา — ใครติดตั้งงานไหน วันไหนถึงวันไหน',
+  '#/admin/inhouse': 'งานของช่างติดตั้งโรงงาน — จัดทีม · วันติดตั้ง · แนบใบส่งมอบ',
+  '#/admin/ibooking': 'ปฏิทินทีมช่างโรงงาน — คลิกช่องวันว่างเพื่อจัดคิว',
+  '#/admin/install': 'งานที่ผู้รับเหมาส่งใบส่งมอบแล้ว — ตรวจรูป แล้วกำหนดวันจ่ายเงิน',
+  '#/admin/pay': 'ยอดจ่ายผู้รับเหมาแต่ละงวด — บันทึกการจ่ายเงิน',
+  '#/admin/users': 'เพิ่ม / แก้ไขผู้ใช้ · อนุมัติคำขอลงทะเบียน',
+  '#/admin/settings': 'ตั้งค่าระบบ — อัตราค่าติดตั้ง · งวดจ่ายเงิน · เวลาเปิดรับราคา · สำรองข้อมูล',
+  '#/sale/orders': 'Order ของ Sale — สร้าง แนบแบบ แล้วกดยืนยัน',
+  '#/sale/new': 'สร้าง Sale Order ใหม่ — กรอกข้อมูลงาน แนบแบบติดตั้ง แล้วกด “ยืนยัน Order”',
+  '#/pur/inbox': 'Order ที่ Sale ยืนยันแล้ว (ดูอย่างเดียว · หัวหน้าช่างเป็นคนเลือกช่องทาง)',
+  '#/pur/bids': 'งานที่เปิดให้ผู้รับเหมาเสนอราคา — เทียบราคา ตรวจคิว แล้วอนุมัติ',
+  '#/pur/queue': 'ตรวจว่าผู้รับเหมาแต่ละรายมีงานช่วงไหนบ้าง (คิวซ้อนกันอนุมัติไม่ได้)',
+  '#/pur/booking': 'ปฏิทินงานผู้รับเหมา — ใครติดตั้งงานไหน วันไหนถึงวันไหน',
+  '#/pur/ibooking': 'ปฏิทินทีมช่างโรงงาน (ดูอย่างเดียว)',
+  '#/acc/review': 'ตรวจรูปใบส่งมอบที่ลูกค้าเซ็น แล้วกำหนดวันจ่ายเงินผู้รับเหมา',
+  '#/acc/pay': 'ยอดจ่ายผู้รับเหมาแต่ละงวด — บันทึกการจ่ายเงิน',
+  '#/ins/inbox': 'Order ใหม่ที่ Sale ยืนยัน — เลือกว่าจะให้ช่างโรงงาน หรือผู้รับเหมาติดตั้ง',
+  '#/ins/queue': 'งานของช่างโรงงาน — เลือกทีม · วันติดตั้ง · แนบใบส่งมอบ',
+  '#/ins/booking': 'ปฏิทินทีมช่างโรงงาน — คลิกช่องวันว่างเพื่อจัดคิว',
+  '#/ins/teams': 'รายชื่อทีมช่างโรงงาน — เพิ่ม / แก้ไข / ปิดใช้งาน',
+  '#/ins/scan': 'สแกน QR / สติกเกอร์บนชิ้นงาน เพื่อดูแบบ / 3D',
+  '#/wh/receive': 'ยิงห่อเข้าคลัง — เลือก Order → เลือกโลเคชั่น → ยิง Code Pack ทีละห่อ',
+  '#/wh/issue': 'ยิงห่อออกจากคลังขึ้นรถไปหน้างาน',
+  '#/wh/stock': 'ดูว่าห่อไหนอยู่โลเคชั่นไหน',
+  '#/wh/locs': 'ตั้งชื่อโลเคชั่น (โซน-แถว-ชั้น) และจำนวนห่อที่ลงได้',
+  '#/prd/orders': 'ไลน์ผลิตย้ายไปแอป Starmark SPN แล้ว — หน้านี้มีปุ่มพาไป',
+  '#/con/open': 'งานใหม่รอท่านใส่ราคา — ใส่ราคาก่อนหมดเวลา',
+  '#/con/sent': 'งานที่ท่านเสนอราคาแล้ว รอบริษัทอนุมัติ',
+  '#/con/work': 'งานที่ท่านได้ — ยิงรับของ (เริ่มงาน) แล้วส่งใบส่งมอบเมื่อเสร็จ',
+  '#/con/pay': 'ยอดเงินของท่านตามงวด และวันที่จะได้รับ',
+  '#/con/scan': 'สแกน QR / สติกเกอร์บนชิ้นงาน เพื่อดูแบบ / 3D'
+});
+/* ---------- หน้า (ปุ่ม ⓘ ข้างหัวข้อหน้า) ---------- */
+helpPage(/^\/admin\/home$/, 'หน้านี้คือ **ภาพรวม**\n1) การ์ดตัวเลขด้านบน = จำนวนงานแต่ละเรื่อง (กดเพื่อไปที่รายการ)\n2) “Order แยกตามขั้นตอน” กดชื่อขั้นเพื่อดู Order ขั้นนั้น\n3) “ต้องดำเนินการ” = งานที่ค้างอยู่ เรียงเรื่องด่วนก่อน — กดแล้วพาไปหน้าที่ต้องทำ\nเมนูซ้ายที่มีตัวเลขสีส้ม / แดง = มีงานรอคุณ');
+helpPage(/^\/admin\/orders$/, 'หน้านี้คือ **Order ทั้งหมด**\n1) พิมพ์ค้นด้วยเลข Order / ชื่องาน / ลูกค้า\n2) กดปุ่มขั้น (ร่าง · รอเลือกช่องทาง · เปิดรับราคา …) เพื่อกรอง\n3) กดแถวเพื่อดูรายละเอียด · ปุ่ม 🔔 ในรายละเอียด = ติดตามงานนี้');
+helpPage(/^\/(admin|pur|ins)\/inbox$/, (p) => /^\/pur\//.test(p)
+  ? 'หน้านี้คือ **Order ที่ Sale ยืนยัน** (ดูอย่างเดียว)\nหัวหน้าช่างจะเลือกช่องทาง — ส่งให้ผู้รับเหมาแล้ว งานจะไปอยู่ที่ “งานรอผู้รับเหมาเสนอราคา”'
+  : 'หน้านี้คือ **Order รอเลือกช่องทาง**\n1) ดูรายละเอียด / แบบงาน\n2) เลือก **ช่างโรงงาน** (จัดทีมเอง) หรือ **ผู้รับเหมา** (เปิดให้เสนอราคา)\n3) กดยืนยัน — งานจะย้ายไปหน้าของช่องทางนั้น\nเลือกผิด: Admin เปลี่ยนช่องทางได้จนกว่าจะเริ่มงานจริง');
+helpPage(/^\/(admin|pur)\/bids$/, 'หน้านี้คือ **งานที่เปิดให้ผู้รับเหมาเสนอราคา**\n1) ดูนับถอยหลัง + จำนวนรายที่เสนอแล้ว\n2) กดงานเพื่อเทียบราคาและคิวของผู้รับเหมาแต่ละราย\n3) เลือกรายที่ต้องการแล้วกดอนุมัติ\nหมดเวลาแล้วยังไม่มีใครเสนอ — กด “ปรับวันเปิดรับราคา” ในหน้างาน');
+helpPage(/^\/(admin|pur)\/bids\/[^/]+$/, 'หน้านี้คือ **เทียบราคาและอนุมัติ**\n1) ตารางด้านล่าง = ราคาที่ผู้รับเหมาแต่ละรายเสนอ + วันที่จะเข้า\n2) แถวที่คิวซ้อนกับงานอื่นจะกดอนุมัติไม่ได้ (ดูเหตุผลในแถว)\n3) กดอนุมัติรายที่เลือก — ผู้รับเหมารายนั้นได้งาน รายอื่นได้รับแจ้งว่าไม่ได้งาน');
+helpPage(/^\/(admin|pur)\/queue$/, 'หน้านี้คือ **ตรวจคิวผู้รับเหมา**\nแต่ละแถว = ผู้รับเหมา 1 ราย · แถบ = ช่วงวันที่มีงานแล้ว\nช่วงที่ซ้อนกันจะเป็นสีแดง — ระบบไม่ให้อนุมัติงานที่ทำให้คิวซ้อน');
+helpPage(/^\/(admin|pur)\/booking$/, 'หน้านี้คือ **Booking ผู้รับเหมา** (ปฏิทิน)\nแถบยาวตามวันติดตั้งจริง · กดที่แถบเพื่อดูรายละเอียดงาน\nเลื่อนเดือนด้วยปุ่มลูกศรด้านบน');
+helpPage(/^\/(admin|pur|ins)\/ibooking$|^\/ins\/booking$/, 'หน้านี้คือ **Booking ช่างโรงงาน** (ปฏิทิน)\nแถว = ทีมช่าง · แถบ = งานที่ทีมนั้นติดตั้ง\nหัวหน้าช่าง / Admin: คลิกช่องวันว่าง = จัดคิวงานให้ทีมนั้น · ทีมเดียวกันคิวซ้อนไม่ได้');
+helpPage(/^\/(admin\/inhouse|ins\/queue)$/, 'หน้านี้คือ **งานช่างติดตั้งโรงงาน**\n1) งานรอจัดทีม: กด “จัดทีม” เลือกทีม + วันติดตั้ง\n2) ระหว่างติดตั้ง: เปิดงานเพื่อยิงรับของ / ดูห่อ\n3) เสร็จแล้ว: แนบรูปใบส่งมอบที่ลูกค้าเซ็น → งานจบ');
+helpPage(/^\/ins\/job\/[^/]+$/, 'หน้านี้คือ **หน้างานช่างโรงงาน**\nทำตามขั้นจากบนลงล่าง: ยิงรับของ (ห่อแรก = เริ่มงาน) → ติดตั้งเสร็จ แนบรูปใบส่งมอบที่ลูกค้าเซ็น\nปุ่ม 🔔 = ติดตามงานนี้ (แจ้งเตือน)');
+helpPage(/^\/ins\/teams$/, 'หน้านี้คือ **ทีมช่างติดตั้ง**\nเพิ่มทีม: กด “เพิ่มทีม” ใส่ชื่อทีม หัวหน้าทีม จำนวนช่าง\nทีมที่เลิกใช้ ให้กด “ปิดใช้งาน” แทนการลบ (ประวัติงานยังอยู่)');
+helpPage(/^\/(admin\/install|acc\/review)$/, 'หน้านี้คือ **ตรวจใบส่งมอบ**\n1) กดงานเพื่อดูรูปใบส่งมอบที่ลูกค้าเซ็น + รูปหน้างาน\n2) ถูกต้อง: กด “ตรวจรับ” แล้วกำหนดวันจ่ายเงิน\n3) ไม่ถูกต้อง: ส่งกลับให้แก้ พร้อมบอกเหตุผล — ผู้รับเหมาแก้แล้วส่งใหม่ได้');
+helpPage(/^\/(admin|acc)\/pay$/, 'หน้านี้คือ **การเงินผู้รับเหมา**\nแต่ละงานแบ่งเป็นงวด (มัดจำ / หลังจบงาน) ตามที่ผู้รับเหมาเลือกตอนเสนอราคา\nจ่ายแล้วกด “บันทึกการจ่าย” — ผู้รับเหมาเห็นในหน้า “รอรับเงิน” ของเขา\nสีแดง = เลยกำหนดจ่าย');
+helpPage(/^\/admin\/users$/, 'หน้านี้คือ **จัดการผู้ใช้**\n1) คำขอลงทะเบียน (ด้านบน): ตรวจแล้วกดอนุมัติ / ไม่อนุมัติ\n2) “เพิ่มผู้ใช้”: ตั้ง Username + Password + ประเภทผู้ใช้\n3) ผู้รับเหมาแต่ละบริษัทมีบัญชีแยก · Admin ไม่เห็นรหัสผ่านของใคร (ตั้งใหม่ได้)');
+helpPage(/^\/admin\/settings$/, 'หน้านี้คือ **ตั้งค่าระบบ** (เฉพาะ Admin)\n• อัตราค่าติดตั้งของแต่ละประเภทงาน · ใช้กับ Order ใหม่\n• เงื่อนไขการจ่ายเงินผู้รับเหมา (มัดจำ / หลังจบงาน)\n• ระยะเวลาเปิดรับราคา · ระยะเวลาติดตั้ง\n• สำรอง / กู้คืนข้อมูล\nแก้แล้วกดบันทึกทุกครั้ง');
+helpPage(/^\/sale\/orders$/, 'หน้านี้คือ **Sale Order ของฉัน**\n1) กด “สร้าง Sale Order” กรอกข้อมูล + แนบแบบติดตั้ง\n2) กด **ยืนยัน Order** — ส่งให้หัวหน้าช่างเลือกช่องทาง\n3) ติดตามสถานะได้จากป้ายสีในแต่ละแถว (ชี้ที่ป้ายเพื่อดูความหมาย)\nยังไม่ยืนยัน = ร่าง (แก้ / ลบได้)');
+helpPage(/^\/sale\/(new|edit\/[^/]+)$/, 'หน้านี้คือ **ฟอร์ม Sale Order**\n1) ใส่เลข Order StarNexus — ระบบเติมข้อมูลให้เอง\n2) ตรวจ / กรอกช่องที่มีดอกจัน * ให้ครบ\n3) แนบแบบงานติดตั้ง (PDF / รูป)\n4) กด “บันทึกร่าง” หรือ **“ยืนยัน Order”**\nชี้ / แตะ ⓘ ข้างชื่อช่องเพื่อดูคำอธิบาย');
+helpPage(/^\/(admin|pur|sale)\/draw\/[^/]+$/, 'หน้านี้คือ **แก้แบบงาน**\nแก้ / เพิ่มแบบงานติดตั้ง และลิงก์แบบงานผลิตได้ตลอด แม้ Order ยืนยันแล้ว\nข้อมูลอื่นของ Order แก้ที่ฟอร์ม Order');
+helpPage(/^\/wh\/receive$/, 'หน้านี้คือ **ยิงรับเข้าคลัง**\n1) เลือก Order\n2) เลือกโลเคชั่นที่จะวาง\n3) ยิง Code Pack บนห่อทีละห่อ (เครื่องยิง / กล้องมือถือ / พิมพ์เอง)\nยิงซ้ำไม่นับซ้ำ · ช่องเต็มจะยิงเข้าไม่ได้');
+helpPage(/^\/wh\/issue$/, 'หน้านี้คือ **ยิงจ่ายออก**\n1) เลือก Order ที่จะขึ้นรถไปหน้างาน\n2) ยิง Code Pack ทีละห่อ — ระบบตัดออกจากโลเคชั่นให้\nตัวเลขที่เมนู = Order ที่ใกล้วันติดตั้ง (3 วัน) แต่ยังมีห่อในคลัง');
+helpPage(/^\/wh\/stock$/, 'หน้านี้คือ **สินค้าในคลัง**\nค้นด้วย Code Pack / เลข Order / เลข StarNexus / ชื่อลูกค้า เพื่อดูว่าห่ออยู่โลเคชั่นไหน');
+helpPage(/^\/wh\/locs$/, 'หน้านี้คือ **ตั้งค่าโลเคชั่น**\nชื่อแบบ โซน-แถว-ชั้น (เช่น A-01-2) · ใส่จำนวนห่อที่ลงได้ต่อช่อง\nยิงรับเข้าเกินจำนวนนี้ไม่ได้');
+helpPage(/^\/con\/open$/, 'หน้านี้คือ **รายการรอใส่ราคา**\n1) แตะงานเพื่อดูแบบ / สถานที่ / วันที่ลูกค้าต้องการ\n2) ใส่ราคาค่าติดตั้งของท่าน + วันที่จะเข้า + เลือกการรับเงิน\n3) กดส่ง — แก้ราคาได้จนกว่าจะหมดเวลา\nราคาของท่านเป็นความลับ รายอื่นไม่เห็น');
+helpPage(/^\/con\/sent$/, 'หน้านี้คือ **เสนอราคาแล้ว รออนุมัติ**\nบริษัทจะเทียบราคาและตรวจคิวงานก่อนอนุมัติ\nได้งานแล้ว งานจะย้ายไปที่ “สถานะการทำงาน” และมีแจ้งเตือน');
+helpPage(/^\/con\/work$/, 'หน้านี้คือ **สถานะการทำงาน** (งานที่ท่านได้)\n1) วันรับของ: ยิง Code Pack บนห่อ (ห่อแรก = เริ่มงาน)\n2) ติดตั้งเสร็จ: แนบรูปใบส่งมอบที่ลูกค้าเซ็น + รูปหน้างาน แล้วกดส่ง\nแตะงานเพื่อเปิดหน้างาน');
+helpPage(/^\/con\/pay$/, 'หน้านี้คือ **รอรับเงิน**\nยอดของท่านแยกตามงวด พร้อมวันที่จะได้รับ\nบริษัทบันทึกการจ่ายแล้วจะขึ้นว่า “จ่ายแล้ว”');
+helpPage(/^\/(con|ins)\/scan$/, 'หน้านี้คือ **สแกนดูแบบ / 3D**\nเล็งกล้องที่ QR หรือสติกเกอร์บนชิ้นงาน — แบบ / 3D ของชิ้นนั้นจะเปิดขึ้นมา\nกล้องไม่ขึ้น: กด “เปิดในแท็บใหม่”');
+/* ---------- ช่องกรอก (ⓘ ต่อท้ายชื่อช่อง — ใส่ให้เองตอนวาดหน้า) · คีย์ = ชื่อช่อง (ตัด * ออก) ---------- */
+Object.assign(HELP_FIELD, {
+  /* Sale Order */
+  'เลขที่ Order (StarNexus)': 'เลข Order จากโปรแกรมออกแบบ StarNexus\nใส่เลขสั้นหรือเลขเต็มก็ได้ — ระบบดึงชื่องาน ลูกค้า ที่อยู่ ให้เอง',
+  'ชื่องาน': 'ชื่อที่ทุกฝ่ายเห็น เช่น ครัว + ตู้เสื้อผ้า บ้านคุณ…',
+  'จำนวนตู้ที่ติดตั้ง': 'จำนวนตู้ทั้งหมดในงานนี้ — ใช้คำนวณวันติดตั้ง',
+  'ชื่อลูกค้า / โครงการ': 'ชื่อลูกค้าหรือชื่อโครงการ',
+  'สถานที่ติดตั้ง': 'ชื่อสถานที่ เช่น บ้านเลขที่ / คอนโด / ชั้น — ผู้รับเหมาใช้ดูก่อนเสนอราคา',
+  'จังหวัด': 'จังหวัดของหน้างาน — ผู้รับเหมาใช้ดูระยะทาง',
+  'ผู้ติดต่อหน้างาน': 'คนที่ช่างโทรหาตอนเข้าหน้างาน',
+  'ลูกค้าพร้อมให้ติดตั้งตั้งแต่ (กำหนดติดตั้ง)': 'วันแรกที่ลูกค้าพร้อมให้เข้าติดตั้ง — ผู้รับเหมาเลือกวันเข้าได้ตั้งแต่วันนี้',
+  'ต้องเสร็จภายใน': 'วันสุดท้ายที่งานต้องติดตั้งเสร็จ — เลยวันนี้ระบบจะขึ้นเตือน “เลยกำหนด”',
+  'หมายเหตุถึงผู้รับเหมา': 'ข้อความที่ผู้รับเหมาเห็นก่อนเสนอราคา เช่น ที่จอดรถ เวลาเข้าหน้างาน',
+  'ราคาขาย (ก่อน VAT)': 'ราคาขายของงานนี้ — **เห็นเฉพาะ Admin / Sale** ผู้รับเหมาไม่เห็นเด็ดขาด',
+  'ลิงก์ดูแบบงานผลิต (Production Drawing)': 'ลิงก์แบบผลิตจาก Production (ไม่บังคับ) — ช่างกดดูได้จากหน้างาน',
+  'แนบแบบงานติดตั้ง (Installation Drawing)': 'แบบที่ช่างใช้ติดตั้ง (PDF / รูป) — ราคาในไฟล์ระบบจะปิดให้ก่อนผู้รับเหมาเห็น',
+  'Sale ผู้รับผิดชอบ': 'Sale เจ้าของงานนี้ — ได้รับแจ้งเตือนของ Order นี้',
+  'เปิดรับราคา': 'ให้ผู้รับเหมาเสนอราคาได้กี่วัน นับจากส่งงานออก',
+  'เปิดรับราคาทั้งหมด': 'จำนวนวันที่เปิดให้เสนอราคา (นับรวมวันที่เปิดไปแล้ว)',
+  /* ผู้รับเหมา: เสนอราคา / ส่งมอบ */
+  'ราคาที่ท่านเสนอ (ก่อน VAT)': 'ราคาค่าติดตั้งที่ท่านเสนอสำหรับงานนี้ (ก่อน VAT)\nเป็นความลับ ผู้รับเหมารายอื่นไม่เห็น · แก้ได้จนหมดเวลา',
+  'วันเริ่มติดตั้ง': 'วันที่เริ่มเข้าติดตั้ง — ช่าง / ผู้รับเหมาคนเดียวกันมีงานวันซ้อนกันไม่ได้',
+  'ใช้เวลา': 'จำนวนวันที่ใช้ติดตั้งจนเสร็จ',
+  'จำนวนช่าง': 'จำนวนช่างที่จะเข้าหน้างาน',
+  'การชำระเงิน': 'เลือกแบบรับเงิน (เช่น มัดจำ + ส่วนที่เหลือหลังจบงาน หรือรับครั้งเดียวหลังจบงาน)\nวันที่จะได้รับเงินดูในหน้า “รอรับเงิน”',
+  'วันที่ส่งมอบงาน': 'วันที่ติดตั้งเสร็จและลูกค้าเซ็นรับงาน',
+  'รูปใบส่งมอบงานที่ลูกค้าเซ็นแล้ว': 'ถ่ายรูปใบส่งมอบที่ลูกค้าเซ็นให้เห็นชัดทั้งใบ — บังคับ 1 รูปขึ้นไป',
+  'ภาพหน้างานหลังติดตั้ง': 'รูปงานที่ติดตั้งเสร็จ (หลายรูปได้) — ช่วยให้ตรวจรับเร็วขึ้น',
+  /* ช่างโรงงาน */
+  'ทีมช่าง': 'ทีมที่จะไปติดตั้ง — ทีมเดียวกันมีงานวันซ้อนกันไม่ได้',
+  'หมายเหตุถึงทีม': 'ข้อความที่ทีมช่างเห็นในหน้างาน',
+  'ชื่อทีม': 'ชื่อที่ใช้เลือกตอนจัดคิว เช่น ทีม A',
+  'หัวหน้าทีม': 'ชื่อหัวหน้าทีม (ไม่บังคับ)',
+  'จำนวนช่างในทีม': 'จำนวนคนในทีม (ไม่บังคับ)',
+  /* บัญชี / Admin */
+  'วันชำระเงินให้ผู้รับเหมา': 'วันที่จะจ่ายเงินงวดหลังจบงาน — ผู้รับเหมาเห็นวันนี้ในหน้า “รอรับเงิน”',
+  'หมายเหตุการตรวจ (ใส่เมื่อส่งกลับ)': 'บอกผู้รับเหมาว่าต้องแก้อะไร (เช่น รูปไม่ชัด / ลูกค้ายังไม่เซ็น)',
+  'วันที่จ่าย': 'วันที่โอนเงินจริง',
+  'สลิปโอนเงิน': 'แนบสลิป (ไม่บังคับ) — ผู้รับเหมาเปิดดูได้',
+  'ประเภทผู้ใช้': 'กำหนดว่าผู้ใช้นี้เห็นหน้าไหนบ้าง (Admin · Sale · จัดซื้อ · บัญชี · หัวหน้าช่าง · คลัง · ฝ่ายผลิต · ผู้รับเหมา)',
+  'ประเภทผู้ใช้ที่อนุมัติ': 'บทบาทที่จะให้คนนี้ใช้ — เปลี่ยนจากที่ขอมาได้',
+  'Username': 'ชื่อสำหรับเข้าระบบ (ภาษาอังกฤษ / ตัวเลข)',
+  'ต้องเสร็จภายใน (หลังวันลูกค้าพร้อมให้ติดตั้ง)': 'ค่าเริ่มของ Order ใหม่: นับกี่วันจากวันที่ลูกค้าพร้อม ถึงวันที่ต้องติดตั้งเสร็จ (Sale แก้ต่อ Order ได้)',
+  'Password': 'รหัสผ่าน (อย่างน้อย 6 ตัว) — ไม่มีใครเห็นรหัสผ่านของคุณ · ลืมให้ Admin ตั้งใหม่',
+  'ตั้ง Password ใหม่': 'เว้นว่าง = ใช้รหัสเดิม · ใส่ใหม่ = เปลี่ยนรหัส',
+  'บริษัทผู้รับเหมา': 'บริษัทที่บัญชีนี้สังกัด — ผู้รับเหมาเห็นเฉพาะงานของบริษัทตัวเอง',
+  'ค่าเริ่มต้นของ Order ใหม่': 'ค่าที่ใส่ให้เองใน Order ใหม่ — แต่ละ Order แก้ทีหลังได้',
+  'มัดจำ 30% จ่ายภายใน': 'นับกี่วันถึงวันจ่ายมัดจำ',
+  'หลังจบงาน จ่ายภายใน': 'หลังตรวจรับใบส่งมอบ กี่วันถึงวันจ่ายส่วนที่เหลือ',
+  /* คลัง */
+  'โซน': 'ตัวอักษรโซน เช่น A',
+  'แถว (จาก – ถึง)': 'ช่วงเลขแถวที่จะสร้าง เช่น 1 ถึง 10',
+  'ชั้น (จาก – ถึง)': 'ช่วงเลขชั้นของแต่ละแถว เช่น 1 ถึง 3',
+  'ลงได้ต่อช่อง (จำนวนห่อ)': 'จำนวนห่อสูงสุดที่วางในช่องเดียว — ยิงเกินไม่ได้',
+  'จำนวนห่อที่ลงได้': 'จำนวนห่อสูงสุดที่วางในช่องนี้'
+});
 
 
 /* =====================================================================
@@ -2211,7 +2684,7 @@ function openOrder(id) {
     .filter(Boolean).sort((a, b) => String(a[0]).localeCompare(String(b[0])));
   modal({ drawer: true, title: esc(o.id) + ' ' + badge(st) + lateTag(o), sub: esc(o.title),
     body: (acts ? '<div class="actbar"><span class="lbl">จัดการ</span>' + acts + '</div>' : '') + cancelNote(o) +
-      '<div class="row" style="margin:' + (o.cancelledAt ? '12px' : '0') + ' 0 12px">' + drawBtns(o) + '</div>' +
+      '<div class="row" style="margin:' + (o.cancelledAt ? '12px' : '0') + ' 0 12px">' + folBtn(o.id) + drawBtns(o) + '</div>' +   /* V7.18.1: 🔔 ติดตาม Order (แจ้งเตือนรายงาน) */
       (st === 'open' || st === 'expired' ? '<div style="margin-bottom:12px">' + cdHtml(o) + '</div>' : '') +
       '<div class="dw-grid"><div class="dw-main"><h3 class="dw-h">รายละเอียดงาน</h3><dl class="dl">' + [o.snOrder ? ['เลขที่ Order StarNexus', '<span class="mono strong">' + esc(o.snOrder) + '</span>'] : null, ['ประเภทงาน', sw(o.type)], seeSalePrice() ? ['ราคาขาย', '<b>' + money(saleTotal(o), 0) + '</b> ' + icon('lock', 'xs') + ' <span class="xs muted">เฉพาะภายใน</span>'] : null,
         role !== 'sale' && ref != null ? ['ราคาตั้งต้นผู้รับเหมา', '<b style="color:var(--teal)">' + money(ref) + '</b>' + (isAdmin() && rateOf(o) != null ? ' <span class="xs muted">= ราคาขาย × ' + rateOf(o) + '%' + (o.confirmedAt ? '' : ' (อัตราปัจจุบัน)') + '</span>' : '') + (o.refChangedAt ? '<div class="xs" style="color:#8A5A00">แก้ไขราคาตั้งต้นเมื่อ ' + fmtDT(o.refChangedAt) + '</div>' : '')] : null,
@@ -3280,13 +3753,13 @@ route(/^\/ins\/job\/([^/]+)$/, 'ins', (m) => {
     '<div class="form-grid" style="margin-top:12px"><div class="field c6"><label>วันที่ส่งมอบงาน <span class="req">*</span></label><input class="input" type="date" name="date" max="' + todayStr() + '" value="' + (IHF.date || todayStr()) + '"></div><div class="field c6"><label>หมายเหตุ</label><input class="input" name="note" value="' + esc(IHF.note || '') + '" placeholder="เช่น ลูกค้าตรวจรับครบทุกตู้"></div></div>' +
     '<button class="btn primary block" style="margin-top:12px" data-act="ihfSend" data-id="' + o.id + '">' + icon('send', 'sm') + ' ส่งใบส่งมอบ · ปิดงาน</button></div>';
   return { nav: back, after: renderIhfFiles, html: '<div class="crumb"><a href="' + back + '">งานช่างติดตั้งโรงงาน</a> › ' + esc(o.id) + '</div>' +
-    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + lateTag(o) + '<h2 style="margin-top:4px">' + esc(o.title) + '</h2></div><span class="row" style="gap:6px">' + drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">' + icon('file', 'sm') + ' รายละเอียด Order</button></span></div>' +
+    '<div class="card"><div class="card-b"><div class="row between"><div><span class="jid mono strong">' + esc(o.id) + '</span> ' + badge(s) + lateTag(o) + ' ' + folBtn(o.id) + '<h2 style="margin-top:4px">' + esc(o.title) + '</h2></div><span class="row" style="gap:6px">' + drawBtns(o) + '<button class="btn sm" data-act="order" data-id="' + o.id + '">' + icon('file', 'sm') + ' รายละเอียด Order</button></span></div>' +
     '<dl class="dl small" style="margin-top:10px">' + (o.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(o.snOrder) + '</dd>' : '') +
       '<dt>ทีมช่าง</dt><dd>' + (tm ? '<b>' + esc(tm.name) + '</b>' + (tm.size ? ' · ' + tm.size + ' คน' : '') + (tm.lead ? ' · ' + esc(tm.lead) : '') : '<span class="badge t-amber">ยังไม่จัดทีม</span>') + '</dd>' +
       (tm ? '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(x.start, x.end) + '</b> (' + x.days + ' วัน)</dd>' : '<dt>ลูกค้าพร้อมให้ติดตั้ง</dt><dd>' + fmtRange(o.wantFrom, o.wantTo) + '</dd>') +
       '<dt>สถานที่</dt><dd>' + esc(o.siteName) + '<br>' + esc(o.address) + ' จ.' + esc(o.province) + siteNavHtml(o, '<br>') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(o.contactName) + (o.contactPhone ? ' · <a href="tel:' + esc(o.contactPhone) + '">' + esc(o.contactPhone) + '</a>' : '') + '</dd>' +
       '<dt>จำนวนตู้</dt><dd>' + num(o.cabinets) + ' ตู้</dd>' + (x.note ? '<dt>หมายเหตุหัวหน้าช่าง</dt><dd>' + esc(x.note) + '</dd>' : '') + (o.note ? '<dt>หมายเหตุ Order</dt><dd>' + esc(o.note) + '</dd>' : '') + '</dl></div></div>' +
-    '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
+    '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน' + tipI('ทำตามลำดับ:\n1) **ยิงรับของ** — ยิง Code Pack บนห่อทุกห่อ (ห่อแรก = เริ่มงาน)\n2) **ส่งมอบงาน** — ติดตั้งเสร็จ แนบรูปใบส่งมอบที่ลูกค้าเซ็น แล้วกดบันทึก → งานจบ', 'ขั้นตอนการทำงาน') + '</h2></div><div class="card-b"><div class="steps">' +
     '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนห่อทุกห่อตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงห่อแรก = เริ่มงาน</div>' +
       recvBox(o, can) + '</div></div>' +
     '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งเสร็จ · ส่งมอบงาน</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ส่งแล้วปิดงานทันที (ช่างโรงงานไม่ต้องผ่านบัญชี)</div>' +
@@ -3681,7 +4154,7 @@ function conOrders(cid) { return DB.orders.filter((o) => conVisible(o, cid)).map
 function noCon(nav) { return { nav, html: '<div class="card">' + empty('users', 'ยังไม่มีบริษัทผู้รับเหมาในระบบ', 'เพิ่มผู้ใช้ประเภท "ผู้รับเหมา" ที่หน้า จัดการผู้ใช้', S.user.role === 'admin' ? '<a class="btn primary" href="#/admin/users">ไปหน้าจัดการผู้ใช้</a>' : '') + '</div>' }; }
 function conHero(cid, title, sub) {
   const c = conById(cid), k = conCounts(cid);
-  return '<div class="con-hero"><div><div class="s">' + esc(c.company) + '</div><h1>' + title + '</h1>' + (sub ? '<div class="s" style="margin-top:2px">' + sub + '</div>' : '') + '</div>' + bellSafe('ch') +   /* V7.16.5: มือถือ (ไม่มีแถบบน) — กระดิ่งเปิด/ปิดแจ้งเตือนที่หัวหน้า */
+  return '<div class="con-hero"><div><div class="s">' + esc(c.company) + '</div><h1>' + title + pageHelpI(title) + '</h1>' + (sub ? '<div class="s" style="margin-top:2px">' + sub + '</div>' : '') + '</div>' + bellSafe('ch') +   /* V7.16.5: มือถือ (ไม่มีแถบบน) — กระดิ่งเปิด/ปิดแจ้งเตือนที่หัวหน้า */
     '<div class="stats">' + [['#/con/open', k.open, 'รอใส่ราคา'], ['#/con/sent', k.sent, 'รออนุมัติ'], ['#/con/work', k.work, 'งานของฉัน']].map((x) => '<a href="' + x[0] + '"' + (location.hash.split('?')[0] === x[0] ? ' class="on" aria-current="page"' : '') + '><b>' + x[1] + '</b><span>' + x[2] + '</span></a>').join('') + '</div></div>';
 }
 /* V7.16.4: งานที่เปิดให้เสนอราคา (ยังไม่ได้เสนอ) — ใช้ในแท็บรอใส่ราคา และขึ้นแทนหน้าว่างของแท็บอื่น (ไม่ต้องกดไปอีกหน้า) */
@@ -3840,7 +4313,7 @@ route(/^\/con\/job\/([^/]+)$/, 'con', (m) => {
     '<dl class="dl small" style="margin-top:10px">' + (p.snOrder ? '<dt>เลขที่ Order StarNexus</dt><dd class="mono strong">' + esc(p.snOrder) + '</dd>' : '') + '<dt>ช่วงติดตั้ง</dt><dd><b>' + fmtRange(p.award.start, p.award.end) + '</b> (' + p.award.days + ' วัน)</dd><dt>สถานที่</dt><dd>' + esc(p.siteName) + '<br>' + esc(p.address) + ' จ.' + esc(p.province) + siteNavHtml(p, '<br>') + '</dd><dt>ผู้ติดต่อหน้างาน</dt><dd>' + esc(p.contactName) + (p.contactPhone ? ' · <a href="tel:' + esc(p.contactPhone) + '">' + esc(p.contactPhone) + '</a>' : '') + '</dd><dt>ราคางาน</dt><dd class="money">' + money(p.award.price, 0) + '</dd><dt>เงื่อนไขจ่ายเงิน</dt><dd>' + esc(termsText(p.award.terms)) + '</dd>' + (p.note ? '<dt>หมายเหตุ</dt><dd>' + esc(p.note) + '</dd>' : '') + '</dl>' + conDraw(p) + '</div></div>' +
     (ack ? ackCard(o) : '') +
     (lateDays(o) ? alertBar(1, 'เลยกำหนดเสร็จ ' + lateDays(o) + ' วัน (ต้องเสร็จภายใน ' + fmtDate(dueEnd(o)) + ')', 'ติดตั้งเสร็จแล้ว — ส่งใบส่งมอบด้านล่าง · ยังไม่เสร็จ — แจ้งจัดซื้อเพื่อเลื่อนวัน', '', 'red') : '') +
-    '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน</h2></div><div class="card-b"><div class="steps">' +
+    '<div class="card"><div class="card-h"><h2>' + icon('list') + ' ขั้นตอนการทำงาน' + tipI('ทำตามลำดับ:\n1) **ยิงรับของ** — ยิง Code Pack บนห่อทุกห่อตอนรับของ (ห่อแรก = เริ่มงาน)\n2) **ส่งมอบงาน** — ติดตั้งเสร็จ แนบรูปใบส่งมอบที่ลูกค้าเซ็น + รูปหน้างาน + วันที่ส่งมอบ แล้วกดส่ง\nบริษัทตรวจรับแล้ว ดูวันรับเงินที่ “รอรับเงิน”', 'ขั้นตอนการทำงาน') + '</h2></div><div class="card-b"><div class="steps">' +
     '<div class="stp ' + st1 + '"><div class="dot">' + (st1 === 'done' ? icon('check', 'sm') : '1') + '</div><div class="sb"><h4>ยิงรับของ</h4><div class="small muted">ยิง Code Pack บนห่อทุกห่อตอนรับของ (สติกเกอร์ใบเดียวกับที่คลังยิง) — ยิงห่อแรก = เริ่มงาน</div>' +
       (ack ? '<div class="box small muted">' + icon('lock', 'sm') + ' ยืนยันเงื่อนไขการชำระเงินด้านบนก่อน จึงยิงรับของ / เริ่มงานได้</div>' : recvBox(o, true)) + '</div></div>' +
     '<div class="stp ' + st3 + '"><div class="dot">' + (st3 === 'done' ? icon('check', 'sm') : '2') + '</div><div class="sb"><h4>ติดตั้งเสร็จ · ส่งมอบงาน</h4><div class="small muted">แนบรูปใบส่งมอบที่ลูกค้าเซ็น ภาพหน้างาน และวันที่ส่งมอบ — ฝ่ายบัญชีของบริษัทจะตรวจเอกสารและแจ้งวันชำระเงิน</div>' +
@@ -3891,7 +4364,7 @@ on('slView', () => {
    กรอบ Scan-Link อยู่นอก #app (วางทับช่องว่างในหน้า) → หน้าวาดใหม่ / เปิดเมนู / ข้อมูลอัปเดต ไม่ทำให้ Scan-Link โหลดใหม่ · ออกจากหน้า = ปิดกล้อง */
 const SLV = { el: null };
 function slvPage(nav) {
-  const head = '<div class="slv-pg-h">' + icon('qr') + '<div class="slv-pg-t"><b>สแกนดูแบบ / 3D</b><span>QR = เปิดแบบ · Data Matrix บนสติกเกอร์ชิ้นงาน = เปิด 3D · บาร์โค้ดชิ้นงาน = ข้อมูล Lot</span></div>' +
+  const head = '<div class="slv-pg-h">' + icon('qr') + '<div class="slv-pg-t"><b>สแกนดูแบบ / 3D' + pageHelpI('สแกนดูแบบ / 3D') + '</b><span>QR = เปิดแบบ · Data Matrix บนสติกเกอร์ชิ้นงาน = เปิด 3D · บาร์โค้ดชิ้นงาน = ข้อมูล Lot</span></div>' +
     '<button type="button" class="btn sm" data-act="slvReload" title="กลับหน้าสแกน">' + icon('refresh', 'sm') + '<span class="hide-sm"> สแกนใหม่</span></button>' +
     '<a class="btn sm" href="' + SCANLINK_URL + '" target="_blank" rel="noopener" title="เปิด Scan-Link ในแท็บใหม่ (ถ้ากล้อง / หน้าแบบไม่ขึ้นในนี้)">' + icon('external', 'sm') + '<span class="hide-sm"> แท็บใหม่</span></a></div>';
   if (FRAMED) return { nav, html: head + '<div class="card"><div class="card-b">' + notice('info', 'ในหน้าของ Production (Odoo) เปิด Scan-Link ในแท็บใหม่ — กล้องในกรอบซ้อนกรอบใช้ไม่ได้ทุกเครื่อง') +
@@ -4542,7 +5015,7 @@ function snbPick(oid, copied) {
   try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { /* ignore */ }
 }
 on('snbRecent', (el) => snbPick(el.dataset.oid, false));
-on('snbNav', async (el) => { try { await snbCall('nav', { to: el.dataset.to === 'prod' ? 'prod' : 'home' }, 5000); } catch (e) { toast(e.message, 'err'); } });
+on('snbNav', async (el) => { const t = el.dataset.to; try { await snbCall('nav', { to: ['prod', 'cn', 'spn'].indexOf(t) >= 0 ? t : 'home' }, 5000); } catch (e) { toast(e.message, 'err'); } });   /* V7.18: + สลับไป CN / SPN (หน้า Odoo V273) */
 /* V7.16.12: Order ทั้งหมดใน Production (ฟอร์มว่าง) — เลื่อนดูได้ทั้งหมด
    ในแท็บ Production: คำสั่ง index (ทุก Order ทีเดียว · ถามใหม่ทุก 60 วิ) · เปิดจากลิงก์: ข้อมูลที่ซิงก์ ทีละ 100 (เลื่อนถึงท้ายรายการโหลดต่อ)
    Production / SQL รุ่นเก่ายังไม่มีคำสั่งนี้ → Order ล่าสุด 20 รายการแบบเดิม */
@@ -4619,7 +5092,7 @@ function snbSumNow() {
 }
 /* V7.9.1: ปุ่มรูปบ้าน (มุมบนซ้ายข้างชื่อโปรแกรม / แถบบนมือถือ) — เปิดผ่าน Production Nexus เท่านั้น */
 function snbHomeHtml(cls) {
-  return SNB_FRAMED && SNB.on && SNB.home ? '<button type="button" class="nx-home ' + (cls || '') + '" data-act="snbNav" data-to="home" title="กลับหน้าเลือกโปรแกรม (Production Nexus / Contractor Nexus)" aria-label="กลับหน้าเลือกโปรแกรม">' + icon('home') + '</button>' : '';
+  return SNB_FRAMED && SNB.on && SNB.home ? '<button type="button" class="nx-home ' + (cls || '') + '" data-act="snbNav" data-to="home" title="กลับหน้าเลือกโปรแกรม (Production · Contractor · Support Nexus)" aria-label="กลับหน้าเลือกโปรแกรม">' + icon('home') + '</button>' : '';
 }
 function snbNavHtml(cls) {
   return SNB_FRAMED && SNB.on && SNB.home ? '<button type="button" class="' + cls + '" data-act="snbNav" data-to="home">' + icon('dashboard', 'sm') + ' หน้าเลือกโปรแกรม</button><button type="button" class="' + cls + '" data-act="snbNav" data-to="prod">' + icon('factory', 'sm') + ' ไป Production Nexus</button>' : '';
@@ -6690,7 +7163,8 @@ function ppShortNote(o, got) {
    V7.16.5: จัดซื้อ: Order ใหม่รอเลือกช่องทาง · หมดเวลาเสนอราคา · ผู้รับเหมาไม่รับเงื่อนไข (sql/06_push_pur.sql)
             แถบ “ติดตั้งแอปลงหน้าจอ” ทุกหน้าบนมือถือ · กระดิ่งมุมขวาบน = เปิด / ปิดแจ้งเตือน + เสียง + ส่งทดสอบ ในแอปเลย */
 const PUSH = { reg: null, sub: null, perm: 'default', inst: null, installed: false, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
-const PUSH_ROLES = { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1, production: 1, warehouse: 1 };   /* V7.17: + ฝ่ายผลิต / คลัง (ไลน์ผลิต) */   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
+/* V7.18: แจ้งเตือนแยกแอป — SPN = ฝ่ายผลิต + จัดซื้อ (งานสั่งทำ) · CN = บทบาทอื่น (ฝ่ายผลิตย้ายไป SPN · เครื่องที่สมัครไว้เดิมยังได้รับจนกว่าจะติดตั้ง SPN) */
+const PUSH_ROLES = APP_KIND === 'spn' ? { production: 1 } : { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1 };   /* V7.17: + ฝ่ายผลิต (ไลน์ผลิต) · V7.17.1 คลังไม่มีหัวข้อไลน์ผลิตแล้ว (ใบเบิกเอาออก) */   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
 function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
 function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
 function pwaStandalone() { try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
@@ -6706,7 +7180,7 @@ function sameKey(sub, key) { try { const a = new Uint8Array(sub.options.applicat
   add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' });
   add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
-  add('meta', { name: 'apple-mobile-web-app-title', content: 'Starmark CN' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: APP_SHORT });
   if (!document.querySelector('meta[name="theme-color"]')) add('meta', { name: 'theme-color', content: '#14233B' });
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); PUSH.inst = e; pushCardRefresh(); });
   window.addEventListener('appinstalled', () => { PUSH.inst = null; PUSH.installed = true; pushCardRefresh(); });
@@ -6728,7 +7202,8 @@ async function pushSync() {
     PUSH.sub = await PUSH.reg.pushManager.getSubscription();
     const u = S.user;
     if (PUSH.sub && PUSH.perm === 'granted' && u && PUSH_ROLES[u.role] && PUSH.linked !== u.id && AUTH.s) {
-      await rpc('cn_push_subscribe', { p_sub: PUSH.sub.toJSON(), p_ua: pushUA() });
+      if (APP_KIND === 'spn') await rpc('cn_push_sub_app', { p_sub: PUSH.sub.toJSON(), p_ua: pushUA(), p_app: 'spn' });   /* V7.18: เครื่องนี้สมัครจากแอป SPN */
+      else await rpc('cn_push_subscribe', { p_sub: PUSH.sub.toJSON(), p_ua: pushUA() });
       PUSH.linked = u.id;
     }
   } catch (e) { /* ไม่ขวางการใช้งาน */ }
@@ -6746,9 +7221,8 @@ function pushBadgeCount() {
     return k.open + fix;
   }
   if (S.user.role === 'installer') { const c = counts(); return c.ihWait + c.ihSign + c.dispatch; }   /* V7.17 + รอเลือกช่องทาง */
+  if (APP_KIND === 'spn') return S.user.role === 'production' || S.user.role === 'purchasing' ? prdNavCount() : 0;   /* V7.18: SPN = cn_spn_badge */
   if (S.user.role === 'purchasing') { const st = DB.orders.map(ost); return st.filter((x) => x === 'expired').length; }   /* = cn_push_badge_for('purchasing') · V7.17 ไม่นับรอเลือกช่องทาง (หัวหน้าช่างเลือก) */
-  if (S.user.role === 'production') return prdList().reduce((n, b) => n + (+b.rqPaid || 0), 0);   /* V7.17 = cn_push_badge_for('production') */
-  if (S.user.role === 'warehouse') return prdList().reduce((n, b) => n + (+b.rqWait || 0), 0);   /* V7.17 = cn_push_badge_for('warehouse') */
   return 0;
 }
 function pushBadge() {
@@ -6763,8 +7237,7 @@ const PUSH_WHAT = {
   purchasing: 'งานใหม่ส่งให้ผู้รับเหมา (หัวหน้าช่างเลือก) · หมดเวลาเสนอราคา รอเลือกผู้รับเหมา · ผู้รับเหมาไม่รับเงื่อนไข · ผู้รับเหมาเสนอราคา (เลือกเปิดได้)',
   sale: 'Order ของคุณ: ได้ช่างติดตั้ง + วันติดตั้ง · เริ่มงานที่หน้างาน · ติดตั้งเสร็จ · Order ถูกยกเลิก',
   admin: 'ทุกขั้นตอนของทุกฝ่าย: Sale ยืนยัน Order · จัดซื้อส่งงาน · ผู้รับเหมาเสนอราคา / ได้งาน / เข้าหน้างาน / ส่งใบส่งมอบ · บัญชีตรวจ / จ่ายเงิน · ช่างโรงงานจัดทีม / เริ่ม / เสร็จ — บอกด้วยว่าแจ้งถึงใคร',
-  production: 'คลังจ่ายของตามใบเบิกแล้ว (มารับได้) · ของสั่งทำมาถึง / มาครบ',   /* V7.17 */
-  warehouse: 'ใบเบิกใหม่จาก Production รอคลังจ่าย'
+  production: 'แผนส่งใบปิดผิว / ใบสั่งตัด / งานสี / ใบรายการสั่งทำใหม่ · เพื่อนร่วมไลน์ติ๊กสถานะ (เลือกได้ว่าสถานะไหน)'   /* V7.18 */
 };
 function pushCardHtml() {
   const u = S.user;
@@ -6774,7 +7247,7 @@ function pushCardHtml() {
   if (pwaInApp() || (pwaNotChrome() && instBarOn())) return '';
   if (pwaIOS() && !pwaStandalone()) {
     return '<div class="pushcard">' + icon('phone') + '<div class="pc-b"><b>ติดตั้งแอปบน iPhone เพื่อรับแจ้งเตือน</b>' +
-      '<ol class="pc-steps"><li>เปิดลิงก์นี้ใน <b>Safari</b></li><li>กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</li><li>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></li><li>เปิดแอป <b>Starmark CN</b> จากไอคอน แล้วกด “เปิดการแจ้งเตือน”</li></ol>' + what + '</div></div>';
+      '<ol class="pc-steps"><li>เปิดลิงก์นี้ใน <b>Safari</b></li><li>กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</li><li>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></li><li>เปิดแอป <b>' + APP_SHORT + '</b> จากไอคอน แล้วกด “เปิดการแจ้งเตือน”</li></ol>' + what + '</div></div>';
   }
   if (!pushCapable() || !PUSH.reg) return '';
   if (PUSH.perm === 'denied') {
@@ -6790,11 +7263,11 @@ function pushCardHtml() {
   return '<div class="pushcard">' + icon('bell') + '<div class="pc-b"><b>รับแจ้งเตือนในมือถือ</b><div class="pc-what">ไม่ต้องเปิดเว็บค้างไว้ · เด้งเตือนพร้อมเสียงของเครื่อง (ปิดเสียงได้) · เลขสีแดงบนไอคอน = งานที่รอท่าน</div>' + what + '</div>' +
     '<div class="pc-act">' + inst + (PUSH_TOPICS[u.role] ? '<button class="btn sm" data-act="pushSheet">' + icon('settings', 'sm') + ' เลือกเรื่องที่แจ้ง</button>' : '') + '<button class="btn sm primary" data-act="pushOn"' + (PUSH.busy ? ' disabled' : '') + '>' + icon('bell', 'sm') + ' เปิดการแจ้งเตือน</button></div></div>';
 }
-const PUSH_HOME = { contractor: '/con/open', installer: '/ins/queue', purchasing: '/pur/bids', sale: '/sale/orders', production: '/prd/orders', warehouse: '/prd/orders' };   /* V7.17: คลังเปิดแจ้งเตือนที่หน้าไลน์ผลิต (หน้าคลังเดิมไม่เปลี่ยน) */
+const PUSH_HOME = APP_KIND === 'spn' ? { purchasing: '/prd/orders', production: '/prd/orders' } : { contractor: '/con/open', installer: '/ins/queue', purchasing: '/pur/bids', sale: '/sale/orders' };   /* V7.18 */   /* V7.17 */
 /* V7.16.5: หัวข้อที่จัดซื้อ / Sale เลือกเปิด-ปิดได้ (ตรงกับ cn_push_topics ใน SQL) — เก็บที่ Server ใช้กับทุกเครื่องของบัญชี */
-const PUSH_TOPICS = {
+const PUSH_TOPICS_ALL = {
   purchasing: [['p_new', 'งานใหม่ส่งให้ผู้รับเหมา', 'หัวหน้าช่างเลือกผู้รับเหมา — เปิดรับราคาแล้ว (V7.17)'], ['p_expire', 'หมดเวลาเสนอราคา', 'ปิดรับราคาแล้ว รอเลือกผู้รับเหมา (บอกจำนวนที่เสนอ)'],
-    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_late', 'งานติดตั้งเลยกำหนดเสร็จ', 'เช้าวันถัดจากวันครบกำหนด ถ้ายังไม่ส่งใบส่งมอบ / ยังไม่กดเสร็จ'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)'], ['p_mo', 'งานสั่งทำใหม่รอสั่ง', 'Production ส่งใบรายการสั่งทำเข้าไลน์ผลิต (V7.17)']],
+    ['p_decline', 'ผู้รับเหมาไม่รับเงื่อนไข', 'ผู้รับเหมาที่อนุมัติกด “ไม่รับ” — ต้องเลือกรายใหม่'], ['p_late', 'งานติดตั้งเลยกำหนดเสร็จ', 'เช้าวันถัดจากวันครบกำหนด ถ้ายังไม่ส่งใบส่งมอบ / ยังไม่กดเสร็จ'], ['p_bid', 'ผู้รับเหมาเสนอราคาเข้ามา', 'ทุกครั้งที่มีการเสนอ / แก้ / ถอนราคา (อาจถี่)']],   /* V7.18: งานสั่งทำย้ายไปสถานี Support ใน SPN (f_mo) — จัดซื้อไม่มีหัวข้อสั่งทำแล้ว */
   sale: [['s_booked', 'ได้ช่างติดตั้ง + วันติดตั้ง', 'รวมเปลี่ยนวันติดตั้ง / ยกเลิกช่าง — ไว้แจ้งลูกค้า'], ['s_start', 'เริ่มงานที่หน้างาน', 'ช่างยิงรับของห่อแรก / กดเริ่มงาน'],
     ['s_done', 'ติดตั้งเสร็จ', 'ช่างส่งใบส่งมอบงานแล้ว'], ['s_cancel', 'Order ถูกยกเลิก', 'เมื่อคนอื่นยกเลิก Order ของคุณ']],
   /* V7.16.6: ผู้รับเหมา / หัวหน้าช่างโรงงาน (ตรงกับ cn_push_topics ใน SQL 07 / 12 · ค่าเริ่มต้นเปิดหมด · V7.16.11 + c_due / i_due / p_late) */
@@ -6804,9 +7277,18 @@ const PUSH_TOPICS = {
   installer: [['i_pick', 'Order ใหม่รอเลือกช่องทาง', 'Sale ยืนยันแล้ว — เลือกช่างติดตั้งโรงงาน หรือ ผู้รับเหมา (V7.17)'], ['i_new', 'งานใหม่รอจัดทีม', 'งานช่างโรงงานที่ยังไม่ได้จัดทีม'], ['i_tomorrow', 'พรุ่งนี้มีงานติดตั้ง', 'เตือนล่วงหน้า 1 วัน + ชื่อทีม'],
     ['i_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่กดเสร็จ'], ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']],
   /* V7.17: ไลน์ผลิต (ตรงกับ cn_push_topics ใน SQL 15) */
-  production: [['f_rq', 'คลังจ่ายของตามใบเบิกแล้ว', 'มารับของได้ — กด “ผลิตรับแล้ว” เมื่อได้ของ'], ['f_mo', 'ของสั่งทำมาถึง', 'จัดซื้อ / คลังกด “ได้รับแล้ว” — บอกว่าครบหรือยังขาดกี่รายการ']],
-  warehouse: [['w_rq', 'ใบเบิกใหม่รอจ่าย', 'Production ออกใบเบิกให้ไลน์ผลิต — เตรียมของแล้วกด “คลังจ่ายแล้ว”']]
+  production: [['f_lm', 'ใบปิดผิวใหม่ / แก้ไข', 'แผนกดส่งใบปิดผิวเข้าไลน์ผลิต'],
+    ['f_lm_got', 'ปิดผิว: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_lm_doing', 'ปิดผิว: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_lm_done', 'ปิดผิว: เสร็จแล้ว', 'ไม้ปิดผิวครบทุกรายการ — พร้อมตัด'],
+    ['f_cut', 'ใบสั่งตัดใหม่ / เปลี่ยน', 'แผนส่งใบสั่งตัด (ไม้ · จำนวนชิ้น)'],
+    ['f_cut_got', 'ตัด: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_cut_doing', 'ตัด: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_cut_done', 'ตัด: เสร็จแล้ว', 'ตัดครบ — ชิ้นที่ทำสีพร้อมส่งแผนกทำสี'],
+    ['f_paint', 'งานสีใหม่ / เปลี่ยน', 'ใบสั่งตัดมีชิ้นทำสี (สี · ตร.ม.)'],
+    ['f_paint_got', 'ทำสี: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_paint_doing', 'ทำสี: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_paint_done', 'ทำสี: เสร็จแล้ว', 'ทำสีครบทุกสี ส่งคืนไลน์'],
+    ['f_mo', 'ใบรายการสั่งทำใหม่ (Support)', 'แผนส่งใบรายการสั่งทำเข้าไลน์ผลิต — รอ Support รับงาน'],
+    ['f_mo_got', 'สั่งทำ: รับงานแล้ว', 'Support ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_mo_doing', 'สั่งทำ: กำลังทำ', 'Support ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_mo_done', 'สั่งทำ: เสร็จแล้ว', 'Support ทำครบทุกรายการ']]   /* V7.18 · SPN: 4 สถานี × (ใหม่ · รับงานแล้ว · กำลังทำ · เสร็จแล้ว) = 16 หัวข้อ (ตรงกับ cn_push_topics ใน SQL 19) */
 };
+/* V7.18: หัวข้อไลน์ผลิต (f_* · p_mo) อยู่ในแอป SPN · ที่เหลืออยู่ใน CN — ตรงกับ cn_push_take ที่ส่งตามแอป */
+const pushSpnKind = (k) => /^f_/.test(k) || k === 'p_mo';
+const PUSH_TOPICS = (() => { const o = {}; Object.keys(PUSH_TOPICS_ALL).forEach((r) => { const L = PUSH_TOPICS_ALL[r].filter((x) => (APP_KIND === 'spn') === pushSpnKind(x[0])); if (L.length) o[r] = L; }); return o; })();
 function pushAfter(path) {
   pushBadge();
   if (AUTH.s && PUSH.reg && S.user && PUSH_ROLES[S.user.role] && PUSH.linked !== S.user.id && Date.now() - PUSH.tick > 60000) { PUSH.tick = Date.now(); pushSync(); }
@@ -6862,7 +7344,7 @@ const chromeBtn = (cls) => '<a class="btn ' + (cls || 'sm primary') + '" href="'
 document.addEventListener('click', (e) => { const a = e.target.closest && e.target.closest('a[data-chrome]'); if (!a) return; setTimeout(() => { if (document.visibilityState === 'visible' && Acts.pwaGuide) Acts.pwaGuide(); }, 2500); });
 function pwaMobile() { try { return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } }
 function pwaTopWin() { try { return !FRAMED && window.top === window; } catch (e) { return false; } }
-const INST_LATER = 'cn_inst_later';
+const INST_LATER = APP_KIND === 'spn' ? 'spn_inst_later' : 'cn_inst_later';   /* V7.18: CN / SPN อยู่โดเมนเดียวกัน (github.io) — ซ่อนแถบติดตั้งแยกกัน */
 function instLater() { try { return Date.now() - (+localStorage.getItem(INST_LATER) || 0) < 3 * 864e5; } catch (e) { return false; } }
 function instBarOn() {
   const u = S.user;
@@ -6875,7 +7357,7 @@ function instBarHtml() {
   const ia = pwaInApp(), nc = pwaNotChrome();
   const txt = ia ? '<b>กดเปิดในเบราว์เซอร์ เพื่อรับแจ้งเตือน</b><span>ตอนนี้เปิดอยู่ใน ' + (ia === 'line' ? 'LINE' : 'แอปแชท') + ' — แจ้งเตือน / ติดตั้งแอปใช้ไม่ได้ในนี้</span>'
     : nc ? '<b>เปิดใน ' + pwaGoBr() + ' เพื่อรับแจ้งเตือน</b><span>ตอนนี้เปิดอยู่ใน ' + BR_NAME[pwaBrowser()] + (pwaIOS() ? ' — iPhone ติดตั้งแอป / รับแจ้งเตือนได้จาก Safari' : ' — แจ้งเตือนมักไม่เด้ง · ติดตั้งเป็นแอปไม่ได้') + '</span>'
-    : '<b>ติดตั้งแอป “Starmark CN” ลงหน้าจอมือถือ</b><span>' + (pwaIOS() ? 'เปิดเร็วเหมือนแอป · iPhone ต้องติดตั้งก่อนถึงรับแจ้งเตือนได้' : 'เปิดเร็วเหมือนแอป (ไม่บังคับ — รับแจ้งเตือนได้แม้ไม่ติดตั้ง)') + '</span>';
+    : '<b>ติดตั้งแอป “' + APP_SHORT + '” ลงหน้าจอมือถือ</b><span>' + (pwaIOS() ? 'เปิดเร็วเหมือนแอป · iPhone ต้องติดตั้งก่อนถึงรับแจ้งเตือนได้' : 'เปิดเร็วเหมือนแอป (ไม่บังคับ — รับแจ้งเตือนได้แม้ไม่ติดตั้ง)') + '</span>';
   const btn = ia === 'line' ? '<button class="btn sm primary" data-act="pwaExternal">' + icon('external', 'sm') + ' เปิดในเบราว์เซอร์</button>'
     : ia ? '<button class="btn sm primary" data-act="pwaGuide">วิธีเปิด</button>'
     : nc ? chromeBtn()
@@ -6897,7 +7379,7 @@ function instBarPaint() {
 function lgInstOn() { return pwaTop() && pwaTopWin() && !pwaStandalone() && (pwaMobile() || !!PUSH.inst || !!pwaInApp() || PUSH.installed); }
 function lgInstHtml() {
   if (!lgInstOn()) return '';
-  if (PUSH.installed) return '<div class="lg-inst-ok">' + icon('check', 'sm') + ' ติดตั้งแล้ว — เปิดแอป <b>Starmark CN</b> จากหน้าจอ' + (pwaMobile() ? 'มือถือ' : 'เครื่อง') + '</div>';
+  if (PUSH.installed) return '<div class="lg-inst-ok">' + icon('check', 'sm') + ' ติดตั้งแล้ว — เปิดแอป <b>' + APP_SHORT + '</b> จากหน้าจอ' + (pwaMobile() ? 'มือถือ' : 'เครื่อง') + '</div>';
   const ia = pwaInApp(), nc = pwaNotChrome(), mob = pwaMobile();
   const lbl = mob ? 'ติดตั้งแอปลงหน้าจอมือถือ' : 'ติดตั้งแอปลงเครื่องนี้';
   const b = (act, txt, ic) => '<button type="button" class="btn block lg-inst-b" data-act="' + act + '">' + icon(ic || 'download', 'sm') + ' ' + txt + '</button>';
@@ -6921,8 +7403,8 @@ function pwaGuideBody() {
     (pwaIOS() ? '' : '<div class="xs muted">ให้ลิงก์จาก LINE เปิด Chrome ทุกครั้ง: ตั้งค่า → แอป → แอปเริ่มต้น → เบราว์เซอร์ → Chrome</div>');
   if (ia) return '<ol class="ps-steps"><li>กดปุ่ม <b>⋯</b> (มุมขวาบน / ขวาล่างของหน้าจอ)</li><li>เลือก <b>เปิดในเบราว์เซอร์</b> (Open in browser)</li><li>ในเบราว์เซอร์ กด <b>ติดตั้งเลย</b> ที่แถบด้านบน</li></ol>' +
     '<div class="xs muted">หรือกด “คัดลอกลิงก์” แล้ววางใน ' + (pwaIOS() ? 'Safari' : 'Chrome') + '</div>';
-  if (pwaIOS()) return '<ol class="ps-steps"><li>เปิดลิงก์นี้ใน <b>Safari</b></li><li>กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) — ไม่เห็น: กด <b>⋯</b> มุมขวาล่างก่อน แล้วกด <b>แชร์</b></li><li>เลื่อนลง เลือก <b>เพิ่มไปยังหน้าจอโฮม</b> → เปิด <b>เปิดเป็นเว็บแอป</b> (ถ้ามี) → กด <b>เพิ่ม</b></li><li>เปิดแอป <b>Starmark CN</b> จากไอคอนบนหน้าจอ แล้วกด <b>กระดิ่ง</b> มุมขวาบน → เปิดการแจ้งเตือน</li></ol>';
-  return '<ol class="ps-steps"><li>กดเมนู <b>⋮</b> มุมขวาบนของ Chrome</li><li>เลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b> → กด <b>ติดตั้ง</b></li><li>เปิดแอป <b>Starmark CN</b> จากไอคอนบนหน้าจอ แล้วกด <b>กระดิ่ง</b> มุมขวาบน → เปิดการแจ้งเตือน</li></ol>' +
+  if (pwaIOS()) return '<ol class="ps-steps"><li>เปิดลิงก์นี้ใน <b>Safari</b></li><li>กดปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) — ไม่เห็น: กด <b>⋯</b> มุมขวาล่างก่อน แล้วกด <b>แชร์</b></li><li>เลื่อนลง เลือก <b>เพิ่มไปยังหน้าจอโฮม</b> → เปิด <b>เปิดเป็นเว็บแอป</b> (ถ้ามี) → กด <b>เพิ่ม</b></li><li>เปิดแอป <b>' + APP_SHORT + '</b> จากไอคอนบนหน้าจอ แล้วกด <b>กระดิ่ง</b> มุมขวาบน → เปิดการแจ้งเตือน</li></ol>';
+  return '<ol class="ps-steps"><li>กดเมนู <b>⋮</b> มุมขวาบนของ Chrome</li><li>เลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b> → กด <b>ติดตั้ง</b></li><li>เปิดแอป <b>' + APP_SHORT + '</b> จากไอคอนบนหน้าจอ แล้วกด <b>กระดิ่ง</b> มุมขวาบน → เปิดการแจ้งเตือน</li></ol>' +
     '<div class="xs muted">Samsung Internet: เมนู ≡ → เพิ่มหน้าลงใน → หน้าจอหลัก</div>';
 }
 on('pwaGuide', () => modal({ title: icon('phone') + (pwaInApp() ? ' เปิดในเบราว์เซอร์' : pwaNotChrome() ? ' เปิดใน ' + pwaGoBr() : ' ติดตั้งแอปลงหน้าจอมือถือ'), sub: pwaIOS() ? 'iPhone / iPad' : 'Android', body: pwaGuideBody(),
@@ -6955,33 +7437,33 @@ function pushBellPaint() {
 const swHtml = (on, act, label) => '<button type="button" class="sw-t" role="switch" aria-checked="' + (on ? 'true' : 'false') + '" aria-label="' + label + '" data-act="' + act + '"' + (PUSH.busy ? ' disabled' : '') + '><span></span></button>';
 function pushSheetBody() {
   const u = S.user; if (!u) return '';
-  const ia = pwaInApp(), nc = pwaNotChrome(), bn = BR_NAME[pwaBrowser()], what = PUSH_TOPICS[u.role] ? pushTopicsHtml() : '<div class="ps-what"><b>แจ้งเตือนเมื่อ</b> ' + (PUSH_WHAT[u.role] || '') + '</div>';
+  const ia = pwaInApp(), nc = pwaNotChrome(), bn = BR_NAME[pwaBrowser()], what = folSheetHtml() + (PUSH_TOPICS[u.role] ? pushTopicsHtml() : '<div class="ps-what"><b>แจ้งเตือนเมื่อ</b> ' + (PUSH_WHAT[u.role] || '') + '</div>');
   const ncRow = nc ? notice('warn', 'ตอนนี้เปิดอยู่ใน <b>' + bn + '</b> — ' + (pwaIOS() ? 'iPhone ติดตั้งแอป / รับแจ้งเตือนได้จาก Safari' : 'แจ้งเตือนมักไม่เด้ง') + ' · แนะนำเปิดใน <b>' + pwaGoBr() + '</b> (กดปุ่มด้านล่าง แล้วล็อกอิน · เปิดแจ้งเตือนที่กระดิ่งอีกครั้ง)') + '<div style="margin:10px 0 4px">' + chromeBtn('primary') + '</div>' : '';
   const instRow = !pwaStandalone() && pwaMobile() && !ia && !nc
     ? '<div class="ps-row"><div class="ps-l"><b>ติดตั้งแอปลงหน้าจอ' + (pwaIOS() ? '' : ' (ไม่บังคับ)') + '</b><span>เปิดเร็วเหมือนแอป' + (pwaIOS() ? ' · iPhone ต้องติดตั้งก่อนถึงรับแจ้งเตือนได้' : ' · รับแจ้งเตือนได้แม้ไม่ติดตั้ง') + '</span></div>' +
       (PUSH.inst ? '<button class="btn sm primary" data-act="pwaInstall">' + icon('download', 'sm') + ' ติดตั้ง</button>' : '<button class="btn sm" data-act="pwaGuide">วิธีติดตั้ง</button>') + '</div>' : '';
   if (ia) return notice('warn', 'เปิดจากใน ' + (ia === 'line' ? 'LINE' : 'แอปแชท') + ' รับแจ้งเตือน / ติดตั้งแอปไม่ได้ — กดเปิดในเบราว์เซอร์ก่อน (' + (pwaIOS() ? 'Safari' : 'แนะนำ Chrome') + ')') +
     '<div style="margin-top:10px">' + (ia === 'line' ? '<button class="btn primary" data-act="pwaExternal">' + icon('external', 'sm') + ' เปิดในเบราว์เซอร์</button>' : '<button class="btn primary" data-act="pwaGuide">วิธีเปิดในเบราว์เซอร์</button>') + '</div>' + what;
-  if (pwaIOS() && !pwaStandalone()) return ncRow + instRow + notice('info', 'iPhone / iPad รับแจ้งเตือนได้เมื่อเปิดจากแอป <b>Starmark CN</b> ที่ติดตั้งลงหน้าจอแล้ว — ติดตั้งก่อน แล้วเปิดแอปจากไอคอน กดกระดิ่งนี้อีกครั้ง') + what;
+  if (pwaIOS() && !pwaStandalone()) return ncRow + instRow + notice('info', 'iPhone / iPad รับแจ้งเตือนได้เมื่อเปิดจากแอป <b>' + APP_SHORT + '</b> ที่ติดตั้งลงหน้าจอแล้ว — ติดตั้งก่อน แล้วเปิดแอปจากไอคอน กดกระดิ่งนี้อีกครั้ง') + what;
   if (!pushCapable() || !PUSH.reg) return ncRow + instRow + notice('warn', PUSH.ready ? 'เบราว์เซอร์นี้รับแจ้งเตือนไม่ได้ — ใช้ Chrome (Android) / Safari (iPhone) หรือเปิดจากแอปที่ติดตั้งแล้ว' : 'กำลังเตรียมระบบแจ้งเตือน… ลองกดอีกครั้งในไม่กี่วินาที') + what;
   if (PUSH.perm === 'denied') {
     pushWant(true);   /* V7.16.6: เปิดสิทธิ์ในตั้งค่าแล้วกลับมา → ระบบเปิดแจ้งเตือนให้เอง */
-    const steps = pwaIOS() ? ['เปิดแอป <b>ตั้งค่า</b> ของ iPhone', 'เลือก <b>การแจ้งเตือน</b> → <b>Starmark CN</b>', 'เปิด <b>อนุญาตการแจ้งเตือน</b>']
-      : pwaStandalone() && pwaBrowser() === 'chrome' ? ['กดค้างที่ไอคอน <b>Starmark CN</b> บนหน้าจอ → <b>ⓘ</b> (ข้อมูลแอป)', '<b>การแจ้งเตือน</b> → เปิด', 'ไม่เจอ ⓘ: <b>ตั้งค่า</b> มือถือ → <b>แอป</b> → <b>Starmark CN</b> → การแจ้งเตือน → เปิด']
+    const steps = pwaIOS() ? ['เปิดแอป <b>ตั้งค่า</b> ของ iPhone', 'เลือก <b>การแจ้งเตือน</b> → <b>' + APP_SHORT + '</b>', 'เปิด <b>อนุญาตการแจ้งเตือน</b>']
+      : pwaStandalone() && pwaBrowser() === 'chrome' ? ['กดค้างที่ไอคอน <b>' + APP_SHORT + '</b> บนหน้าจอ → <b>ⓘ</b> (ข้อมูลแอป)', '<b>การแจ้งเตือน</b> → เปิด', 'ไม่เจอ ⓘ: <b>ตั้งค่า</b> มือถือ → <b>แอป</b> → <b>' + APP_SHORT + '</b> → การแจ้งเตือน → เปิด']
       : ['แตะไอคอน <b>ซ้ายสุดของช่องลิงก์</b> ด้านบน (แม่กุญแจ / ⓘ / ปุ่มปรับ)', 'เลือก <b>สิทธิ์</b> หรือ <b>การแจ้งเตือน</b> → <b>อนุญาต</b>', 'ยังไม่ได้: <b>ตั้งค่า</b> มือถือ → <b>แอป</b> → <b>' + bn + '</b> → การแจ้งเตือน → เปิด'];
     return ncRow + notice('warn', '<b>การแจ้งเตือนของเครื่องนี้ถูกปิดไว้</b> — มือถือไม่ให้แอปขอซ้ำเอง ต้องเปิดเองครั้งเดียว:') +
       '<ol class="ps-steps">' + steps.map((x) => '<li>' + x + '</li>').join('') + '<li>กลับมาที่หน้านี้ — <b>ระบบเปิดแจ้งเตือนให้เอง</b></li></ol>' +
       '<div style="margin-top:6px"><button class="btn sm" data-act="pushRecheck">' + icon('refresh', 'sm') + ' ตรวจอีกครั้ง</button></div>' + instRow + what;
   }
   const on = pushOnFor();
-  return ncRow + '<div class="ps-row"><div class="ps-l"><b>แจ้งเตือนในเครื่องนี้</b><span>' + (on ? 'เปิดอยู่ — เด้งเตือนแม้ไม่ได้เปิดแอป' : 'ปิดอยู่ — กดเปิด แล้วเลือก “อนุญาต” ในหน้าต่างที่เด้งขึ้น') + '</span></div>' + swHtml(on, on ? 'pushOff' : 'pushOn', 'แจ้งเตือนในเครื่องนี้') + '</div>' +
-    (on ? '<div class="ps-row"><div class="ps-l"><b>เสียงแจ้งเตือน</b><span>' + (PUSH.sound ? 'ดังตาม “ระดับเสียงการแจ้งเตือน” ของมือถือ' : 'ไม่มีเสียง (ยังเด้งเตือน)') + '</span></div>' + swHtml(PUSH.sound, 'pushSound', 'เสียงแจ้งเตือน') + '</div>' +
+  return ncRow + '<div class="ps-row"><div class="ps-l"><b>แจ้งเตือนในเครื่องนี้' + tipI('เปิดสวิตช์นี้ = มือถือ / คอมเครื่องนี้เด้งแจ้งเตือน แม้ไม่ได้เปิดแอปอยู่\nตอนเปิดครั้งแรก เครื่องจะถามสิทธิ์ ให้กด **อนุญาต**\nแต่ละเครื่องต้องเปิดเอง (เปิดที่มือถือแล้ว คอมยังไม่เปิดให้)', 'แจ้งเตือนในเครื่องนี้') + '</b><span>' + (on ? 'เปิดอยู่ — เด้งเตือนแม้ไม่ได้เปิดแอป' : 'ปิดอยู่ — กดเปิด แล้วเลือก “อนุญาต” ในหน้าต่างที่เด้งขึ้น') + '</span></div>' + swHtml(on, on ? 'pushOff' : 'pushOn', 'แจ้งเตือนในเครื่องนี้') + '</div>' +
+    (on ? '<div class="ps-row"><div class="ps-l"><b>เสียงแจ้งเตือน' + tipI('เปิด = มีเสียงตอนเด้งแจ้งเตือน (ดังตามระดับเสียงแจ้งเตือนของมือถือ) · ปิด = เด้งเงียบ ๆ', 'เสียง') + '</b><span>' + (PUSH.sound ? 'ดังตาม “ระดับเสียงการแจ้งเตือน” ของมือถือ' : 'ไม่มีเสียง (ยังเด้งเตือน)') + '</span></div>' + swHtml(PUSH.sound, 'pushSound', 'เสียงแจ้งเตือน') + '</div>' +
       (PUSH.sound && pwaMobile() ? '<div class="ps-hint">' + icon('info', 'sm') + '<span><b>ให้เด้งบนจอ + มีเสียงแบบ LINE</b> (ตั้งครั้งเดียว · แอปตั้งเองไม่ได้): ' +
-        (pwaIOS() ? '<b>ตั้งค่า</b> → <b>การแจ้งเตือน</b> → <b>Starmark CN</b> → เปิด <b>แบนเนอร์</b> + <b>เสียง</b>'
+        (pwaIOS() ? '<b>ตั้งค่า</b> → <b>การแจ้งเตือน</b> → <b>' + APP_SHORT + '</b> → เปิด <b>แบนเนอร์</b> + <b>เสียง</b>'
           : 'กด <b>ส่งทดสอบ</b> → รูดแถบแจ้งเตือนลง → <b>กดค้าง</b>ที่แจ้งเตือน → <b>⚙ ตั้งค่า</b> → เลือก <b>มีเสียง / แจ้งเตือน</b> (ไม่ใช่ เงียบ) + เปิด <b>แบนเนอร์ / แสดงบนหน้าจอ</b>') +
         ' · เสียงเบา: <b>ตั้งค่า</b> → <b>เสียง</b> → <b>ระดับเสียงการแจ้งเตือน</b></span></div>' : '') +
-      '<div class="ps-row"><div class="ps-l"><b>ลองส่งแจ้งเตือน</b><span>เด้งภายในไม่กี่วินาที</span></div><button class="btn sm" data-act="pushTest">' + icon('send', 'sm') + ' ส่งทดสอบ</button></div>' +
-      (PUSH.tested ? '<div class="ps-hint" id="psHint">' + icon('info', 'sm') + '<span>ส่งแล้ว — ไม่เด้งใน 10 วินาที: <b>ตั้งค่า</b> มือถือ → <b>แอป</b> → <b>' + (pwaIOS() ? 'Starmark CN' : pwaStandalone() && pwaBrowser() === 'chrome' ? 'Starmark CN' : bn) + '</b> → การแจ้งเตือน → เปิด' + (pwaIOS() ? '' : ' · ปิดโหมดประหยัดแบตของแอปนั้น') + '</span></div>' : '') : '') +
+      '<div class="ps-row"><div class="ps-l"><b>ลองส่งแจ้งเตือน' + tipI('กดเพื่อส่งแจ้งเตือนทดสอบมาที่เครื่องนี้ — ถ้าไม่เด้งภายใน 10 วินาที ให้เช็คการตั้งค่าแจ้งเตือนของมือถือตามคำแนะนำ', 'ลองส่ง') + '</b><span>เด้งภายในไม่กี่วินาที</span></div><button class="btn sm" data-act="pushTest">' + icon('send', 'sm') + ' ส่งทดสอบ</button></div>' +
+      (PUSH.tested ? '<div class="ps-hint" id="psHint">' + icon('info', 'sm') + '<span>ส่งแล้ว — ไม่เด้งใน 10 วินาที: <b>ตั้งค่า</b> มือถือ → <b>แอป</b> → <b>' + (pwaIOS() ? '' + APP_SHORT + '' : pwaStandalone() && pwaBrowser() === 'chrome' ? '' + APP_SHORT + '' : bn) + '</b> → การแจ้งเตือน → เปิด' + (pwaIOS() ? '' : ' · ปิดโหมดประหยัดแบตของแอปนั้น') + '</span></div>' : '') : '') +
     instRow + what;
 }
 on('pushSheet', () => {
@@ -6989,6 +7471,7 @@ on('pushSheet', () => {
   if (PUSH.prefsU !== S.user.id) { PUSH.prefs = null; PUSH.prefsU = S.user.id; }   /* สลับบัญชีในเครื่องเดียวกัน — ไม่แสดงค่าของบัญชีก่อน */
   modal({ title: icon('bell') + ' การแจ้งเตือน', sub: 'เครื่องนี้ · ' + esc(S.user.name), body: '<div id="pushSheet">' + pushSheetBody() + '</div>', foot: '<button class="btn" data-act="closeOv">ปิด</button>' });
   pushPrefsLoad();
+  folLoad(true);
 });
 /* V7.16.5: เลือกหัวข้อ (จัดซื้อ / Sale) */
 async function pushPrefsLoad() {
@@ -6998,7 +7481,7 @@ async function pushPrefsLoad() {
 }
 function pushTopicsHtml() {
   const t = S.user && PUSH_TOPICS[S.user.role]; if (!t) return '';
-  return '<div class="ps-sec"><b>เรื่องที่ให้แจ้ง</b><span>เปิด / ปิดได้ทีละเรื่อง · ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้</span></div>' + t.map((x) => {
+  return '<div class="ps-sec"><b>เรื่องที่ให้แจ้ง' + tipI('สวิตช์ **เขียว** = แจ้ง · **เทา** = ไม่แจ้ง — แตะเพื่อเปลี่ยน\nตั้งครั้งเดียว ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้', 'เรื่องที่ให้แจ้ง') + '</b><span>เปิด / ปิดได้ทีละเรื่อง · ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้</span></div>' + t.map((x) => {
     const v = PUSH.prefs && x[0] in PUSH.prefs ? !!PUSH.prefs[x[0]] : null;
     return '<div class="ps-row"><div class="ps-l"><b>' + x[1] + '</b><span>' + x[2] + '</span></div>' +
       (v === null ? '<span class="xs muted">' + (PUSH.prefsErr ? 'โหลดไม่ได้' : 'กำลังโหลด…') + '</span>'
@@ -7077,7 +7560,7 @@ on('pwaInstall', async () => {
   PUSH.inst = null;
   let ok = false;
   try { ev.prompt(); const c = await ev.userChoice; ok = !!(c && c.outcome === 'accepted'); } catch (e) { /* ข้าม */ }
-  if (ok) { PUSH.installed = true; toast('ติดตั้งแล้ว — เปิดแอป “Starmark CN” จากหน้าจอมือถือ แล้วกดกระดิ่งเพื่อเปิดการแจ้งเตือน'); }
+  if (ok) { PUSH.installed = true; toast('ติดตั้งแล้ว — เปิดแอป “' + APP_SHORT + '” จากหน้าจอมือถือ แล้วกดกระดิ่งเพื่อเปิดการแจ้งเตือน'); }
   pushCardRefresh();
 });
 /* ออกจากระบบ: เลิกผูกเครื่องนี้กับบัญชี (เครื่องที่ใช้ร่วมกันจะไม่ได้แจ้งเตือนของบัญชีเดิม) */
@@ -7133,273 +7616,92 @@ on('pushAdmAll', async (el) => {
 lgInstPaint();   /* V7.16.18: หน้าเข้าระบบที่วาดไว้ก่อนไฟล์นี้โหลด → ใส่ปุ่มติดตั้ง */
 
 /* =====================================================================
-   V7.17 ไลน์ผลิต — ดูเอกสาร + สถานะผ่านแอป (ลดกระดาษ)
-   ผู้ใช้ 14/11: “สถานะผลิต เอาแค่ สถานะใบเบิก · สถานะงานสั่งทำ · รายการรวม — ผลิตคลิกเข้าไปแล้วเห็นเอกสารกับสถานะ”
-   · รายการรวม (#/prd/orders) — ทุก Order ที่ Production ส่งเอกสาร / ใบรายการสั่งทำมา + สถานะย่อ · ค้น · กรอง
-   · หน้า Order (#/prd/o/<เลข>) — ใบเบิก (ออกใบ → คลังจ่ายแล้ว → ผลิตรับแล้ว) · ใบปิดผิว (ดูอย่างเดียว + แตก BOM)
-     · งานสั่งทำ (รหัสสั่งตัด · กระจกสั่งตามขนาด · งานแผ่น: ยังไม่สั่ง → สั่งแล้ว → ได้รับแล้ว)
-   · ใครกดอะไร: คลัง “คลังจ่ายแล้ว” · ฝ่ายผลิต “ผลิตรับแล้ว” · จัดซื้อ “สั่งแล้ว / ได้รับแล้ว” · คลัง “ได้รับแล้ว” · Admin ทุกขั้น (Server ตรวจซ้ำ)
-   · ข้อมูลมาจาก Production: เปิด CN ในแท็บ Production → prdSync (คำสั่ง prd ของตัวกลาง · V270) → cn_prd_sync · ไม่มีราคา
+   V7.18.1 · SPN V1.1 — แจ้งเตือนรายงาน (ผู้ใช้ 15/11 11:56 “เปิดทั้งหมด หรือเปิดเฉพาะบาง job ทุกสถานการณ์”)
+   กระดิ่ง: “ทุกงาน” (ค่าเริ่มต้น) / “เฉพาะงานที่ติดตาม” + รายการงานที่ติดตาม · ปุ่ม 🔔 ในหน้างาน (SPN: หน้างาน / หน้าติ๊ก · CN: หน้ารายละเอียด Order)
+   งานใหม่ (เอกสารใหม่ / Order ใหม่) แจ้งเสมอ · หัวข้อที่เปิด / ปิดยังใช้เหมือนเดิม · ตรวจที่ Server (cn_push_follow_* · cn_push_take)
    ===================================================================== */
-const PRD_ROLES = { admin: 1, production: 1, warehouse: 1, purchasing: 1 };
-function canPrd() { return !!S.user && !!PRD_ROLES[S.user.role]; }
-const PRD = { det: {}, sig: {}, loading: {}, err: {}, q: '', f: '', tab: {}, sel: {} };
-function prdList() { return (DB && Array.isArray(DB.prd)) ? DB.prd : []; }
-const prdSum = (k) => prdList().reduce((n, b) => n + (+b[k] || 0), 0);
-function prdNavCount() {
-  const r = S.user && S.user.role;
-  return r === 'warehouse' ? prdSum('rqWait') : r === 'production' ? prdSum('rqPaid') : r === 'purchasing' ? prdSum('moNone') : 0;
+const FOL_ROLES = APP_KIND === 'spn' ? { production: 1 } : { admin: 1, sale: 1, purchasing: 1, installer: 1 };
+const FOL = { d: null, uid: '', busy: false, err: '', at: 0 };
+function folOk() { return !!(S.user && FOL_ROLES[S.user.role] && AUTH.s); }
+async function folLoad(force) {
+  if (!folOk() || FOL.busy) return;
+  if (FOL.uid !== S.user.id) { FOL.d = null; FOL.uid = S.user.id; }
+  if (!force && (FOL.d || FOL.err) && Date.now() - FOL.at < 60000) return;
+  FOL.busy = true;
+  try { FOL.d = await rpc('cn_push_follow_get'); FOL.err = ''; }
+  catch (e) { if (e.code === 'session') { forceLogout(e.message); return; } FOL.err = e.message; }
+  finally { FOL.busy = false; FOL.at = Date.now(); }
+  folPaint();
 }
-function prdNavItem(c) {
-  const r = S.user && S.user.role;
-  return { h: '#/prd/orders', i: 'factory', t: r === 'production' ? 'รายการรวม · เอกสาร & สถานะ' : 'ไลน์ผลิต · ใบเบิก / งานสั่งทำ', s: r === 'production' ? 'รายการรวม' : 'ไลน์ผลิต',
-    n: c ? c.prd : prdNavCount(), w: true, tip: (NAV_TIP.prd || {})[r] || '' };
+function folIs(ref) { return !!(FOL.d && Array.isArray(FOL.d.list) && FOL.d.list.some((x) => x.ref === ref)); }
+function folBtn(ref, cls) {
+  if (!folOk() || !ref) return '';
+  if (!FOL.d && !FOL.busy && !FOL.err) setTimeout(() => folLoad(), 0);
+  const on = folIs(ref);
+  return '<button type="button" class="btn sm fol-b' + (on ? ' on' : '') + (cls ? ' ' + cls : '') + '" data-act="folTog" data-ref="' + esc(ref) + '" aria-pressed="' + on + '" title="' + esc(folTip(ref)) + '">' + folBtnIn(ref) + '</button>';
 }
-/* งานที่บทบาทนี้ต้องทำใน Order นี้ */
-function prdTodo(b, r) {
-  r = r || (S.user && S.user.role);
-  if (r === 'warehouse') return +b.rqWait > 0;
-  if (r === 'production') return +b.rqPaid > 0;
-  if (r === 'purchasing') return +b.moNone > 0 || +b.moOrd > 0;
-  return +b.rqWait > 0 || +b.rqPaid > 0 || +b.moNone > 0 || +b.moOrd > 0;
+function folBtnIn(ref) { const on = folIs(ref); return icon('bell', 'sm') + '<span>' + (on ? 'ติดตามอยู่' : 'ติดตามงานนี้') + '</span>'; }
+function folMark(ref) { return folOk() ? '<span class="fol-mk' + (folIs(ref) ? '' : ' off') + '" data-fref="' + esc(ref) + '" title="ติดตามงานนี้อยู่ (แจ้งเตือน)">' + icon('bell', 'xs') + '</span>' : ''; }
+function folTip(ref) {
+  const on = folIs(ref), only = !!(FOL.d && FOL.d.only);
+  return on ? 'ติดตามอยู่ — กดเพื่อเลิกติดตาม' + (only ? ' (เลิกแล้วงานนี้ไม่แจ้งสถานะ ยกเว้นเอกสารใหม่)' : '')
+    : 'กดเพื่อติดตามงานนี้ — ' + (only ? 'แจ้งเตือนทุกหัวข้อที่เปิดไว้ของงานนี้' : 'ตอนนี้ตั้ง “แจ้งทุกงาน” อยู่ · เปลี่ยนเป็น “เฉพาะงานที่ติดตาม” ได้ที่กระดิ่ง');
 }
-const prdDone = (b) => !(+b.rqWait || +b.rqPaid || +b.moNone || +b.moOrd);
-const PRD_TODO_T = { warehouse: 'รอคลังจ่าย', production: 'รอผลิตรับ', purchasing: 'ต้องสั่ง / รอของ', admin: 'ยังไม่จบ' };
-const prdQ = (b) => [b.oid, b.title, b.iid].join(' ').toUpperCase();
-function prdD(v) { return v ? fmtDate(v) : '—'; }
-function prdIso(s) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '')); if (!m) return ''; const y = +m[1] > 2400 ? +m[1] - 543 : +m[1]; return fmtDate(y + '-' + m[2] + '-' + m[3]); }
-function prdQty(n) { const v = Math.round((+n || 0) * 100) / 100; return v.toLocaleString('th-TH', { maximumFractionDigits: 2 }); }
-
-/* ---------- สรุปย่อของ Order (ใช้ทั้งรายการรวม / หัวหน้า Order) ---------- */
-function prdRqPills(b) {
-  if (!+b.rq) return '<span class="xs muted">ไม่มีใบเบิก</span>';
-  return '<div class="prd-pills">' + (+b.rqWait ? '<span class="badge t-amber">รอคลังจ่าย ' + b.rqWait + '</span> ' : '') + (+b.rqPaid ? '<span class="badge t-blue">รอผลิตรับ ' + b.rqPaid + '</span> ' : '') +
-    (+b.rqRecv ? '<span class="badge t-green">' + icon('check', 'xs') + ' รับแล้ว ' + b.rqRecv + '</span>' : '') + '</div>';
+function folPaint() {
+  document.querySelectorAll('.fol-b[data-ref]').forEach((b) => { const r = b.dataset.ref, on = folIs(r); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.title = folTip(r); b.innerHTML = folBtnIn(r); });
+  document.querySelectorAll('.fol-mk[data-fref]').forEach((m) => m.classList.toggle('off', !folIs(m.dataset.fref)));   /* เครื่องหมาย 🔔 ที่แถวงาน */
+  pushSheetRepaint();
 }
-function prdMoBar(b) {
-  if (!+b.mo) return '<span class="xs muted">' + (b.moAt ? 'ไม่มีรายการ' : 'ยังไม่ส่งใบสั่งทำ') + '</span>';
-  const pct = Math.round(+b.moRecv / +b.mo * 100);
-  return '<div class="prd-mob"><div class="prd-mo"><div class="prog"><i style="width:' + pct + '%"></i></div><span class="small"><b>' + b.moRecv + '</b>/' + b.mo + ' ได้รับ</span></div>' +
-    '<div class="prd-pills">' + (+b.moNone ? '<span class="badge t-red">ยังไม่สั่ง ' + b.moNone + '</span> ' : '') + (+b.moOrd ? '<span class="badge t-amber">สั่งแล้ว รอของ ' + b.moOrd + '</span>' : '') +
-    (+b.moRecv === +b.mo ? '<span class="badge t-green">' + icon('check', 'xs') + ' ครบแล้ว</span>' : '') + '</div></div>';
+function folSheetHtml() {
+  if (!folOk()) return '';
+  const D = FOL.d, h = '<div class="ps-sec"><b>แจ้งงานไหนบ้าง' + tipI('**ทุกงาน** = แจ้งทุกงาน ตามเรื่องที่เปิดไว้\n**เฉพาะงานที่ติดตาม** = งานใหม่ยังแจ้งเสมอ ส่วนความคืบหน้าแจ้งเฉพาะงานที่กด 🔔 “ติดตามงานนี้” ไว้\nเลิกติดตามได้ที่รายการด้านล่าง', 'แจ้งงานไหนบ้าง') + '</b><span>ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้</span></div>';
+  if (!D) return h + '<div class="xs muted" style="padding:8px 0">' + (FOL.err ? esc(FOL.err) : 'กำลังโหลด…') + '</div>';
+  const seg = (v, t, s) => '<button type="button" class="fol-opt' + (D.only === v ? ' on' : '') + '" role="radio" aria-checked="' + (D.only === v) + '" data-act="folMode" data-v="' + (v ? 1 : 0) + '"><b>' + t + '</b><span>' + s + '</span></button>';
+  const where = APP_KIND === 'spn' ? 'ในหน้างาน / หน้าติ๊กสถานะ' : 'ในหน้ารายละเอียด Order (กดเลข Order)';
+  const L = D.list || [];
+  return h + '<div class="fol-mode" role="radiogroup" aria-label="แจ้งงานไหนบ้าง">' + seg(false, 'ทุกงาน', 'ทุกงานตามหัวข้อที่เปิดไว้') + seg(true, 'เฉพาะงานที่ติดตาม', 'งานใหม่ยังแจ้งเสมอ · สถานะต่อจากนั้นแจ้งเฉพาะงานที่ติดตาม') + '</div>' +
+    '<div class="fol-lh"><b>งานที่ติดตาม ' + L.length + ' งาน</b><span class="xs muted">กด ' + icon('bell', 'xs') + ' “ติดตามงานนี้” ' + where + '</span></div>' +
+    (L.length ? '<div class="fol-list">' + L.map((x) => {
+      const go = x.app === 'spn' && APP_KIND === 'spn' ? '<a class="fol-go" href="#/prd/o/' + encodeURIComponent(x.ref) + '" data-act="folGo" data-ref="' + esc(x.ref) + '">' : x.app === 'cn' && APP_KIND === 'cn' ? '<a class="fol-go" href="#" data-act="order" data-id="' + esc(x.ref) + '">' : '<span class="fol-go">';
+      const end = go.charAt(1) === 'a' ? '</a>' : '</span>';
+      return '<div class="fol-r">' + go + '<b class="mono">' + esc(x.ref) + '</b><span class="xs muted">' + esc(x.title || (x.app ? '' : 'ไม่พบงานแล้ว')) + '</span>' + end +
+        '<button type="button" class="btn sm ghost" data-act="folTog" data-ref="' + esc(x.ref) + '" aria-label="เลิกติดตาม ' + esc(x.ref) + '">' + icon('x', 'sm') + ' เลิกติดตาม</button></div>'; }).join('') + '</div>'
+      : '<div class="xs muted" style="padding:4px 0 8px">ยังไม่ได้ติดตามงานไหน</div>');
 }
-
-/* ---------- รายการรวม ---------- */
-route(/^\/prd\/orders$/, 'prd', () => {
-  const r = S.user.role, L = prdList();
-  const f = PRD.f || (r === 'admin' ? 'all' : 'todo');
-  const nTodo = L.filter((b) => prdTodo(b)).length, nWait = L.filter((b) => !prdDone(b)).length, nDone = L.filter(prdDone).length;
-  const rows = L.filter((b) => (f === 'todo' ? prdTodo(b) : f === 'wait' ? !prdDone(b) : f === 'done' ? prdDone(b) : true));
-  const kpi = (ico, tone, k, val, s) => '<div class="card kpi accent" style="--k:var(--' + tone + ')"><div class="k">' + icon(ico, 'sm') + k + '</div><div class="v">' + val + '</div><div class="s">' + s + '</div></div>';
-  const sub = r === 'production' ? 'ดูเอกสารใบปิดผิว / ใบเบิก และสถานะของแต่ละ Order — ได้ของจากคลังแล้วกด “ผลิตรับแล้ว”'
-    : r === 'warehouse' ? 'ใบเบิกจาก Production — เตรียมของแล้วกด “คลังจ่ายแล้ว” · ของสั่งทำมาถึงกด “ได้รับแล้ว”'
-    : r === 'purchasing' ? 'งานสั่งทำจาก Production — สั่งแล้วกด “สั่งแล้ว” · ของมาถึงกด “ได้รับแล้ว”' : 'เอกสาร + สถานะไลน์ผลิตทุก Order';
-  return { nav: '#/prd/orders', after: () => prdQApply(),
-    html: pageHead(r === 'production' ? 'รายการรวม — ไลน์ผลิต' : 'ไลน์ผลิต — ใบเบิก & งานสั่งทำ', sub, (SNB_FRAMED ? '<button class="btn sm" data-act="prdSyncNow">' + icon('refresh', 'sm') + ' ดึงจาก Production</button>' : '')) +
-      '<div class="grid g4">' + kpi('file', 'amber', 'ใบเบิกรอคลังจ่าย', prdSum('rqWait'), 'คลังกด “คลังจ่ายแล้ว”') + kpi('box', 'blue', 'รอผลิตรับ', prdSum('rqPaid'), 'คลังจ่ายแล้ว — ผลิตกด “ผลิตรับแล้ว”') +
-        kpi('tool', 'red', 'งานสั่งทำยังไม่สั่ง', prdSum('moNone'), 'รายการ · จัดซื้อกด “สั่งแล้ว”') + kpi('clock', 'teal', 'สั่งแล้ว รอของ', prdSum('moOrd'), 'รายการ · ได้รับแล้วกด “ได้รับแล้ว”') + '</div>' +
-      prdSyncNote() +
-      '<div class="card" style="margin-top:16px"><div class="card-b">' +
-        '<div class="sbox">' + icon('search', 'sm') + '<input class="input" type="search" id="prd-q" data-inp="prdQ" value="' + esc(PRD.q) + '" placeholder="ค้นเลข Order / ชื่องาน / Item Id" aria-label="ค้นหา Order"></div>' +
-        '<div class="chips" style="margin:12px 0 4px">' + [['todo', PRD_TODO_T[r] || 'ต้องทำ', nTodo], ['wait', 'ยังไม่ครบ', nWait], ['done', 'ครบแล้ว', nDone], ['all', 'ทั้งหมด', L.length]]
-          .map((x) => '<button class="fchip ' + (f === x[0] ? 'on' : '') + '" data-act="prdF" data-f="' + x[0] + '">' + x[1] + ' <span class="n">' + x[2] + '</span></button>').join('') + '</div></div>' +
-        '<div class="table-wrap"><table class="t resp prd-tbl"><thead><tr><th>Order</th><th>ใบปิดผิว</th><th>ใบเบิก</th><th>งานสั่งทำ</th><th>อัปเดต</th></tr></thead><tbody>' +
-          (rows.length ? rows.map((b) => '<tr class="prd-row' + (prdTodo(b) ? ' todo' : '') + '" data-act="prdOpen" data-oid="' + esc(b.oid) + '" data-pq="' + esc(prdQ(b)) + '" tabindex="0"><td class="main"><a href="#/prd/o/' + encodeURIComponent(b.oid) + '" class="mono strong">' + esc(b.oid) + '</a>' +
-              (b.title && b.title !== b.oid ? '<div class="sub">' + esc(b.title) + '</div>' : '') + (b.iid ? '<div class="sub mono">' + esc(b.iid) + '</div>' : '') + '</td>' +
-            '<td data-l="ใบปิดผิว">' + (+b.lm ? '<span><b>' + b.lm + '</b> ใบ</span>' : '<span class="xs muted">—</span>') + '</td>' +
-            '<td data-l="ใบเบิก">' + prdRqPills(b) + '</td><td data-l="งานสั่งทำ">' + prdMoBar(b) + '</td>' +
-            '<td data-l="อัปเดต" class="small">' + fmtDT(b.moAt && b.moAt > b.at ? b.moAt : b.at) + '</td></tr>').join('')
-            : '<tr><td colspan="5">' + (L.length ? empty('search', 'ไม่มี Order ในกลุ่มนี้', 'เลือก “ทั้งหมด” เพื่อดูทุก Order')
-              : empty('factory', 'ยังไม่มีเอกสารจาก Production', 'เปิด Contractor Nexus ในแท็บ Production ที่คอมออฟฟิศ (เข้าสู่ระบบค้างไว้) — ใบปิดผิว / ใบเบิก และใบรายการสั่งทำที่กด “ส่งเข้าไลน์ผลิต” จะขึ้นที่นี่เอง')) + '</td></tr>') +
-        '<tr id="prd-none" class="hidden"><td colspan="5">' + empty('search', 'ไม่พบ Order ที่ค้น', 'ลองคำค้นอื่น หรือเลือก “ทั้งหมด”') + '</td></tr>' +
-        '</tbody></table></div></div>' };
+on('folGo', (el) => { closeOverlay(); go('#/prd/o/' + encodeURIComponent(el.dataset.ref)); });
+on('folMode', async (el) => {
+  const v = el.dataset.v === '1'; if (!FOL.d || FOL.d.only === v) return;
+  FOL.d = await rpc('cn_push_follow_mode_set', { p_only: v }); FOL.at = Date.now();
+  toast(v ? 'ตั้งแล้ว: แจ้งเฉพาะงานที่ติดตาม (' + FOL.d.list.length + ' งาน) + งานใหม่' : 'ตั้งแล้ว: แจ้งทุกงาน'); folPaint();
 });
-/* ค้น: ซ่อน / แสดงแถวเอง (ไม่วาดหน้าใหม่ — พิมพ์ต่อได้ลื่น) */
-Acts.prdQ = (el) => { PRD.q = el.value; prdQApply(); };
-function prdQApply() {
-  const words = PRD.q.trim().toUpperCase().split(/\s+/).filter(Boolean); let n = 0;
-  $$('#app tr.prd-row').forEach((tr) => { const hit = words.every((w) => tr.dataset.pq.indexOf(w) >= 0); tr.classList.toggle('hidden', !hit); if (hit) n++; });
-  const nm = $('#prd-none'); if (nm) nm.classList.toggle('hidden', n > 0 || !$$('#app tr.prd-row').length);
-}
-on('prdF', (el) => { PRD.f = el.dataset.f; rerender(); });
-on('prdOpen', (el) => { go('#/prd/o/' + encodeURIComponent(el.dataset.oid)); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('prd-row')) go('#/prd/o/' + encodeURIComponent(e.target.dataset.oid)); });
-
-/* ---------- หน้า Order ---------- */
-function prdBrief(oid) { return prdList().find((b) => b.oid === oid) || null; }
-function prdSigOf(oid) { const b = prdBrief(oid); return b ? [b.at, b.moAt, b.rqWait, b.rqPaid, b.rqRecv, b.moNone, b.moOrd, b.moRecv, b.mo, b.lm, b.rq].join('|') : ''; }
-async function prdLoad(oid, force) {
-  if (PRD.loading[oid]) return;
-  const sig = prdSigOf(oid);
-  if (!force && PRD.det[oid] && PRD.sig[oid] === sig) return;
-  PRD.loading[oid] = true;
-  try { PRD.det[oid] = await rpc('cn_prd_order', { p_oid: oid }); PRD.sig[oid] = sig; PRD.err[oid] = ''; }
-  catch (e) { if (e.code === 'session') { forceLogout(e.message); return; } PRD.err[oid] = e.message; }
-  finally { PRD.loading[oid] = false; }
-  if (curPath() === '/prd/o/' + oid && !isEditing()) rerender();
-}
-function prdDefTab(r, D) {
-  const rq = D.docs.filter((d) => d.kind === 'rq').length, lm = D.docs.filter((d) => d.kind === 'lm').length, mo = D.items.length;
-  if (r === 'purchasing') return mo ? 'mo' : rq ? 'rq' : 'lm';
-  if (r === 'production') return rq ? 'rq' : lm ? 'lm' : 'mo';
-  return rq ? 'rq' : mo ? 'mo' : 'lm';
-}
-route(/^\/prd\/o\/(.+)$/, 'prd', (m) => {
-  let oid = m[0]; try { oid = decodeURIComponent(oid); } catch (e) { /* ใช้ตามที่พิมพ์ */ }
-  const D = PRD.det[oid], b = prdBrief(oid), r = S.user.role;
-  setTimeout(() => prdLoad(oid), 0);
-  const back = '<a class="btn sm" href="#/prd/orders">' + icon('chevLeft', 'sm') + ' รายการรวม</a>';
-  if (!D) {
-    return { nav: '#/prd/orders', html: pageHead(esc(oid), b ? esc(b.title || '') : '', back, 'ไลน์ผลิต') +
-      '<div class="card"><div class="card-b">' + (PRD.err[oid] ? notice('danger', esc(PRD.err[oid])) + '<button class="btn" style="margin-top:10px" data-act="prdReload" data-oid="' + esc(oid) + '">' + icon('refresh', 'sm') + ' ลองใหม่</button>'
-        : '<div class="small muted">กำลังโหลดเอกสาร…</div>') + '</div></div>' };
-  }
-  const tab = PRD.tab[oid] || prdDefTab(r, D);
-  const rq = D.docs.filter((d) => d.kind === 'rq'), lm = D.docs.filter((d) => d.kind === 'lm'), live = (d) => !d.cancelled && !d.gone;
-  const nRq = rq.filter(live).length, nLm = lm.filter(live).length, nMo = D.items.filter((i) => !i.gone).length;
-  const o = D.order;
-  const tabs = '<div class="seg prd-seg" role="tablist">' + [['rq', 'ใบเบิก', nRq], ['lm', 'ใบปิดผิว', nLm], ['mo', 'งานสั่งทำ', nMo]]
-    .map((x) => '<button type="button" role="tab" aria-selected="' + (tab === x[0]) + '" class="' + (tab === x[0] ? 'on' : '') + '" data-act="prdTab" data-oid="' + esc(oid) + '" data-t="' + x[0] + '">' + x[1] + ' <span class="n">' + x[2] + '</span></button>').join('') + '</div>';
-  const head = '<div class="card prd-head"><div class="card-b"><div class="prd-hrow"><div class="prd-hb"><div class="xs muted">ใบเบิก</div>' + (b ? prdRqPills(b) : '—') + '</div>' +
-    '<div class="prd-hb"><div class="xs muted">งานสั่งทำ</div>' + (b ? prdMoBar(b) : '—') + '</div>' +
-    '<div class="prd-hb"><div class="xs muted">ใบปิดผิว</div><span><b>' + nLm + '</b> ใบ</span></div></div>' +
-    (o.iid ? '<div class="xs muted" style="margin-top:8px">Item Id Set <span class="mono">' + esc(o.iid) + '</span></div>' : '') + '</div></div>';
-  const body = tab === 'rq' ? prdRqHtml(oid, rq, r) : tab === 'lm' ? prdLmHtml(lm) : prdMoHtml(oid, D, r);
-  return { nav: '#/prd/orders', html: pageHead('<span class="mono">' + esc(oid) + '</span>', esc(o.title && o.title !== oid ? o.title : ''), back + '<button class="btn sm" data-act="prdReload" data-oid="' + esc(oid) + '" aria-label="โหลดใหม่">' + icon('refresh', 'sm') + '</button>', 'ไลน์ผลิต') +
-    head + '<div class="prd-tabs">' + tabs + '</div>' + body };
-});
-on('prdTab', (el) => { PRD.tab[el.dataset.oid] = el.dataset.t; rerender(); });
-on('prdReload', async (el) => { const oid = el.dataset.oid; PRD.err[oid] = ''; await refresh(); await prdLoad(oid, true); rerender(); });
-
-/* ใบเบิก: ออกใบ → คลังจ่ายแล้ว → ผลิตรับแล้ว */
-function prdTrack(d) {
-  const st = (on, cur, t, s) => '<div class="pt' + (on ? ' done' : cur ? ' cur' : '') + '"><i>' + (on ? icon('check', 'xs') : '') + '</i><b>' + t + '</b><span>' + (s || '') + '</span></div>';
-  return '<div class="prd-trk">' + st(true, false, 'ออกใบ', prdD(d.issuedAt)) +
-    st(!!d.paidAt, !d.paidAt, 'คลังจ่ายแล้ว', d.paidAt ? fmtDT(d.paidAt) + '<br>' + esc(d.paidBy || '') : 'รอคลัง') +
-    st(!!d.recvAt, !!d.paidAt && !d.recvAt, 'ผลิตรับแล้ว', d.recvAt ? fmtDT(d.recvAt) + '<br>' + esc(d.recvBy || '') : d.paidAt ? 'รอผลิตรับ' : '') + '</div>';
-}
-function prdRqHtml(oid, docs, r) {
-  if (!docs.length) return '<div class="card">' + empty('file', 'ยังไม่มีใบเบิกของ Order นี้', 'ใบเบิกที่ออกในแท็บเอกสารของ Production จะขึ้นที่นี่') + '</div>';
-  const live = docs.filter((d) => !d.cancelled && !d.gone), dead = docs.filter((d) => d.cancelled || d.gone);
-  const canPay = r === 'admin' || r === 'warehouse', canRecv = r === 'admin' || r === 'production';
-  const card = (d) => {
-    const h = d.head || {}, off = d.cancelled || d.gone;
-    const acts = off ? '' : (canPay && !d.paidAt ? '<button class="btn primary" data-act="prdRq" data-id="' + esc(d.id) + '" data-a="pay">' + icon('check', 'sm') + ' คลังจ่ายแล้ว</button>' : '') +
-      (canRecv && d.paidAt && !d.recvAt ? '<button class="btn ok" data-act="prdRq" data-id="' + esc(d.id) + '" data-a="recv">' + icon('check', 'sm') + ' ผลิตรับแล้ว</button>' : '') +
-      (canRecv && d.recvAt ? '<button class="btn sm ghost" data-act="prdRqBack" data-id="' + esc(d.id) + '" data-a="unrecv">' + icon('undo', 'xs') + ' ยกเลิก “ผลิตรับแล้ว”</button>' : '') +
-      (canPay && d.paidAt && !d.recvAt ? '<button class="btn sm ghost" data-act="prdRqBack" data-id="' + esc(d.id) + '" data-a="unpay">' + icon('undo', 'xs') + ' ยกเลิก “คลังจ่ายแล้ว”</button>' : '') +
-      (!canPay && !d.paidAt ? '<span class="xs muted">รอคลังกด “คลังจ่ายแล้ว”</span>' : '') + (!canRecv && d.paidAt && !d.recvAt ? '<span class="xs muted">รอฝ่ายผลิตกด “ผลิตรับแล้ว”</span>' : '');
-    return '<div class="card prd-doc' + (off ? ' off' : d.recvAt ? ' ok' : '') + '"><div class="card-h"><h2><span class="mono">' + esc(d.no) + '</span> ' +
-        (off ? '<span class="badge t-gray">' + (d.gone ? 'ลบใน Production แล้ว' : 'ยกเลิกแล้ว') + '</span>' : d.recvAt ? '<span class="badge t-green">ผลิตรับแล้ว</span>' : d.paidAt ? '<span class="badge t-blue">รอผลิตรับ</span>' : '<span class="badge t-amber">รอคลังจ่าย</span>') + '</h2>' +
-        '<span class="small muted">' + d.lines.length + ' รายการ</span></div><div class="card-b">' +
-      (off ? '' : prdTrack(d)) +
-      '<div class="prd-wh small">' + icon('truck', 'sm') + ' จาก <b>' + esc(h.fromName || h.from || '—') + '</b>' + (h.from && h.fromName ? ' <span class="mono xs">' + esc(h.from) + '</span>' : '') + ' → <b>' + esc(h.toName || h.to || '—') + '</b>' + (h.to && h.toName ? ' <span class="mono xs">' + esc(h.to) + '</span>' : '') +
-        (h.ax ? ' · AX <span class="mono">' + esc(h.ax) + '</span>' : '') + (h.note ? '<div class="xs muted">' + esc(h.note) + '</div>' : '') + '</div>' +
-      '<div class="table-wrap"><table class="t resp prd-lines"><thead><tr><th>รหัส</th><th>รายการ</th><th class="r">จำนวน</th><th>โลเคชั่น</th></tr></thead><tbody>' +
-        d.lines.map((l) => '<tr><td class="main mono strong">' + esc(l.code) + '</td><td data-l="รายการ">' + esc(l.name || '') + '</td><td data-l="จำนวน" class="r"><span><b>' + prdQty(l.qty) + '</b> ' + esc(l.unit || '') + '</span></td><td data-l="โลเคชั่น" class="small mono">' + esc(l.loc || '—') + '</td></tr>').join('') +
-      '</tbody></table></div>' + (acts ? '<div class="prd-acts">' + acts + '</div>' : '') + '</div></div>';
-  };
-  return live.map(card).join('') + (dead.length ? '<details class="prd-dead"><summary>ใบที่ยกเลิก / ลบแล้ว ' + dead.length + ' ใบ</summary>' + dead.map(card).join('') + '</details>' : '');
-}
-on('prdRq', async (el) => {
-  const d = await rpc('cn_prd_rq', { p_id: el.dataset.id, p_act: el.dataset.a });
-  PRD.det[d.order.oid] = d; await refresh(); PRD.sig[d.order.oid] = prdSigOf(d.order.oid);
-  toast(el.dataset.a === 'pay' ? 'บันทึก “คลังจ่ายแล้ว” — แจ้งฝ่ายผลิตแล้ว' : 'บันทึก “ผลิตรับแล้ว”'); rerender();
-});
-on('prdRqBack', (el) => {
-  const pay = el.dataset.a === 'unpay';
-  modal({ title: icon('undo') + ' ยกเลิก “' + (pay ? 'คลังจ่ายแล้ว' : 'ผลิตรับแล้ว') + '”?', body: '<p>ใช้เมื่อกดผิด — สถานะจะกลับเป็น “' + (pay ? 'รอคลังจ่าย' : 'รอผลิตรับ') + '”</p>',
-    foot: '<button class="btn" data-act="closeOv">ไม่ใช่</button><button class="btn danger" data-act="prdRqBackOk" data-id="' + esc(el.dataset.id) + '" data-a="' + esc(el.dataset.a) + '">ยกเลิกสถานะ</button>' });
-});
-on('prdRqBackOk', async (el) => {
-  const d = await rpc('cn_prd_rq', { p_id: el.dataset.id, p_act: el.dataset.a });
-  PRD.det[d.order.oid] = d; closeOverlay(); await refresh(); PRD.sig[d.order.oid] = prdSigOf(d.order.oid); toast('ยกเลิกสถานะแล้ว'); rerender();
+on('folTog', async (el) => {
+  const ref = el.dataset.ref; if (!ref || !folOk()) return;
+  if (!FOL.d) await folLoad(true);
+  const on = !folIs(ref), only = !!(FOL.d && FOL.d.only);
+  FOL.d = await rpc('cn_push_follow_set', { p_ref: ref, p_on: on }); FOL.at = Date.now();
+  toast(on ? (only ? 'ติดตาม ' + ref + ' แล้ว — แจ้งเตือนงานนี้ทุกหัวข้อที่เปิดไว้' : 'ติดตาม ' + ref + ' แล้ว · ตอนนี้ตั้ง “แจ้งทุกงาน” อยู่ — เปลี่ยนเป็น “เฉพาะงานที่ติดตาม” ได้ที่กระดิ่ง')
+    : 'เลิกติดตาม ' + ref + ' แล้ว' + (only ? ' — งานนี้ไม่แจ้งสถานะแล้ว (ยกเว้นเอกสารใหม่)' : ''));
+  folPaint();
 });
 
-/* ใบปิดผิว (ดูอย่างเดียว) */
-function prdLmHtml(docs) {
-  if (!docs.length) return '<div class="card">' + empty('file', 'ยังไม่มีใบปิดผิวของ Order นี้', 'ใบปิดผิว (รายการไม้ปิดผิว) ที่ออกใน Production จะขึ้นที่นี่') + '</div>';
-  const live = docs.filter((d) => !d.cancelled && !d.gone), dead = docs.filter((d) => d.cancelled || d.gone);
-  const card = (d) => {
-    const h = d.head || {}, off = d.cancelled || d.gone, tot = d.lines.reduce((n, l) => n + (+l.qty || 0), 0);
-    return '<div class="card prd-doc' + (off ? ' off' : '') + '"><div class="card-h"><h2><span class="mono">' + esc(d.no) + '</span>' + (off ? ' <span class="badge t-gray">' + (d.gone ? 'ลบใน Production แล้ว' : 'ยกเลิกแล้ว') + '</span>' : '') + (+d.orders > 1 ? ' <span class="badge t-violet">รวม ' + d.orders + ' Order</span>' : '') + '</h2>' +
-        '<span class="small muted">ออกใบ ' + prdD(d.issuedAt) + '</span></div><div class="card-b">' +
-      '<div class="prd-lmh">' + (h.due ? '<div class="prd-due"><span>วันกำหนดเสร็จ (ปิดผิว)</span><b>' + prdIso(h.due) + '</b>' + (h.endDate ? '<span class="xs">End Date ' + prdIso(h.endDate) + '</span>' : '') + '</div>' : '') +
-        '<dl class="prd-dl">' + (h.lot ? '<dt>LOT</dt><dd class="mono">' + esc(h.lot) + '</dd>' : '') + (h.prodPool ? '<dt>Prod Pool</dt><dd>' + esc(h.prodPool) + '</dd>' : '') + (h.pdPool ? '<dt>PD Pool</dt><dd>' + esc(h.pdPool) + '</dd>' : '') +
-        (h.note ? '<dt>หมายเหตุ</dt><dd>' + esc(h.note) + '</dd>' : '') + '</dl></div>' +
-      '<div class="table-wrap"><table class="t resp prd-lines"><thead><tr><th>รหัสไม้</th><th>รายละเอียด</th><th class="r">จำนวน</th></tr></thead><tbody>' +
-        d.lines.map((l) => '<tr><td class="main mono strong">' + esc(l.code) + '</td><td data-l="รายละเอียด"><div>' + esc(l.name || '') +
-            (l.bom && l.bom.length ? '<details class="prd-bom"><summary>แตก BOM ' + l.bom.length + ' รายการ</summary><ul>' + l.bom.map((x) => '<li><span class="mono">' + esc(x.code) + '</span> ' + esc(x.name || '') + ' — <b>' + prdQty(x.qty) + '</b> ' + esc(x.unit || '') + '</li>').join('') + '</ul></details>' : '') + '</div></td>' +
-          '<td data-l="จำนวน" class="r"><span><b>' + prdQty(l.qty) + '</b> ' + esc(l.unit || 'แผ่น') + '</span></td></tr>').join('') +
-        '<tr class="prd-tot"><td colspan="2">รวม ' + d.lines.length + ' รายการ<span class="prd-tot-m"> · <b>' + prdQty(tot) + '</b> แผ่น</span></td><td class="r prd-tot-n"><span><b>' + prdQty(tot) + '</b> แผ่น</span></td></tr>' +
-      '</tbody></table></div></div></div>';
-  };
-  return live.map(card).join('') + (dead.length ? '<details class="prd-dead"><summary>ใบที่ยกเลิก / ลบแล้ว ' + dead.length + ' ใบ</summary>' + dead.map(card).join('') + '</details>' : '');
-}
 
-/* งานสั่งทำ: ยังไม่สั่ง → สั่งแล้ว (จัดซื้อ) → ได้รับแล้ว (จัดซื้อ / คลัง) · ฝ่ายผลิตดูอย่างเดียว */
-const PRD_SEC = { cut: ['รหัสสั่งตัด (มือจับ / อลูมิเนียม / ไฟ ฯลฯ)', 'tool'], glass: ['กระจก — สั่งตามขนาด', 'image'], sheet: ['งานตัดแผ่น / อื่น ๆ', 'file'] };
-const PRD_ST = { none: ['ยังไม่สั่ง', 't-red'], ordered: ['สั่งแล้ว รอของ', 't-amber'], received: ['ได้รับแล้ว', 't-green'] };
-function prdCanMo(r, st) {
-  if (r === 'admin' || r === 'purchasing') return true;
-  if (r === 'warehouse') return st !== 'none';   /* คลัง: กดได้รับแล้ว / ย้อนได้รับ */
-  return false;
-}
-function prdSel(oid) { if (!PRD.sel[oid]) PRD.sel[oid] = new Set(); return PRD.sel[oid]; }
-function prdMoHtml(oid, D, r) {
-  const items = D.items.filter((i) => !i.gone), gone = D.items.filter((i) => i.gone), o = D.order, sel = prdSel(oid);
-  Array.from(sel).forEach((k) => { if (!items.some((i) => i.key === k)) sel.delete(k); });
-  if (!items.length && !gone.length) return '<div class="card">' + empty('tool', 'ยังไม่ได้ส่งใบรายการสั่งทำ', 'ใน Production เปิด Order นี้ → แท็บ “📋 ใบรายการสั่งทำ” → กด “📤 ส่งเข้าไลน์ผลิต”') + '</div>';
-  const edit = r !== 'production';
-  const nSel = sel.size, selItems = items.filter((i) => sel.has(i.key));
-  const canOrd = (r === 'admin' || r === 'purchasing') && selItems.some((i) => i.st === 'none');
-  const canRecv = (r === 'admin' || r === 'purchasing' || r === 'warehouse') && selItems.some((i) => i.st !== 'received');
-  const canBack = selItems.some((i) => i.st === 'received' || (i.st === 'ordered' && (r === 'admin' || r === 'purchasing')));
-  const bar = edit ? '<div class="prd-bar' + (nSel ? ' on' : '') + '"><span class="small">' + (nSel ? 'เลือก <b>' + nSel + '</b> รายการ' : 'ติ๊กเลือกรายการ แล้วกดเปลี่ยนสถานะ') + '</span><span class="spacer"></span>' +
-      ((r === 'admin' || r === 'purchasing') ? '<button class="btn sm primary" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="ordered"' + (canOrd ? '' : ' disabled') + '>สั่งแล้ว</button>' : '') +
-      '<button class="btn sm ok" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="received"' + (canRecv ? '' : ' disabled') + '>' + icon('check', 'xs') + ' ได้รับแล้ว</button>' +
-      '<button class="btn sm ghost" data-act="prdMo" data-oid="' + esc(oid) + '" data-st="back"' + (canBack ? '' : ' disabled') + '>' + icon('undo', 'xs') + ' ย้อน 1 ขั้น</button></div>' : '';
-  const secs = ['cut', 'glass', 'sheet'].map((sec) => {
-    const L = items.filter((i) => i.sec === sec); if (!L.length) return '';
-    const pick = L.filter((i) => prdCanMo(r, i.st)), all = pick.length && pick.every((i) => sel.has(i.key));
-    const rec = L.filter((i) => i.st === 'received').length;
-    return '<div class="card prd-sec"><div class="card-h"><h2>' + icon(PRD_SEC[sec][1]) + ' ' + PRD_SEC[sec][0] + ' <span class="muted small">' + rec + '/' + L.length + ' ได้รับ</span></h2>' +
-        (edit && pick.length ? '<label class="small prd-all"><input type="checkbox" data-chg="prdSelAll" data-oid="' + esc(oid) + '" data-sec="' + sec + '"' + (all ? ' checked' : '') + '> เลือกทั้งหมด</label>' : '') + '</div>' +
-      '<div class="table-wrap"><table class="t resp prd-lines prd-mo-t"><thead><tr>' + (edit ? '<th style="width:30px"></th>' : '') + '<th>รหัส</th><th>รายการ</th><th class="r">จำนวน</th><th>ตู้</th><th>สถานะ</th></tr></thead><tbody>' +
-        L.map((i) => '<tr class="st-' + i.st + (sel.has(i.key) ? ' sel' : '') + '">' + (edit ? '<td class="ck">' + (prdCanMo(r, i.st) ? '<input type="checkbox" data-chg="prdSelOne" data-oid="' + esc(oid) + '" data-k="' + esc(i.key) + '"' + (sel.has(i.key) ? ' checked' : '') + ' aria-label="เลือก ' + esc(i.code) + '">' : '') + '</td>' : '') +
-          '<td class="main mono strong">' + esc(i.code) + '</td><td data-l="รายการ"><div>' + esc(i.name || '') + (i.spec ? '<div class="sub">' + esc(i.spec) + '</div>' : '') + '</div></td>' +
-          '<td data-l="จำนวน" class="r"><span><b>' + prdQty(i.qty) + '</b> ' + esc(i.unit || 'EA') + '</span></td><td data-l="ตู้" class="small">' + esc(i.cab || '—') + '</td>' +
-          '<td data-l="สถานะ"><div><span class="badge ' + PRD_ST[i.st][1] + '">' + PRD_ST[i.st][0] + '</span>' +
-            (i.st === 'received' ? '<div class="sub">' + fmtDT(i.recvAt) + ' · ' + esc(i.recvBy || '') + '</div>' : i.st === 'ordered' ? '<div class="sub">' + fmtDT(i.orderedAt) + ' · ' + esc(i.orderedBy || '') + '</div>' : '') + '</div></td></tr>').join('') +
-      '</tbody></table></div></div>';
-  }).join('');
-  return '<div class="prd-moh small muted">' + icon('clock', 'sm') + '<span>ส่งจาก Production ' + (o.moAt ? fmtDT(o.moAt) + (o.moBy ? ' · ' + esc(o.moBy) : '') : '—') + (r === 'production' ? ' · ฝ่ายผลิตดูอย่างเดียว (จัดซื้อ / คลังเป็นคนกด)' : '') + '</span></div>' +
-    bar + secs + (gone.length ? '<details class="prd-dead"><summary>ไม่อยู่ในใบล่าสุดแล้ว ' + gone.length + ' รายการ</summary><div class="card"><div class="card-b small">' +
-      gone.map((i) => '<div><span class="mono">' + esc(i.code) + '</span> ' + esc(i.name || '') + ' — ' + PRD_ST[i.st][0] + '</div>').join('') + '</div></div></details>' : '');
-}
-on('prdSelOne', (el) => { const s = prdSel(el.dataset.oid); if (el.checked) s.add(el.dataset.k); else s.delete(el.dataset.k); rerender(); });
-on('prdSelAll', (el) => {
-  const oid = el.dataset.oid, s = prdSel(oid), D = PRD.det[oid]; if (!D) return;
-  D.items.filter((i) => !i.gone && i.sec === el.dataset.sec && prdCanMo(S.user.role, i.st)).forEach((i) => { if (el.checked) s.add(i.key); else s.delete(i.key); });
-  rerender();
-});
-on('prdMo', async (el) => {
-  const oid = el.dataset.oid, st = el.dataset.st, s = prdSel(oid); if (!s.size) return;
-  const d = await rpc('cn_prd_mo', { p_oid: oid, p_keys: Array.from(s), p_st: st });
-  PRD.det[oid] = d; s.clear(); await refresh(); PRD.sig[oid] = prdSigOf(oid);
-  toast(st === 'ordered' ? 'บันทึก “สั่งแล้ว”' : st === 'received' ? 'บันทึก “ได้รับแล้ว” — แจ้งฝ่ายผลิตแล้ว' : 'ย้อนสถานะแล้ว'); rerender();
-});
-
-/* ---------- ซิงก์จาก Production (เปิด CN ในแท็บ Production · ผู้ใช้ภายใน) ---------- */
+/* =====================================================================
+   ส่งเอกสารไลน์ผลิตขึ้นจาก Production (แอปเปิดในแท็บของ Production · ผู้ใช้ภายใน) — เฉพาะที่แผนกดส่ง (V272)
+   V7.18: แยกจาก prd.js — ใช้ทั้ง CN (สำรอง) และ Starmark SPN · หน้า Odoo V273 ให้ SPN ส่งก่อน (CN ส่งเมื่อไม่มีกรอบ SPN ที่เข้าระบบอยู่)
+   ===================================================================== */
 const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0 };
-const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'from', 'fromName', 'to', 'toName', 'ax', 'who'];
+const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'ax', 'who'];
 function prdClean(x) {   /* ส่งเฉพาะช่องที่กำหนด (Server ตัดซ้ำ) — ไม่มีราคา */
   const pick = (o, ks) => { const r = {}; ks.forEach((k) => { if (o && o[k] != null && typeof o[k] !== 'object') r[k] = o[k]; }); return r; };
+  const arr = (v, n) => (Array.isArray(v) ? v : []).slice(0, n);
   const out = pick(x, ['oid', 'title', 'itemIdSet', 'sig']);
-  out.docs = (Array.isArray(x.docs) ? x.docs : []).slice(0, 200).map((d) => Object.assign(pick(d, ['no', 'type', 'at', 'cancel', 'orders']), { head: pick(d.head, PRD_HEAD),
-    lines: (Array.isArray(d.lines) ? d.lines : []).slice(0, 400).map((l) => Object.assign(pick(l, ['code', 'name', 'qty', 'unit', 'loc', 'pool']),
-      Array.isArray(l.bom) ? { bom: l.bom.slice(0, 30).map((b) => pick(b, ['code', 'name', 'qty', 'unit'])) } : {})) })).filter((d) => d.type === 'lm' || d.type === 'rq');
-  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: (Array.isArray(x.mo.items) ? x.mo.items : []).slice(0, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab'])) });
+  if (x.lm && typeof x.lm === 'object') out.lm = Object.assign(pick(x.lm, ['at', 'by']), { docs: arr(x.lm.docs, 200).filter((d) => d && (!d.type || d.type === 'lm')).map((d) => Object.assign(pick(d, ['no', 'type', 'at', 'cancel', 'orders']), { head: pick(d.head, PRD_HEAD),
+    lines: arr(d.lines, 400).map((l) => Object.assign(pick(l, ['code', 'name', 'qty', 'unit', 'loc', 'pool']), Array.isArray(l.bom) ? { bom: l.bom.slice(0, 30).map((b) => pick(b, ['code', 'name', 'qty', 'unit'])) } : {})) })) });
+  if (x.cut && typeof x.cut === 'object') out.cut = Object.assign(pick(x.cut, ['at', 'by', 'total', 'pcs', 'rows', 'all', 'more']), {
+    colors: arr(x.cut.colors, 80).map((c) => Object.assign(pick(c, ['code', 'short', 'name', 'm2', 'pcs', 'rows']), { specs: arr(c.specs, 20).map((s) => pick(s, ['spec', 'name', 'm2', 'pcs'])) })),
+    parts: arr(x.cut.parts, 1500).map((p) => pick(p, ['cab', 'name', 'bc', 'w', 'l', 't', 'q', 'mat', 'top', 'bot', 'm2'])),
+    mats: arr(x.cut.mats, 120).map((m) => pick(m, ['code', 'rows', 'pcs', 'paint'])) });
+  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab'])) });
   return out;
 }
 async function prdSync(force) {
@@ -7412,6 +7714,7 @@ async function prdSync(force) {
       let r;
       try { r = await snbCall('prd', { have: PRDS.sigs }, 30000); }
       catch (e) { if (/ไม่รู้จักคำสั่ง/.test(e.message)) PRDS.off = Date.now() + 600000; throw e; }   /* Production รุ่นก่อน V270 */
+      if (!(r && r.v >= 2)) { PRDS.last = { at: Date.now(), n: 0, old: true }; return; }   /* Production รุ่นก่อน V272 (ส่งเอง) — ไม่รับ รอแผนกดส่งจาก V272 */
       const rows = ((r && r.rows) || []).slice(0, 40).map(prdClean).filter((x) => x.oid);
       if (!rows.length) break;
       const out = await rpc('cn_prd_sync', { p_rows: rows });
@@ -7423,13 +7726,30 @@ async function prdSync(force) {
   } catch (e) { PRDS.last = Object.assign({}, PRDS.last || {}, { err: e.message, errAt: Date.now() }); } finally { PRDS.busy = false; }
 }
 if (SNB_FRAMED) setInterval(() => { prdSync(); }, 30000);
-function prdSyncNote() {
-  if (!SNB_FRAMED) return '';
-  const L = PRDS.last;
-  return '<div class="xs muted prd-sync">' + icon('refresh', 'xs') + ' ' + (!SNB.on ? 'ยังไม่ได้เชื่อม Production' : L && L.err && (!L.at || L.errAt > L.at) ? 'ส่งจาก Production ไม่สำเร็จ: ' + esc(L.err)
-    : L ? 'ส่งเอกสารจาก Production ล่าสุด ' + fmtTime(L.at) + (L.n ? ' (' + L.n + ' Order)' : ' — ไม่มีอะไรเปลี่ยน') : 'กำลังส่งเอกสารจาก Production…') + '</div>';
-}
-on('prdSyncNow', async () => { PRDS.sigsAt = 0; PRDS.off = 0; await prdSync(true); if (PRDS.last && PRDS.last.err && PRDS.last.errAt >= PRDS.last.at) toast(PRDS.last.err, 'err'); else toast('ดึงจาก Production แล้ว'); rerender(); });
+
+/* =====================================================================
+   V7.18 — ไลน์ผลิตย้ายไปแอป Starmark SPN (Support Production Nexus) · ผู้ใช้ 14/11 16:37–16:54 “แยกออกจาก CN — ใน CN มีแค่ปุ่มไปที่ SPN”
+   ข้อมูล / บัญชี / แจ้งเตือนชุดเดิม (Supabase เดียวกัน) · CN ยังส่งเอกสารจาก Production ขึ้นได้ (สำรอง เมื่อไม่มีกรอบ SPN ที่เข้าระบบในหน้า Odoo)
+   ===================================================================== */
+const PRD_ROLES = { admin: 1, production: 1 };
+function canPrd() { return !!S.user && !!PRD_ROLES[S.user.role]; }
+function prdNavCount() { return 0; }
+function prdNavItem() { return { h: '#/prd/orders', i: 'factory', t: 'ไลน์ผลิต → Starmark SPN', s: 'ไลน์ผลิต' }; }
+route(/^\/prd(?:\/(.*))?$/, 'prd', (m) => {
+  const sub = m[0] ? String(m[0]) : 'orders', url = SPN_URL + '#/prd/' + sub;
+  return { nav: '#/prd/orders', html: pageHead('ไลน์ผลิตย้ายไปแอป Starmark SPN', 'สถานะไลน์ผลิต (ปิดผิว · ตัด · ทำสี · สั่งทำ) แยกเป็นแอปของตัวเองแล้ว — บัญชี / รหัสผ่านเดิม') +
+    '<div class="card"><div class="card-b spn-go">' +
+      '<span class="spn-logo big" aria-hidden="true">SPN</span>' +
+      '<div><h2 style="margin:0">Starmark SPN · Support Production Nexus</h2>' +
+        '<p class="small" style="margin:6px 0 0;line-height:1.6">ติ๊กสถานะ รับงานแล้ว · กำลังทำ · เสร็จแล้ว ทีละรายการ · ความคืบหน้า % · งานสั่งทำ (Support) · แจ้งเตือนเลือกหัวข้อได้ทุกสถานี<br>ข้อมูลทั้งหมดอยู่ที่เดิม — เข้าด้วย Username / Password เดียวกับ CN</p>' +
+        '<div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">' +
+          (FRAMED && SNB.on ? '<button type="button" class="btn primary" data-act="snbNav" data-to="spn">' + icon('factory', 'sm') + ' ไปที่ Support Nexus (การ์ด 3)</button>' : '') +
+          '<a class="btn ' + (FRAMED && SNB.on ? '' : 'primary') + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + icon('external', 'sm') + ' เปิด Starmark SPN</a>' +
+          '<button type="button" class="btn" data-act="spnCopy">' + icon('copy', 'sm') + ' คัดลอกลิงก์</button></div>' +
+        '<div class="xs muted" style="margin-top:10px">มือถือ: เปิดลิงก์แล้วติดตั้งเป็นแอป “Starmark SPN” + กดเปิดการแจ้งเตือนในแอปนั้น (เครื่องที่ยังไม่ติดตั้ง SPN ยังได้รับแจ้งเตือนไลน์ผลิตผ่าน CN เหมือนเดิม)</div></div>' +
+    '</div></div>' };
+});
+on('spnCopy', () => copyText(SPN_URL).then((ok) => toast(ok ? 'คัดลอกลิงก์ Starmark SPN แล้ว' : 'คัดลอกไม่ได้ — ลิงก์: ' + SPN_URL, ok ? '' : 'err')));
 
 })();
 
