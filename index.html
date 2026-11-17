@@ -797,6 +797,12 @@ span.loc-chip{cursor:default}
 .ps-l{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .ps-l b{font-size:14.5px}.ps-l span{font-size:12.5px;color:var(--gray);line-height:1.45}
 .ps-sec{display:flex;flex-direction:column;gap:2px;margin-top:14px;padding:10px 0 2px;border-top:1px solid var(--line)}
+/* SPN V1.7.3: แจ้งเตือนงานสั่งตัด / สั่งทำ แยกแผนก */
+.ps-mo{border-bottom:1px solid var(--line);padding-bottom:4px}.ps-moh{padding:12px 0 4px}
+.ps-dep{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:9px 0 9px 10px;border-left:3px solid var(--line);margin:4px 0}
+.ps-dep .ps-l{flex:1 1 170px}.ps-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ps-chip{border:1px solid #C5CDD8;background:#fff;color:var(--gray);border-radius:999px;padding:6px 11px;font:inherit;font-size:13px;line-height:1.2;cursor:pointer;min-height:32px}
+.ps-chip.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}.ps-chip:disabled{opacity:.5;cursor:default}.ps-chip:focus-visible{outline:3px solid var(--action);outline-offset:2px}
 .ps-sec b{font-size:13px;color:var(--ink)}.ps-sec span{font-size:12px;color:var(--gray)}
 .ps-what{margin-top:12px;font-size:12.5px;color:var(--gray);line-height:1.55}
 .ps-steps{margin:4px 0 10px;padding-left:22px;font-size:14px;line-height:1.85}
@@ -1442,7 +1448,7 @@ function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toS
 
 /* ---------- ค่าระบบ ---------- */
 /* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.7.2' : 'V7.18.9';
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.7.3' : 'V7.18.10';
 const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
@@ -7500,9 +7506,30 @@ async function pushPrefsLoad() {
   try { PUSH.prefs = await rpc('cn_push_prefs', {}); PUSH.prefsErr = false; } catch (e) { PUSH.prefsErr = true; }
   pushSheetRepaint();
 }
+/* SPN V1.7.3 (ผู้ใช้ 17/11 11:19 “แตกงานสั่งตัดสโตร์ สั่งทำอลู สั่งทำเหล็ก การแจ้งเตือนแยกกัน · เพิ่มแผนกจาก Production ก็ให้เพิ่มตาม”)
+   ตัด (สโตร์) / สั่งทำ = ตาราง แผนก × ขั้นตอน (หัวข้อ f_mo…@<แผนก>) · แผนกจาก Server (prd_deps ตามตั้งค่า Production) · แถว “แผนกอื่น / ค่าตั้งต้น” = หัวข้อเดิม */
+const PUSH_MO = [['f_mo', 'งานใหม่'], ['f_mo_got', 'รับงานแล้ว'], ['f_mo_doing', 'กำลังทำ'], ['f_mo_done', 'เสร็จแล้ว']];
+function pushMoDeps() { return PUSH.prefs && Array.isArray(PUSH.prefs._deps) ? PUSH.prefs._deps : []; }
+function pushMoLabel(k) {
+  const b = String(k).split('@'), m = PUSH_MO.find((x) => x[0] === b[0]); if (!m) return null;
+  const d = b[1] ? pushMoDeps().find((x) => x.id === b[1]) : null;
+  return [k, (d ? d.label : 'ตัด (สโตร์) / สั่งทำ') + ': ' + m[1]];
+}
+function pushMoHtml() {
+  const P = PUSH.prefs;
+  if (!P) return '<div class="ps-row"><div class="ps-l"><b>ตัด (สโตร์) / สั่งทำ</b></div><span class="xs muted">' + (PUSH.prefsErr ? 'โหลดไม่ได้' : 'กำลังโหลด…') + '</span></div>';
+  const deps = pushMoDeps();
+  const chip = (k, lab, nm) => { const v = !!P[k]; return '<button type="button" class="ps-chip' + (v ? ' on' : '') + '" role="switch" aria-checked="' + (v ? 'true' : 'false') + '" data-act="pushTopic" data-k="' + esc(k) + '" aria-label="' + esc(nm + ': ' + lab) + '">' + (v ? '✓ ' : '') + lab + '</button>'; };
+  const row = (nm, sub, sfx) => '<div class="ps-dep"><div class="ps-l"><b>' + esc(nm) + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div><div class="ps-chips">' + PUSH_MO.map((m) => chip(m[0] + sfx, m[1], nm)).join('') + '</div></div>';
+  return '<div class="ps-mo"><div class="ps-l ps-moh"><b>ตัด (สโตร์) / สั่งทำ — แยกแผนก</b><span>แตะเพื่อเปิด / ปิดทีละช่อง (เขียว = แจ้ง) · แผนกตามตั้งค่าแผนกใน Production — เพิ่มแผนกที่นั่นแล้วมีแถวใหม่เอง</span></div>' +
+    deps.map((d) => row(d.label, '', '@' + d.id)).join('') +
+    row(deps.length ? 'แผนกอื่น / ค่าตั้งต้น' : 'ทุกแผนก', (deps.length ? 'แผนกที่ยังไม่ได้แตะ · งานที่ไม่ระบุแผนก · ' : '') + 'แจ้ง “Order นี้ไม่มีงานสั่งตัด / สั่งทำ” ด้วย', '') + '</div>';
+}
 function pushTopicsHtml() {
   const t = S.user && PUSH_TOPICS[S.user.role]; if (!t) return '';
   return '<div class="ps-sec"><b>เรื่องที่ให้แจ้ง' + tipI('สวิตช์ **เขียว** = แจ้ง · **เทา** = ไม่แจ้ง — แตะเพื่อเปลี่ยน\nตั้งครั้งเดียว ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้', 'เรื่องที่ให้แจ้ง') + '</b><span>เปิด / ปิดได้ทีละเรื่อง · ใช้กับทุกเครื่องที่ล็อกอินบัญชีนี้</span></div>' + t.map((x) => {
+    if (x[0] === 'f_mo') return pushMoHtml();   /* SPN V1.7.3 */
+    if (/^f_mo_/.test(x[0])) return '';
     const v = PUSH.prefs && x[0] in PUSH.prefs ? !!PUSH.prefs[x[0]] : null;
     return '<div class="ps-row"><div class="ps-l"><b>' + x[1] + '</b><span>' + x[2] + '</span></div>' +
       (v === null ? '<span class="xs muted">' + (PUSH.prefsErr ? 'โหลดไม่ได้' : 'กำลังโหลด…') + '</span>'
@@ -7510,7 +7537,7 @@ function pushTopicsHtml() {
   }).join('');
 }
 on('pushTopic', async (el) => {
-  const k = el.dataset.k, x = (PUSH_TOPICS[S.user.role] || []).find((t) => t[0] === k); if (!x || !PUSH.prefs) return;
+  const k = el.dataset.k, x = /^f_mo/.test(k) ? pushMoLabel(k) : (PUSH_TOPICS[S.user.role] || []).find((t) => t[0] === k); if (!x || !PUSH.prefs || !(k in PUSH.prefs)) return;   /* V1.7.3: + แผนก */
   const v = !PUSH.prefs[k]; el.disabled = true;
   try { PUSH.prefs = await rpc('cn_push_set_pref', { p_topic: k, p_on: v }); toast((v ? 'เปิด' : 'ปิด') + 'แจ้งเตือน “' + x[1] + '” แล้ว'); }
   catch (e) { toast('บันทึกไม่ได้: ' + ((e && e.message) || e), 'err'); }
@@ -7726,7 +7753,7 @@ function prdClean(x) {   /* ส่งเฉพาะช่องที่กำ�
   if (x.due && typeof x.due === 'object') {   /* SPN V1.5 (Production V282): วันติดตั้ง + กำหนดจบ (งานสี / ต่อแผนก) */
     const one = (v) => (v && typeof v === 'object' ? pick(v, ['d', 'n', 'ov']) : null), ds = {};
     Object.keys(x.due.deps || {}).slice(0, 30).forEach((k) => { const v = one(x.due.deps[k]); if (v && /^[a-z0-9]{1,24}$/.test(k)) ds[k] = v; });
-    out.due = Object.assign(pick(x.due, ['install', 'show']), { deps: ds }, one(x.due.paint) ? { paint: one(x.due.paint) } : {});
+    out.due = Object.assign(pick(x.due, ['install', 'show', 'sun']), { deps: ds }, one(x.due.paint) ? { paint: one(x.due.paint) } : {}, one(x.due.lm) ? { lm: one(x.due.lm) } : {});   /* V1.7.3: + ปิดผิว (lm) · นับวันอาทิตย์ (sun) */
   }
   if (x.none && typeof x.none === 'object') {   /* SPN V1.7 (Production V287): แผนกดแจ้ง “Order นี้ไม่มีงาน…” — เวลาที่กด (ms) ต่อประเภท */
     const nn = {}; ['lm', 'paint', 'mo'].forEach((k) => { const v = Number(x.none[k]); if (isFinite(v) && v > 0) nn[k] = Math.floor(v); });
