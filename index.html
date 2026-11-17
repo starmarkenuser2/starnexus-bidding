@@ -1170,6 +1170,18 @@ body.slv-on{overflow:hidden}
 .spn-tabs.spn-t1{grid-template-columns:repeat(1,minmax(0,1fr))}.spn-tabs.spn-t2{grid-template-columns:repeat(2,minmax(0,1fr))}.spn-tabs.spn-t3{grid-template-columns:repeat(3,minmax(0,1fr))}.spn-tabs.spn-t4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .spn-tabs button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:50px;border:0;border-radius:9px;background:transparent;color:#C9D4E3;font-size:15px;font-weight:600;cursor:pointer;padding:6px 8px}
 .spn-tabs button.on{background:#fff;color:var(--ink)}
+/* SPN V1.3: แท็บแผนก (มากกว่า 4 แท็บ) · Admin จัดลำดับแท็บ (ลาก / ◀ ▶) */
+.spn-tabs.spn-tn{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));position:relative}
+.spn-tabs.spn-tn button{font-size:14px;line-height:1.25;text-align:center}.spn-tabs.spn-tn button .tl{white-space:normal}
+.spn-tabs.spn-ro{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));outline:2px dashed #E3A72F;outline-offset:2px}
+.spn-rt{display:flex;align-items:center;gap:6px;min-height:50px;border-radius:9px;background:#22324B;color:#fff;padding:6px 8px;cursor:grab;touch-action:none;user-select:none;font-weight:600;font-size:14px}
+.spn-rt .grip{color:#8FA3BF;letter-spacing:-2px;font-weight:800}.spn-rt .tl{flex:1;min-width:0;line-height:1.25}
+.spn-rt .spn-rb{display:flex;gap:4px}.spn-rt .spn-rb .btn{min-height:30px;padding:0 9px;background:#fff;color:var(--ink);border:0}
+.spn-rt.drag{box-shadow:0 10px 24px rgba(0,0,0,.4);z-index:5;position:relative;cursor:grabbing;background:#2E4466}
+.spn-rt.drop-l{box-shadow:inset 4px 0 0 #E3A72F}.spn-rt.drop-r{box-shadow:inset -4px 0 0 #E3A72F}
+.spn-robar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:-2px 0 12px;padding:8px 10px;background:#FDF1DA;border-radius:10px;color:#7A4304}.spn-robar .sp{flex:1}
+.prd-dpl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px}.prd-deps{display:flex;gap:6px;flex-wrap:wrap}.prd-depc{margin-top:16px}
+@media (max-width:700px){.spn-tabs.spn-tn{display:flex;overflow-x:auto;scroll-snap-type:x proximity}.spn-tabs.spn-tn button{flex:0 0 auto;min-width:104px;max-width:150px;scroll-snap-align:start}.spn-tabs.spn-ro{grid-template-columns:1fr}}
 .spn-tabs button .n{font-size:12px;font-weight:700;min-width:24px;padding:0 7px;border-radius:999px;line-height:19px;background:#22324B;color:#C9D4E3}
 .spn-tabs button.on .n{background:var(--gray-bg);color:var(--gray)}
 .spn-tabs button .n.w{background:#BE3A31;color:#fff}
@@ -1269,6 +1281,8 @@ h1 .tip-i{width:24px;height:24px;margin-left:8px;transform:translateY(-2px)}
 .spn-gd .n{flex:none;width:32px;height:32px;border-radius:50%;background:#14233B;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
 .spn-gd li div{display:flex;flex-direction:column;gap:2px}.spn-gd li b{font-size:15px}.spn-gd li span{font-size:13.5px;color:var(--text-2);line-height:1.5}
 @media (min-width:900px){.spn-gd{grid-template-columns:repeat(3,1fr)}}
+/* V1.4: เลขที่เอกสารของแผนก (RM / SP-…) */
+.prd-dno{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:6px;border:1px solid var(--line,#cbd5e1);font-size:12px;font-weight:700;vertical-align:1px}
 
 /* V7.16.6: ตราแบรนด์ (ไฟล์นี้ต่อท้าย proto.css ตอน build)
    · ตรา StarNexus (ภาพจากโลโก้จริง) แทนรูปดาวเดิม — มุมเมนูข้าง + หัวการ์ดเข้าสู่ระบบ / ลงทะเบียน / หน้าโหลดใน Production
@@ -1428,7 +1442,7 @@ function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toS
 
 /* ---------- ค่าระบบ ---------- */
 /* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.2' : 'V7.18.2';
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.7.1' : 'V7.18.8';
 const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
@@ -2000,7 +2014,11 @@ function dpEnhance(inp) {
   inp.addEventListener('input', sync); inp.addEventListener('change', sync);
   txt.addEventListener('input', (e) => {
     const v = txt.value;
-    if (/^\d+$/.test(v) && !(e.inputType && e.inputType.indexOf('delete') === 0)) { const d = v.slice(0, 8); txt.value = d.length > 4 ? d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4) : d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d; }
+    if (!(e.inputType && e.inputType.indexOf('delete') === 0)) {   /* V7.18.6: พิมพ์ตัวเลขติดกันทีละหลัก (12112026) ใส่ / ให้ครบ — เดิมใส่ / แรกแล้วหลักถัดไปไม่จัดให้ */
+      let m2;
+      if (/^\d{3,8}$/.test(v)) { const d = v.slice(0, 8); txt.value = d.length > 4 ? d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4) : d.slice(0, 2) + '/' + d.slice(2); }
+      else if ((m2 = /^(\d{2})\/(\d{3,6})$/.exec(v))) txt.value = m2[1] + '/' + m2[2].slice(0, 2) + '/' + m2[2].slice(2);
+    }
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(txt.value)) commit(true); else txt.classList.remove('bad');
   });
   txt.addEventListener('change', () => commit(false));
@@ -7164,7 +7182,7 @@ function ppShortNote(o, got) {
             แถบ “ติดตั้งแอปลงหน้าจอ” ทุกหน้าบนมือถือ · กระดิ่งมุมขวาบน = เปิด / ปิดแจ้งเตือน + เสียง + ส่งทดสอบ ในแอปเลย */
 const PUSH = { reg: null, sub: null, perm: 'default', inst: null, installed: false, busy: false, linked: '', tick: 0, ready: false, sound: true, info: null, infoAt: 0, infoBusy: false };
 /* V7.18: แจ้งเตือนแยกแอป — SPN = ฝ่ายผลิต + จัดซื้อ (งานสั่งทำ) · CN = บทบาทอื่น (ฝ่ายผลิตย้ายไป SPN · เครื่องที่สมัครไว้เดิมยังได้รับจนกว่าจะติดตั้ง SPN) */
-const PUSH_ROLES = APP_KIND === 'spn' ? { production: 1 } : { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1 };   /* V7.17: + ฝ่ายผลิต (ไลน์ผลิต) · V7.17.1 คลังไม่มีหัวข้อไลน์ผลิตแล้ว (ใบเบิกเอาออก) */   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
+const PUSH_ROLES = APP_KIND === 'spn' ? { production: 1, admin: 1 } : { contractor: 1, installer: 1, purchasing: 1, sale: 1, admin: 1 };   /* V7.17: + ฝ่ายผลิต (ไลน์ผลิต) · V7.17.1 คลังไม่มีหัวข้อไลน์ผลิตแล้ว (ใบเบิกเอาออก) */   /* V7.16.5: + จัดซื้อ / Sale (เลือกหัวข้อได้) */   /* V7.16: Admin รับแจ้งเตือนทุกขั้นตอน (เปิดที่ ตั้งค่าระบบ) */
 function pwaTop() { try { return !FRAMED && window.top === window && window.isSecureContext && 'serviceWorker' in navigator; } catch (e) { return false; } }
 function pushCapable() { return pwaTop() && 'PushManager' in window && 'Notification' in window; }
 function pwaStandalone() { try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } }
@@ -7237,8 +7255,9 @@ const PUSH_WHAT = {
   purchasing: 'งานใหม่ส่งให้ผู้รับเหมา (หัวหน้าช่างเลือก) · หมดเวลาเสนอราคา รอเลือกผู้รับเหมา · ผู้รับเหมาไม่รับเงื่อนไข · ผู้รับเหมาเสนอราคา (เลือกเปิดได้)',
   sale: 'Order ของคุณ: ได้ช่างติดตั้ง + วันติดตั้ง · เริ่มงานที่หน้างาน · ติดตั้งเสร็จ · Order ถูกยกเลิก',
   admin: 'ทุกขั้นตอนของทุกฝ่าย: Sale ยืนยัน Order · จัดซื้อส่งงาน · ผู้รับเหมาเสนอราคา / ได้งาน / เข้าหน้างาน / ส่งใบส่งมอบ · บัญชีตรวจ / จ่ายเงิน · ช่างโรงงานจัดทีม / เริ่ม / เสร็จ — บอกด้วยว่าแจ้งถึงใคร',
-  production: 'แผนส่งใบปิดผิว / ใบสั่งตัด / งานสี / ใบรายการสั่งทำใหม่ · เพื่อนร่วมไลน์ติ๊กสถานะ (เลือกได้ว่าสถานะไหน)'   /* V7.18 */
+  production: 'Order ใหม่เข้าไลน์ผลิต · แผนส่งใบปิดผิว / งานสี / งานตัด (สโตร์) · สั่งทำ (แยกแผนก) · Order ที่ไม่มีงานนั้น ๆ · เพื่อนร่วมไลน์ติ๊กสถานะ (เลือกได้ว่าสถานะไหน)'   /* SPN V1.7 */   /* V7.18 */
 };
+if (APP_KIND === 'spn') PUSH_WHAT.admin = 'งานไลน์ผลิตทุกส่วน: Order ใหม่ · ใบปิดผิว · งานสี · ตัด (สโตร์) / สั่งทำ (แยกแผนก) — งานใหม่ · Order ที่ไม่มีงานนั้น ๆ + สถานะที่ติ๊ก (เลือกได้) · ปิดทั้งหมดได้ที่ CN → ตั้งค่าระบบ → แจ้ง Admin ทุกขั้นตอน';   /* SPN V1.6 */
 function pushCardHtml() {
   const u = S.user;
   if (!u || !PUSH_ROLES[u.role] || !pwaTop() || !PUSH.ready) return '';
@@ -7277,15 +7296,17 @@ const PUSH_TOPICS_ALL = {
   installer: [['i_pick', 'Order ใหม่รอเลือกช่องทาง', 'Sale ยืนยันแล้ว — เลือกช่างติดตั้งโรงงาน หรือ ผู้รับเหมา (V7.17)'], ['i_new', 'งานใหม่รอจัดทีม', 'งานช่างโรงงานที่ยังไม่ได้จัดทีม'], ['i_tomorrow', 'พรุ่งนี้มีงานติดตั้ง', 'เตือนล่วงหน้า 1 วัน + ชื่อทีม'],
     ['i_due', 'ครบกำหนด / เลยกำหนดเสร็จงาน', 'พรุ่งนี้ครบกำหนดเสร็จ · เลยกำหนดแล้วยังไม่กดเสร็จ'], ['i_change', 'งานย้าย / ยกเลิก', 'งานย้ายไปให้ผู้รับเหมา · งานถูกยกเลิก']],
   /* V7.17: ไลน์ผลิต (ตรงกับ cn_push_topics ใน SQL 15) */
-  production: [['f_lm', 'ใบปิดผิวใหม่ / แก้ไข', 'แผนกดส่งใบปิดผิวเข้าไลน์ผลิต'],
+  /* SPN V1.7 (ผู้ใช้ 17/11 09:18–09:19 “แก้คำแจ้งเตือนให้สอดคล้องกับโปรแกรมล่าสุด เช่น ตัด ต้องเป็น ตัด (สโตร์) · ให้มีหัวข้อแจ้งเตือน Order เข้ามาใหม่”)
+     + f_new Order ใหม่ · งานสั่งตัด / สั่งทำ = แท็บแผนก (ตัด (สโตร์) · สั่งทำ (แผนกเหล็ก …)) · ใบสั่งตัดไม้ (f_cut*) ไม่ส่งแล้วตั้งแต่ Production V279 = ซ่อน (ค่าที่ตั้งไว้ไม่หาย) */
+  production: [['f_new', 'Order ใหม่เข้าไลน์ผลิต', 'Order ที่ส่งเข้าไลน์ผลิตครั้งแรก (Item Id Set · ชื่องาน)'],
+    ['f_lm', 'ปิดผิว: งานใหม่ / แก้ไข', '“ใบปิดผิวใหม่ / มีการแก้ไข” · แจ้ง “Order นี้ไม่มีงานปิดผิว” ด้วย'],
     ['f_lm_got', 'ปิดผิว: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_lm_doing', 'ปิดผิว: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_lm_done', 'ปิดผิว: เสร็จแล้ว', 'ไม้ปิดผิวครบทุกรายการ — พร้อมตัด'],
-    ['f_cut', 'ใบสั่งตัดใหม่ / เปลี่ยน', 'แผนส่งใบสั่งตัด (ไม้ · จำนวนชิ้น)'],
-    ['f_cut_got', 'ตัด: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_cut_doing', 'ตัด: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_cut_done', 'ตัด: เสร็จแล้ว', 'ตัดครบ — ชิ้นที่ทำสีพร้อมส่งแผนกทำสี'],
-    ['f_paint', 'งานสีใหม่ / เปลี่ยน', 'ใบสั่งตัดมีชิ้นทำสี (สี · ตร.ม.)'],
-    ['f_paint_got', 'ทำสี: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_paint_doing', 'ทำสี: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_paint_done', 'ทำสี: เสร็จแล้ว', 'ทำสีครบทุกสี ส่งคืนไลน์'],
-    ['f_mo', 'ใบรายการสั่งทำใหม่ (Support)', 'แผนส่งใบรายการสั่งทำเข้าไลน์ผลิต — รอ Support รับงาน'],
-    ['f_mo_got', 'สั่งทำ: รับงานแล้ว', 'Support ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_mo_doing', 'สั่งทำ: กำลังทำ', 'Support ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_mo_done', 'สั่งทำ: เสร็จแล้ว', 'Support ทำครบทุกรายการ']]   /* V7.18 · SPN: 4 สถานี × (ใหม่ · รับงานแล้ว · กำลังทำ · เสร็จแล้ว) = 16 หัวข้อ (ตรงกับ cn_push_topics ใน SQL 19) */
+    ['f_mo', 'ตัด (สโตร์) / สั่งทำ: งานใหม่ (แยกแผนก)', '“งานใหม่เข้าแผนก — สั่งตัด · สโตร์ / สั่งทำ · แผนกเหล็ก …” · แจ้ง “Order นี้ไม่มีงานสั่งตัด / สั่งทำ” ด้วย'],
+    ['f_mo_got', 'ตัด (สโตร์) / สั่งทำ: รับงานแล้ว', 'แผนกติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_mo_doing', 'ตัด (สโตร์) / สั่งทำ: กำลังทำ', 'แผนกติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_mo_done', 'ตัด (สโตร์) / สั่งทำ: เสร็จแล้ว', 'แผนกทำครบทุกรายการของแผนกนั้น'],
+    ['f_paint', 'ทำสี: งานใหม่ / แก้ไข', '“งานทำสีใหม่ / มีการแก้ไข” (สี · ตร.ม. · ชิ้น) · แจ้ง “Order นี้ไม่มีงานสี” ด้วย'],
+    ['f_paint_got', 'ทำสี: รับงานแล้ว', 'เพื่อนร่วมไลน์ติ๊ก “รับงานแล้ว” (ค่าเริ่มต้นปิด)'], ['f_paint_doing', 'ทำสี: กำลังทำ', 'เพื่อนร่วมไลน์ติ๊ก “กำลังทำ” (ค่าเริ่มต้นปิด)'], ['f_paint_done', 'ทำสี: เสร็จแล้ว', 'ทำสีครบทุกสี ส่งคืนไลน์']]
 };
+PUSH_TOPICS_ALL.admin = PUSH_TOPICS_ALL.production;   /* SPN V1.6 (ผู้ใช้ 16/11 18:03 “ทำให้คล้าย CN”): Admin เลือกหัวข้อไลน์ผลิตในแอป SPN · ใน CN ไม่มีหัวข้อ (กรองตามแอป) = ได้ทุกขั้นตอนเหมือนเดิม */
 /* V7.18: หัวข้อไลน์ผลิต (f_* · p_mo) อยู่ในแอป SPN · ที่เหลืออยู่ใน CN — ตรงกับ cn_push_take ที่ส่งตามแอป */
 const pushSpnKind = (k) => /^f_/.test(k) || k === 'p_mo';
 const PUSH_TOPICS = (() => { const o = {}; Object.keys(PUSH_TOPICS_ALL).forEach((r) => { const L = PUSH_TOPICS_ALL[r].filter((x) => (APP_KIND === 'spn') === pushSpnKind(x[0])); if (L.length) o[r] = L; }); return o; })();
@@ -7689,7 +7710,7 @@ on('folTog', async (el) => {
    ส่งเอกสารไลน์ผลิตขึ้นจาก Production (แอปเปิดในแท็บของ Production · ผู้ใช้ภายใน) — เฉพาะที่แผนกดส่ง (V272)
    V7.18: แยกจาก prd.js — ใช้ทั้ง CN (สำรอง) และ Starmark SPN · หน้า Odoo V273 ให้ SPN ส่งก่อน (CN ส่งเมื่อไม่มีกรอบ SPN ที่เข้าระบบอยู่)
    ===================================================================== */
-const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0 };
+const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0, depSig: '', depNew: false };
 const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'ax', 'who'];
 function prdClean(x) {   /* ส่งเฉพาะช่องที่กำหนด (Server ตัดซ้ำ) — ไม่มีราคา */
   const pick = (o, ks) => { const r = {}; ks.forEach((k) => { if (o && o[k] != null && typeof o[k] !== 'object') r[k] = o[k]; }); return r; };
@@ -7697,14 +7718,24 @@ function prdClean(x) {   /* ส่งเฉพาะช่องที่กำ�
   const out = pick(x, ['oid', 'title', 'itemIdSet', 'sig']);
   if (x.lm && typeof x.lm === 'object') out.lm = Object.assign(pick(x.lm, ['at', 'by']), { docs: arr(x.lm.docs, 200).filter((d) => d && (!d.type || d.type === 'lm')).map((d) => Object.assign(pick(d, ['no', 'type', 'at', 'cancel', 'orders']), { head: pick(d.head, PRD_HEAD),
     lines: arr(d.lines, 400).map((l) => Object.assign(pick(l, ['code', 'name', 'qty', 'unit', 'loc', 'pool']), Array.isArray(l.bom) ? { bom: l.bom.slice(0, 30).map((b) => pick(b, ['code', 'name', 'qty', 'unit'])) } : {})) })) });
-  if (x.cut && typeof x.cut === 'object') out.cut = Object.assign(pick(x.cut, ['at', 'by', 'total', 'pcs', 'rows', 'all', 'more']), {
+  if (x.cut && typeof x.cut === 'object') out.cut = Object.assign(pick(x.cut, ['paintOnly', 'at', 'by', 'total', 'pcs', 'rows', 'all', 'more']), {   /* V1.3: paintOnly = ส่งเฉพาะงานสี */
     colors: arr(x.cut.colors, 80).map((c) => Object.assign(pick(c, ['code', 'short', 'name', 'm2', 'pcs', 'rows']), { specs: arr(c.specs, 20).map((s) => pick(s, ['spec', 'name', 'm2', 'pcs'])) })),
     parts: arr(x.cut.parts, 1500).map((p) => pick(p, ['cab', 'name', 'bc', 'w', 'l', 't', 'q', 'mat', 'top', 'bot', 'm2'])),
     mats: arr(x.cut.mats, 120).map((m) => pick(m, ['code', 'rows', 'pcs', 'paint'])) });
-  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab'])) });
+  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab', 'dep', 'depName', 'no'])) });   /* V1.3: แผนก · V1.4: เลขที่เอกสารของแผนก */
+  if (x.due && typeof x.due === 'object') {   /* SPN V1.5 (Production V282): วันติดตั้ง + กำหนดจบ (งานสี / ต่อแผนก) */
+    const one = (v) => (v && typeof v === 'object' ? pick(v, ['d', 'n', 'ov']) : null), ds = {};
+    Object.keys(x.due.deps || {}).slice(0, 30).forEach((k) => { const v = one(x.due.deps[k]); if (v && /^[a-z0-9]{1,24}$/.test(k)) ds[k] = v; });
+    out.due = Object.assign(pick(x.due, ['install', 'show']), { deps: ds }, one(x.due.paint) ? { paint: one(x.due.paint) } : {});
+  }
+  if (x.none && typeof x.none === 'object') {   /* SPN V1.7 (Production V287): แผนกดแจ้ง “Order นี้ไม่มีงาน…” — เวลาที่กด (ms) ต่อประเภท */
+    const nn = {}; ['lm', 'paint', 'mo'].forEach((k) => { const v = Number(x.none[k]); if (isFinite(v) && v > 0) nn[k] = Math.floor(v); });
+    if (Object.keys(nn).length) out.none = nn;
+  }
   return out;
 }
 async function prdSync(force) {
+  if (PRDS.busy && force) PRDS.again = true;   /* SPN V1.7: Production กดส่งระหว่างที่กำลังส่งรอบก่อน → ส่งต่ออีกรอบทันทีหลังจบ (เดิมรอรอบ 30 วิ) */
   if (!snsOk() || PRDS.busy || (!force && (Date.now() - PRDS.at < 30000 || Date.now() < PRDS.off))) return;
   PRDS.busy = true; PRDS.at = Date.now();
   try {
@@ -7715,15 +7746,28 @@ async function prdSync(force) {
       try { r = await snbCall('prd', { have: PRDS.sigs }, 30000); }
       catch (e) { if (/ไม่รู้จักคำสั่ง/.test(e.message)) PRDS.off = Date.now() + 600000; throw e; }   /* Production รุ่นก่อน V270 */
       if (!(r && r.v >= 2)) { PRDS.last = { at: Date.now(), n: 0, old: true }; return; }   /* Production รุ่นก่อน V272 (ส่งเอง) — ไม่รับ รอแผนกดส่งจาก V272 */
+      if (round === 0 && Array.isArray(r.deps) && r.depsSig && r.depsSig !== PRDS.depSig) {   /* V1.3: แผนก (แท็บงานสั่งตัด / สั่งทำ) จาก Production V279 */
+        try { await rpc('cn_prd_deps_set', { p_deps: r.deps.slice(0, 30).map((d) => ({ id: d.id, name: d.name, grp: d.grp, label: d.label, pos: d.pos })) }); PRDS.depSig = r.depsSig; PRDS.depNew = true; PRDS.depErr = ''; }
+        catch (e) { if (e.code === 'session') throw e; PRDS.depErr = e.message; }   /* ยังไม่ได้รัน SQL V1.3 — ส่งเอกสารต่อได้ (แท็บแผนกยังไม่ขึ้น) */
+      }
       const rows = ((r && r.rows) || []).slice(0, 40).map(prdClean).filter((x) => x.oid);
       if (!rows.length) break;
       const out = await rpc('cn_prd_sync', { p_rows: rows });
       Object.assign(PRDS.sigs, (out && out.sigs) || {}); n += rows.length;
+      const nr = rows.filter((x) => x.none).map((x) => ({ oid: x.oid, title: x.title, none: x.none }));   /* SPN V1.7: แจ้ง “Order นี้ไม่มีงาน…” (Server แจ้งครั้งเดียวต่อการกด) */
+      if (nr.length && Date.now() > (PRDS.noneOff || 0)) {
+        try { await rpc('cn_prd_none', { p_rows: nr }); }
+        catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_none/.test(e.message || '')) PRDS.noneOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL V7.18.7 — ส่งเอกสารต่อได้ (แจ้งไม่มีงานยังไม่ทำงาน) */
+      }
       if (!(r && r.more)) break;
     }
     PRDS.last = { at: Date.now(), n };
+    if (PRDS.depNew && typeof prdStLoad === 'function') { PRDS.depNew = false; await prdStLoad(true); }   /* แท็บแผนกใหม่ขึ้นทันที */
     if (n) { await refresh(); if (/^\/prd\//.test(curPath()) && !isEditing() && !$('#overlay.on')) rerender(); }
-  } catch (e) { PRDS.last = Object.assign({}, PRDS.last || {}, { err: e.message, errAt: Date.now() }); } finally { PRDS.busy = false; }
+  } catch (e) { PRDS.last = Object.assign({}, PRDS.last || {}, { err: e.message, errAt: Date.now() }); } finally {
+    PRDS.busy = false;
+    if (PRDS.again) { PRDS.again = false; setTimeout(() => { prdSync(true); }, 400); }
+  }
 }
 if (SNB_FRAMED) setInterval(() => { prdSync(); }, 30000);
 
