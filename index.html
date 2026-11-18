@@ -1304,6 +1304,15 @@ h1 .tip-i{width:24px;height:24px;margin-left:8px;transform:translateY(-2px)}
 /* ในแท็บ Production (Odoo) — หัวโปรแกรม Production มีโลโก้ STARMARK อยู่แล้ว → เมนูข้างของ CN คงแบบเดิม (ปุ่มบ้านอยู่มุมบน) */
 .shell.framed .side .brand::before{display:none}
 
+
+/* V7.18.11: การ์ดประเภทงาน */
+.typ-list{display:flex;flex-direction:column;gap:8px}
+.typ-row{display:grid;grid-template-columns:34px minmax(0,1.2fr) minmax(0,1.4fr) 110px auto;gap:8px;align-items:center}
+.typ-row.off{opacity:.6}.typ-row.new .input[name=name]{border-color:var(--green)}
+.typ-sw .sw-i,.typ-sw i{display:inline-block;width:26px;height:26px;border-radius:50%}
+.typ-col{width:30px;height:30px;padding:0;border:1px solid var(--line-2);border-radius:50%;background:none;cursor:pointer}
+.typ-col::-webkit-color-swatch-wrapper{padding:0}.typ-col::-webkit-color-swatch{border:0;border-radius:50%}
+@media(max-width:640px){.typ-row{grid-template-columns:34px minmax(0,1fr) 96px auto}.typ-row .typ-th{grid-column:2/-1;grid-row:2}}
 </style>
 </head>
 <body>
@@ -1448,7 +1457,7 @@ function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toS
 
 /* ---------- ค่าระบบ ---------- */
 /* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.7.3' : 'V7.18.10';
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.0' : 'V7.18.11';
 const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
@@ -1462,12 +1471,17 @@ const FINISH_DAYS = 7;
 const finishDaysNow = () => { const st = typeof DB !== 'undefined' && DB && DB.settings, v = st && st.finishDays != null && st.finishDays !== '' ? Number(st.finishDays) : NaN; return Number.isFinite(v) && v >= 0 ? Math.min(90, Math.floor(v)) : FINISH_DAYS; };
 const bidDaysNow = () => Math.min(60, Math.max(1, Math.floor(Number(typeof DB !== 'undefined' && DB && DB.settings && DB.settings.bidDays) || BID_DAYS)));
 /* % ค่าติดตั้งจากราคาขาย: เก็บที่ Server และส่งมาเฉพาะ Admin — ไม่มีค่าอัตราฝังในโค้ดหน้าเว็บ */
-const TYPES = [
+const TYPES0 = [   /* V7.18.11: ค่าตั้งต้น — รายการจริงมาจาก Server (DB.settings.types · Admin เพิ่ม / แก้ / ซ่อนได้) */
   { k: 'HG', name: 'งานสี', th: 'HG (เงา) / MU (ด้าน)' }, /* V7.10.3: ชื่อที่แสดงเปลี่ยนเป็น งานสี — รหัสยังเป็น HG (ข้อมูลเดิม/อัตราที่ Server ไม่เปลี่ยน) */
   { k: 'Membrane', name: 'Membrane', th: 'เมมเบรน' },
   { k: 'Melamine', name: 'เมลามีน', th: 'Melamine' },
 ];
-const TYPE_BY = Object.fromEntries(TYPES.map((t) => [t.k, t]));
+/* V7.18.11 (ผู้ใช้ 18/11 13:10 “ตรงประเภทงานให้เพิ่มลบแก้ไขได้ด้วย — เจองาน HPL”): ประเภทงานจาก Server · ลบ = ซ่อน (Order เดิมยังแสดงชื่อเดิม) */
+function typesAll() { const L = typeof DB !== 'undefined' && DB && DB.settings && Array.isArray(DB.settings.types) && DB.settings.types.length ? DB.settings.types : TYPES0; return L; }
+function typesLive() { return typesAll().filter((t) => !t.gone); }
+function typeBy(k) { return typesAll().find((t) => t.k === k) || null; }
+const MAT_BUILTIN = { HG: 1, Membrane: 1, Melamine: 1 }, MAT_COLORS = ['#6B8F71', '#8C6D4F', '#4F6D8C', '#9B5D73', '#7A7A52', '#5E8C88'];
+function matAttr(t) { return t && !MAT_BUILTIN[t.k] ? ' style="background:' + esc(t.color || '#8A94A6') + '"' : ''; }
 const ROLES = {
   admin: { label: 'Admin', cls: 'r-admin', color: '#14233B', home: '#/admin/home' },
   sale: { label: 'Sale', cls: 'r-sale', color: '#1E5BA8', home: '#/sale/orders' },
@@ -1860,7 +1874,7 @@ function applyFilter(key) {
 Acts.tblFilter = (el) => { S.q[el.dataset.k] = el.value; applyFilter(el.dataset.k); };
 function badge(st) { const m = OST[st]; return '<span class="badge t-' + m[1] + '"' + tipA(HELP_ST[st]) + '>' + m[0] + '</span>'; }   /* V7.18.2: ชี้ดูความหมายสถานะ */
 function payBadge(p) { if (!p) return '<span class="muted small">—</span>'; const m = PAYST[p.st]; return '<span class="badge t-' + m[1] + '">' + m[0] + '</span>'; }
-function sw(type) { const t = TYPE_BY[type]; return t ? '<span class="sw"><i class="mat-' + t.k + '"></i>' + t.name + '</span>' : '<span class="muted small">—</span>'; }
+function sw(type) { const t = typeBy(type); return t ? '<span class="sw"><i class="mat-' + t.k + '"' + matAttr(t) + '></i>' + esc(t.name) + '</span>' : '<span class="muted small">—</span>'; }
 /* V7.16.5: กระดิ่งการแจ้งเตือน (แถบบนมือถือ + กล่องชื่อผู้ใช้แถบซ้าย) — push.js โหลดทีหลัง: ยังไม่พร้อม = ไม่แสดง */
 function bellSafe(cls) { try { return pushBellHtml(cls); } catch (e) { return ''; } }
 function roleTag(r) { return '<span class="role ' + ROLES[r].cls + '">' + ROLES[r].label + '</span>'; }
@@ -2079,7 +2093,6 @@ function navFor(area) {
     { h: '#/acc/review', i: 'wallet', t: 'หน้าจอบัญชี' },
     { h: '#/ins/queue', i: 'hammer', t: 'หน้าจอหัวหน้าช่างติดตั้ง' },
     { h: '#/wh/receive', i: 'box', t: 'หน้าจอคลังสินค้า' },
-    { h: '#/prd/orders', i: 'factory', t: 'ไลน์ผลิต (Starmark SPN)' },   /* V7.17 · V7.18 ย้ายไปแอป SPN — หน้านี้มีปุ่มไป SPN */
     { h: '#/con/open', i: 'tool', t: 'หน้าจอผู้รับเหมา' },
   ];
   if (area === 'sale') return [{ h: '#/sale/orders', i: 'list', t: 'Sale Order ของฉัน', n: c.drafts, tip: NAV_TIP.drafts }, { h: '#/sale/new', i: 'plus', t: 'สร้าง Sale Order' }];
@@ -2957,7 +2970,7 @@ route(/^\/admin\/home$/, 'admin', () => {
     (todo.length ? todo.map((t) => '<a href="' + t[4] + '" class="todo"><span class="badge plain t-' + t[1] + ' ti">' + icon(t[0], 'sm') + '</span><div style="flex:1;min-width:0"><div class="strong small">' + esc(t[2]) + '</div><div class="xs muted">' + esc(t[3]) + '</div></div>' + icon('chevRight', 'sm') + '</a>').join('') : empty('checkCircle', 'ไม่มีงานค้าง')) + '</div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('lock') + ' อัตราค่าติดตั้งผู้รับเหมา</h2><a class="btn sm" href="#/admin/settings">' + icon('edit', 'sm') + ' แก้ไขอัตรา</a></div><div class="card-b">' +
     '<div class="table-wrap"><table class="t"><thead><tr><th>ประเภทงาน (1 Order = 1 ประเภท)</th><th class="r">% ของราคาขาย</th><th class="r">ตัวอย่าง ราคาขาย ฿100,000</th></tr></thead><tbody>' +
-    TYPES.map((t) => '<tr><td>' + sw(t.k) + ' <span class="xs muted">' + t.th + '</span></td><td class="r strong">' + rateNow(t.k) + '%</td><td class="r money">' + money(feeOf(t.k, 100000), 0) + '</td></tr>').join('') + '</tbody></table></div>' +
+    typesLive().map((t) => '<tr><td>' + sw(t.k) + ' <span class="xs muted">' + esc(t.th || '') + '</span></td><td class="r strong">' + rateNow(t.k) + '%</td><td class="r money">' + money(feeOf(t.k, 100000), 0) + '</td></tr>').join('') + '</tbody></table></div>' +
     '<div class="small muted" style="margin-top:10px">การชำระเงินที่ผู้รับเหมาเลือกได้: ' + Object.keys(PAY_OPTS).map((k) => '<b>' + PAY_OPTS[k].label + '</b> (' + esc(termsText(optTerms(k))) + ')').join(' หรือ ') + ' · ผู้รับเหมาไม่เห็นตารางอัตรานี้</div></div></div></div>' };
 });
 on('ordFilter', (el) => { S.ordFilter = el.dataset.f; go('#/admin/orders'); });
@@ -3092,10 +3105,10 @@ on('paySave', async (el) => {
 });
 
 route(/^\/admin\/users$/, 'admin', () => {
-  const us = liveUsers(), del = DB.users.length - us.length;
+  const nPrd = liveUsers().filter((u) => u.role === 'production').length, us = liveUsers().filter((u) => u.role !== 'production'), del = DB.users.length - liveUsers().length;   /* V7.18.11: บัญชีฝ่ายผลิตจัดการในแอป SPN */
   return { nav: '#/admin/users', html: pageHead('จัดการผู้ใช้', 'เพิ่ม/แก้ไข/ลบผู้ใช้ กำหนด Username, Password และประเภทผู้ใช้ — ผู้รับเหมาแต่ละรายมีบัญชีแยกกัน · Sale/จัดซื้อ/ผู้รับเหมาลงทะเบียนเองได้ที่หน้าเข้าสู่ระบบ (รอคุณอนุมัติ)', '<button class="btn primary" data-act="userForm">' + icon('plus') + ' เพิ่มผู้ใช้</button>') + signupSection() +
     alertBar((DB.signups || []).filter((g) => g.status === 'pending').length, (DB.signups || []).filter((g) => g.status === 'pending').length + ' คำขอลงทะเบียนรออนุมัติ', 'ผู้ใช้สมัครเองที่หน้าเข้าสู่ระบบ — กด <b>อนุมัติ</b> (เลือกประเภท / บริษัท) หรือ <b>ปฏิเสธ</b> ในกรอบ "คำขอลงทะเบียนรออนุมัติ"') +
-    '<div class="grid g4" style="margin-bottom:16px">' + Object.keys(ROLES).map((r) => '<div class="card kpi"><div class="k">' + roleTag(r) + '</div><div class="v">' + us.filter((u) => u.role === r).length + '</div><div class="s">ใช้งาน ' + us.filter((u) => u.role === r && u.active).length + ' บัญชี</div></div>').join('') + '</div>' +
+    '<div class="grid g4" style="margin-bottom:16px">' + Object.keys(ROLES).filter((r) => r !== 'production').map((r) => '<div class="card kpi"><div class="k">' + roleTag(r) + '</div><div class="v">' + us.filter((u) => u.role === r).length + '</div><div class="s">ใช้งาน ' + us.filter((u) => u.role === r && u.active).length + ' บัญชี</div></div>').join('') + '</div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>ผู้ใช้</th><th>Username</th><th>ประเภท</th><th>บริษัทผู้รับเหมา</th><th>เข้าใช้ล่าสุด</th><th>สถานะ</th><th class="r">จัดการ</th></tr></thead><tbody>' +
     us.map((u) => { const me = u.id === S.user.id; return '<tr><td class="main"><b>' + esc(u.name) + '</b>' + (u.super ? ' <span class="badge t-amber plain">Super Admin</span>' : '') + (me ? ' <span class="badge t-blue plain">คุณ</span>' : '') + '<div class="sub">' + esc(u.phone || '') + '</div></td><td data-l="Username" class="mono">' + esc(u.username) + '</td><td data-l="ประเภท">' + roleTag(u.role) + '</td>' +
       '<td data-l="บริษัท" class="small">' + (u.cid ? esc(shortCo(conById(u.cid).company)) : '<span class="muted">—</span>') + '</td><td data-l="เข้าใช้ล่าสุด" class="small">' + (u.lastLogin ? fmtDT(u.lastLogin) : '<span class="muted">ยังไม่เคย</span>') + '</td>' +
@@ -3103,6 +3116,7 @@ route(/^\/admin\/users$/, 'admin', () => {
       '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px"><button class="btn xs" data-act="userForm" data-id="' + u.id + '">' + icon('edit', 'xs') + ' แก้ไข</button>' +
       (u.super || me ? '' : '<button class="btn xs" data-act="userToggle" data-id="' + u.id + '">' + (u.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน') + '</button><button class="btn xs danger" data-act="userDel" data-id="' + u.id + '" aria-label="ลบ ' + esc(u.username) + '">' + icon('trash', 'xs') + '</button>') + '</span></td></tr>'; }).join('') +
     '</tbody></table></div></div>' +
+    '<div style="margin-top:12px">' + notice('info', 'บัญชีฝ่ายผลิต' + (nPrd ? ' (' + nPrd + ' บัญชี)' : '') + ' จัดการในแอป Starmark SPN → เมนู “บัญชีผู้ใช้” (ระบุแผนกได้) · Admin ใช้ Username / รหัสเดิมเข้า SPN ได้') + '</div>' +
     '<div class="sec-t">' + icon('building') + ' บริษัทผู้รับเหมา <span class="n">' + DB.contractors.length + '</span> <span class="xs muted" style="font-weight:400">เพิ่มบริษัทใหม่ได้ตอนเพิ่มผู้ใช้ประเภทผู้รับเหมา</span></div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>บริษัท</th><th>ผู้ติดต่อ</th><th class="r">ช่างในทีม</th><th>บัญชีผู้ใช้</th><th class="r">จัดการ</th></tr></thead><tbody>' +
     (DB.contractors.length ? DB.contractors.map((c) => { const n = us.filter((u) => u.cid === c.id); return '<tr><td class="main"><b>' + esc(c.company) + '</b><div class="sub mono">' + esc(c.id) + '</div></td><td data-l="ผู้ติดต่อ" class="small">' + esc(c.contact || '—') + (c.phone ? '<div class="sub">' + esc(c.phone) + '</div>' : '') + '</td><td data-l="ช่าง" class="r">' + (c.team ? c.team + ' คน' : '—') + '</td>' +
@@ -3130,7 +3144,7 @@ on('sgApprove', (el) => {
   modal({ title: icon('check') + ' อนุมัติการลงทะเบียน', sub: esc(g.name) + ' · ' + esc(g.username),
     body: '<dl class="dl"><dt>เบอร์โทร</dt><dd>' + esc(g.phone) + '</dd><dt>ขอเป็น</dt><dd>' + roleTag(g.role) + '</dd>' + (g.company ? '<dt>บริษัทที่แจ้ง</dt><dd>' + esc(g.company) + (g.team ? ' · ช่าง ' + g.team + ' คน' : '') + '</dd>' : '') + (g.note ? '<dt>หมายเหตุ</dt><dd>' + esc(g.note) + '</dd>' : '') + '<dt>ส่งเมื่อ</dt><dd>' + fmtDT(g.createdAt) + '</dd></dl>' +
       '<div class="divider"></div><div class="form-grid" id="sa">' +
-      '<div class="field c6"><label>ประเภทผู้ใช้ที่อนุมัติ <span class="req">*</span></label><select class="select" name="role" data-chg="saSync">' + Object.keys(ROLES).map((r) => '<option value="' + r + '"' + (g.role === r ? ' selected' : '') + '>' + ROLES[r].label + '</option>').join('') + '</select><div class="help">เปลี่ยนได้ถ้าผู้สมัครเลือกผิด</div></div>' +
+      '<div class="field c6"><label>ประเภทผู้ใช้ที่อนุมัติ <span class="req">*</span></label><select class="select" name="role" data-chg="saSync">' + Object.keys(ROLES).filter((r) => r !== 'production').map((r) => '<option value="' + r + '"' + (g.role === r ? ' selected' : '') + '>' + ROLES[r].label + '</option>').join('') + '</select><div class="help">เปลี่ยนได้ถ้าผู้สมัครเลือกผิด</div></div>' +
       '<div class="field c6" id="sa-cid"><label>บริษัทผู้รับเหมา <span class="req">*</span></label><select class="select" name="cid" data-chg="saSync">' + DB.contractors.map((c) => '<option value="' + c.id + '"' + (same && same.id === c.id ? ' selected' : '') + '>' + esc(c.company) + '</option>').join('') + '<option value="__new"' + (same ? '' : ' selected') + '>+ เพิ่มบริษัทใหม่</option></select></div>' +
       '<div class="c12 form-grid" id="sa-newco" style="margin:0"><div class="field c8"><label>ชื่อบริษัทใหม่ <span class="req">*</span></label><input class="input" name="coName" value="' + esc(g.company) + '"></div><div class="field c4"><label>จำนวนช่าง</label><div class="addon"><input class="input" name="coTeam" inputmode="numeric" value="' + (g.team || '') + '"><span>คน</span></div></div></div>' +
       '<div class="c12" id="sa-warn"></div></div>',
@@ -3173,7 +3187,7 @@ on('userForm', (el) => {
       '<div class="field c6"><label>เบอร์โทร</label><input class="input" name="phone" value="' + esc(u.phone || '') + '"></div>' +
       '<div class="field c6"><label>Username <span class="req">*</span></label><input class="input mono" name="username" value="' + esc(u.username) + '" autocomplete="off" autocapitalize="off"></div>' +
       '<div class="field c6"><label>' + (isNew ? 'Password' : 'ตั้ง Password ใหม่') + (isNew ? ' <span class="req">*</span>' : '') + '</label><div class="addon"><input class="input mono" name="password" type="password" placeholder="' + (isNew ? 'อย่างน้อย 8 ตัวอักษร' : 'เว้นว่าง = ไม่เปลี่ยน') + '" autocomplete="new-password"><button type="button" class="addon-btn" data-act="pwGen">สุ่ม</button></div><div class="help">แจ้งรหัสให้ผู้ใช้เอง — ระบบไม่แสดงรหัสเดิม</div></div>' +
-      '<div class="field c6"><label>ประเภทผู้ใช้ <span class="req">*</span></label><select class="select" name="role" data-chg="ufRole"' + (lockRole ? ' disabled' : '') + '>' + Object.keys(ROLES).map((r) => '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>' + ROLES[r].label + '</option>').join('') + '</select></div>' +
+      '<div class="field c6"><label>ประเภทผู้ใช้ <span class="req">*</span></label><select class="select" name="role" data-chg="ufRole"' + (lockRole ? ' disabled' : '') + '>' + Object.keys(ROLES).filter((r) => r !== 'production').map((r) => '<option value="' + r + '"' + (u.role === r ? ' selected' : '') + '>' + ROLES[r].label + '</option>').join('') + '</select></div>' +
       '<div class="field c6 ' + (u.role === 'contractor' ? '' : 'hidden') + '" id="uf-cid"><label>บริษัทผู้รับเหมา <span class="req">*</span></label><select class="select" name="cid" data-chg="ufCid">' + DB.contractors.map((c) => '<option value="' + c.id + '"' + (u.cid === c.id ? ' selected' : '') + '>' + esc(c.company) + '</option>').join('') + '<option value="__new"' + (DB.contractors.length ? '' : ' selected') + '>+ เพิ่มบริษัทใหม่</option></select></div>' +
       '<div class="c12 form-grid ' + (u.role === 'contractor' && !DB.contractors.length ? '' : 'hidden') + '" id="uf-newco" style="margin:0"><div class="field c8"><label>ชื่อบริษัทผู้รับเหมา <span class="req">*</span></label><input class="input" name="coName" placeholder="เช่น บริษัท ช่างดี ติดตั้ง จำกัด"></div><div class="field c4"><label>จำนวนช่างในทีม</label><div class="addon"><input class="input" name="coTeam" inputmode="numeric" value="3"><span>คน</span></div></div></div>' +
       '<div class="c12"><label class="check"><input type="checkbox" name="active"' + (u.active ? ' checked' : '') + (lockRole ? ' disabled' : '') + '> เปิดใช้งานบัญชี</label></div>' +
@@ -3352,7 +3366,7 @@ route(/^\/sale\/(new|edit\/([^/]+))$/, 'sale', (m) => {
       F('bidDays', icon('clock', 'sm') + ' เปิดรับราคา <span class="req">*</span>', '', 'c6', '<div class="addon"><input class="input" name="bidDays" inputmode="numeric" value="' + (o ? bidDaysOf(o) : bidDaysNow()) + '" data-inp="bdChk" aria-label="จำนวนวันเปิดรับราคา"><span>วัน</span></div><div class="help" id="bd-help"></div>') +
       F('note', 'หมายเหตุถึงผู้รับเหมา', d.note, 'c12', '<textarea class="textarea" name="note" rows="2" placeholder="เช่น เวลาเข้างาน ลิฟต์ขนของ">' + esc(d.note) + '</textarea>') + '</div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('layers') + ' ประเภทงานและราคา</h2><span class="xs muted">เลือกได้ 1 ประเภทต่อ 1 Order</span></div><div class="card-b">' +
-      '<div class="field" data-f="type"><div class="mat-tiles" role="radiogroup" aria-label="ประเภทงาน">' + TYPES.map((t) => '<label class="mat-tile ' + (d.type === t.k ? 'on' : '') + '"><input type="radio" name="type" value="' + t.k + '"' + (d.type === t.k ? ' checked' : '') + ' data-chg="saleType"><div class="face mat-' + t.k + '"><span class="chk">' + icon('check', 'sm') + '</span></div><div class="lbl"><b>' + t.name + '</b><span>' + t.th + (admin && rateNow(t.k) != null ? ' · ค่าติดตั้ง ' + rateNow(t.k) + '%' : '') + '</span></div></label>').join('') + '</div><div class="err"></div></div>' +
+      '<div class="field" data-f="type"><div class="mat-tiles" role="radiogroup" aria-label="ประเภทงาน">' + typesLive().concat(typesAll().filter((t) => t.gone && t.k === d.type)).map((t) => '<label class="mat-tile ' + (d.type === t.k ? 'on' : '') + '"><input type="radio" name="type" value="' + t.k + '"' + (d.type === t.k ? ' checked' : '') + ' data-chg="saleType"><div class="face mat-' + t.k + '"' + matAttr(t) + '><span class="chk">' + icon('check', 'sm') + '</span></div><div class="lbl"><b>' + esc(t.name) + '</b><span>' + esc(t.th || '') + (admin && rateNow(t.k) != null ? ' · ค่าติดตั้ง ' + rateNow(t.k) + '%' : '') + '</span></div></label>').join('') + '</div><div class="err"></div></div>' +
       '<div class="form-grid" style="margin-top:14px">' + F('sale', 'ราคาขาย (ก่อน VAT) <span class="req">*</span> ' + icon('lock', 'xs'), d.sale, 'c6', '<div class="addon"><input class="input money" name="sale" inputmode="decimal" value="' + (d.sale ? Number(d.sale).toLocaleString('th-TH') : '') + '" data-inp="saleCalc" placeholder="เช่น 880,000"><span>บาท</span></div><div class="help">เห็นเฉพาะ Admin และ Sale — ไม่ส่งไปหน้าผู้รับเหมา</div>') +
       (admin ? '<div class="c6"><div class="fee-total" id="fee-box"></div><div class="xs muted" style="margin-top:4px">' + icon('lock', 'xs') + ' ช่องนี้เห็นเฉพาะ Admin</div></div>' : '') + '</div></div></div>' +
     '<div class="card"><div class="card-f" style="border-top:0;border-radius:var(--r-lg)"><a class="btn" href="#/sale/orders">กลับ</a><span class="spacer"></span>' + btns + '</div></div></form>' };
@@ -3422,7 +3436,7 @@ function saleCalc() {
   $$('.mat-tile', f).forEach((x) => x.classList.toggle('on', x.querySelector('input').checked));
   const fb = $('#fee-box'); if (!fb) return; /* ราคาตั้งต้น/อัตรา % แสดงเฉพาะ Admin */
   const k = t ? rateNow(t) : null;
-  fb.innerHTML = t && s > 0 && k != null ? '<div><div class="small">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="xs">' + money(s, 0) + ' × ' + k + '% (' + TYPE_BY[t].name + ')</div></div><b class="num">' + money(feeOf(t, s)) + '</b>'
+  fb.innerHTML = t && s > 0 && k != null ? '<div><div class="small">ราคาตั้งต้นที่ผู้รับเหมาเห็น</div><div class="xs">' + money(s, 0) + ' × ' + k + '% (' + esc((typeBy(t) || { name: t }).name) + ')</div></div><b class="num">' + money(feeOf(t, s)) + '</b>'
     : '<div class="small">ราคาตั้งต้นที่ผู้รับเหมาเห็น — เลือกประเภทงานและใส่ราคาขายเพื่อคำนวณ</div><b class="num">—</b>';
 }
 Acts.saleCalc = saleCalc; Acts.saleType = saleCalc;
@@ -3481,7 +3495,7 @@ function odooClean(d) {
   ODOO_TXT.forEach((k) => { if (d[k] != null && str(d[k])) o[k] = str(d[k], k === 'note' ? 1000 : k === 'mapUrl' ? 600 : 300); });
   if (d.ref != null && str(d.ref)) o.ref = str(d.ref, 60);
   if (PROV_ALL.indexOf(str(d.province)) >= 0) o.province = str(d.province);
-  if (TYPE_BY[str(d.type)]) o.type = str(d.type);
+  if (typeBy(str(d.type))) o.type = str(d.type);
   const sale = parseNum(d.sale); if (sale > 0) o.sale = r2(sale);
   const cab = parseNum(d.cabinets); if (cab > 0 && Math.floor(cab) === cab) o.cabinets = cab;
   ['wantFrom', 'wantTo'].forEach((k) => { const v = str(d[k]); if (/^\d{4}-\d{2}-\d{2}$/.test(v) && toDate(v)) o[k] = v; });
@@ -3597,7 +3611,7 @@ on('saleSave', async (el) => {
   }
   const nd = d.bidDays, fv = admin ? feeOf(d.type, d.sale) : null;
   modal({ title: icon('send') + ' ยืนยัน Order?', body: '<p>เมื่อยืนยันแล้ว:</p><ul style="margin:0 0 12px;padding-left:20px;line-height:1.9"><li>Order <b>ส่งให้หัวหน้าช่างติดตั้งโรงงาน</b> เลือกช่องทาง: <b>ช่างติดตั้งโรงงาน</b> หรือ <b>ผู้รับเหมาติดตั้ง</b></li><li>ถ้าเลือกผู้รับเหมา: ผู้รับเหมา<b>ทุกคน</b>เห็นงานและเสนอราคาได้ <b>' + nd + ' วัน</b> นับจากตอนเลือก (นับรวมวันอาทิตย์และวันหยุด) · จัดซื้อเลือก / อนุมัติผู้รับเหมาต่อ (ปรับวันเปิดรับราคาได้)</li>' +
-      (fv != null ? '<li>ผู้รับเหมาเห็นราคาตั้งต้น <b>' + money(fv) + '</b> (' + TYPE_BY[d.type].name + ' ' + rateNow(d.type) + '%) — ไม่เห็นราคาขาย</li>' : '<li>ผู้รับเหมาเห็นเฉพาะราคาตั้งต้นที่ระบบคำนวณ — ไม่เห็นราคาขาย</li>') +
+      (fv != null ? '<li>ผู้รับเหมาเห็นราคาตั้งต้น <b>' + money(fv) + '</b> (' + esc((typeBy(d.type) || { name: d.type }).name) + ' ' + rateNow(d.type) + '%) — ไม่เห็นราคาขาย</li>' : '<li>ผู้รับเหมาเห็นเฉพาะราคาตั้งต้นที่ระบบคำนวณ — ไม่เห็นราคาขาย</li>') +
       '<li>แก้ไขได้จนกว่าจัดซื้อจะอนุมัติ — ถ้าแก้ราคา ผู้รับเหมาจะเห็นว่าราคาตั้งต้นมีการแก้ไข</li></ul>',
     foot: '<button class="btn" data-act="closeOv">กลับไปตรวจ</button><button class="btn primary" data-act="saleConfirmOk">' + icon('send', 'sm') + ' ยืนยัน Order</button>' });
   Acts.saleConfirmOk = async () => {
@@ -5366,18 +5380,21 @@ function drDate(s) {
   return '';
 }
 /* กำหนดติดตั้ง / วันที่ติดตั้ง / นัดติดตั้ง (ในใบเสนอราคา / Memo / Order check list) — ค่าหลังหัวข้อในช่องเดียวกัน (หรือบรรทัดถัดไปถ้าหัวข้ออยู่โดด ๆ) · มีแต่เดือน / ช่องว่าง = ไม่เอา */
-const DR_INST_RE = /(?:ก[ำา]?หนด(?:การ)?(?:วัน)?ติดตั้ง(?:งาน)?|วันที่?ติดตั้ง|นัด(?:หมาย)?ติดตั้ง|install(?:ation)?\s*date)\s*/gi;
-function drInstDate(T) {
+const DR_INST_RE = /(?:ก[ำา]?หนด(?:การ)?ส่ง(?:สินค้า|ของ)(?:เข้า)?(?:ติดตั้ง|หน้างาน)|ก[ำา]?หนด(?:การ)?(?:วัน)?ติดตั้ง(?:งาน)?|วันที่?ติดตั้ง|นัด(?:หมาย)?ติดตั้ง|install(?:ation)?\s*date)\s*/gi;
+function drInstDate(T) {   /* V7.18.11 (ผู้ใช้ 18/11 13:10 “แบบมี 5/1/2569 กับ 12/11/2569 — ให้เอาวันที่ใกล้วันปัจจุบันที่สุด”): เก็บทุกวันที่ใต้หัวข้อกำหนดติดตั้ง แล้วเลือกวันที่ใกล้วันนี้ที่สุด (เท่ากัน = ที่เจอก่อน) */
+  const C = [];
   for (let i = 0; i < T.length; i++) {
     DR_INST_RE.lastIndex = 0; let m;
     while ((m = DR_INST_RE.exec(T[i]))) {
       const rest = T[i].slice(m.index + m[0].length).replace(/^[\s:：=¦-]+/, '');
       const seg = rest.split('¦')[0];
       const v = drDate(seg) || (!seg.trim() && T[i + 1] ? drDate(T[i + 1].split('¦')[0]) : '');
-      if (v) return { v, src: T[i] };
+      if (v) C.push({ v, src: T[i] });
     }
   }
-  return null;
+  if (!C.length) return null;
+  const t0 = Date.parse(todayStr() + 'T00:00:00'), dd = (v) => Math.abs(Date.parse(v + 'T00:00:00') - t0);
+  return C.reduce((a, b) => (dd(b.v) < dd(a.v) ? b : a));
 }
 function drParse(lines) {
   const L = (lines || []).map((l) => (typeof l === 'string' ? { t: drNorm(l), x: null } : l)).filter((l) => l && l.t);
@@ -6082,10 +6099,10 @@ route(/^\/admin\/settings$/, 'admin', () => {
   const rt = DB.settings.rates, pc = payCfg();
   return { nav: '#/admin/settings', html: pageHead('ตั้งค่าระบบ', 'อัตราค่าติดตั้ง · การชำระเงินผู้รับเหมา · ระยะเวลาเปิดรับราคา · ระยะเวลาติดตั้ง · สำรองข้อมูล') +
     '<div class="grid g2">' +
-    '<div class="card"><div class="card-h"><h2>' + icon('lock') + ' อัตราค่าติดตั้งผู้รับเหมา</h2><span class="xs muted">เฉพาะภายใน</span></div><div class="card-b"><div id="rt" class="form-grid">' +
-      TYPES.map((t) => '<div class="field c4"><label>' + sw(t.k) + '</label><div class="addon"><input class="input" name="' + t.k + '" inputmode="decimal" value="' + rateNow(t.k) + '" aria-label="อัตรา ' + t.name + '"><span>%</span></div></div>').join('') +
-      '</div><div class="small muted" style="margin-top:10px">ราคาตั้งต้นที่ผู้รับเหมาเห็น = ราคาขาย × % ของประเภทงาน · <b>มีผลกับ Order ที่ยืนยันหลังจากบันทึก</b> — Order ที่ยืนยันแล้วใช้อัตราเดิมที่บันทึกไว้' + (DB.settings.ratesAt ? ' · แก้ล่าสุด ' + fmtDT(DB.settings.ratesAt) + ' โดย ' + esc(DB.settings.ratesBy || '') : '') + '</div></div>' +
-      '<div class="card-f"><span class="spacer"></span><button class="btn primary" data-act="rateSave">' + icon('check', 'sm') + ' บันทึกอัตรา</button></div></div>' +
+    '<div class="card"><div class="card-h"><h2>' + icon('lock') + ' ประเภทงาน · อัตราค่าติดตั้งผู้รับเหมา</h2><span class="xs muted">เฉพาะภายใน</span></div><div class="card-b"><div id="rt">' + typEditor() + '</div>' +
+      '<div class="xs muted" style="margin-top:10px">ลบ = ซ่อนจากตัวเลือกตอนสร้าง Order — Order เดิมยังแสดงชื่อและใช้อัตราเดิม · กู้คืนได้</div>' +
+      '<div class="small muted" style="margin-top:10px">ราคาตั้งต้นที่ผู้รับเหมาเห็น = ราคาขาย × % ของประเภทงาน · <b>มีผลกับ Order ที่ยืนยันหลังจากบันทึก</b> — Order ที่ยืนยันแล้วใช้อัตราเดิมที่บันทึกไว้' + (DB.settings.ratesAt ? ' · แก้ล่าสุด ' + fmtDT(DB.settings.ratesAt) + ' โดย ' + esc(DB.settings.ratesBy || '') : '') + '</div></div>' +
+      '<div class="card-f"><button class="btn sm" data-act="typAdd">' + icon('plus', 'sm') + ' เพิ่มประเภทงาน</button><span class="spacer"></span><button class="btn primary" data-act="rateSave">' + icon('check', 'sm') + ' บันทึก</button></div></div>' +
     '<div class="card"><div class="card-h"><h2>' + icon('wallet') + ' การชำระเงินผู้รับเหมา</h2></div><div class="card-b"><div id="pc" class="form-grid">' +
       '<div class="field c6"><label>หลังจบงาน จ่ายภายใน</label><div class="addon"><input class="input" name="days" inputmode="numeric" value="' + pc.days + '"><span>วัน</span></div><div class="help">นับจากวันที่ตรวจรับใบส่งมอบ</div></div>' +
       '<div class="field c6"><label>มัดจำ 30% จ่ายภายใน</label><div class="addon"><input class="input" name="depDays" inputmode="numeric" value="' + pc.depDays + '"><span>วัน</span></div><div class="help">นับจาก' + DEP_WHEN[pc.depWhen === 'start' ? 'start' : 'approve'] + '</div></div>' +
@@ -6134,15 +6151,60 @@ route(/^\/admin\/settings$/, 'admin', () => {
       '<button class="btn danger" data-act="wipeOrders">' + icon('trash', 'sm') + ' ลบ Order ทั้งหมด</button></div>' +
       '<div class="xs muted" style="margin-top:8px">ตอนนี้มี Order ' + DB.orders.length + ' รายการ (ยังไม่ยกเลิก ' + DB.orders.filter((o) => !o.cancelledAt).length + ')</div></div></div>' };
 });
+/* V7.18.11: การ์ดประเภทงาน · อัตราค่าติดตั้ง — เพิ่ม / แก้ชื่อ คำอธิบาย สี อัตรา / ลบ (= ซ่อน) · บันทึกทีเดียว (cn_save_types) */
+const TYP = { L: null, n: 0 };
+window.addEventListener('hashchange', () => { if (!/^#\/admin\/settings/.test(location.hash)) TYP.L = null; });
+function typDraft() { if (!TYP.L) TYP.L = typesAll().map((t) => ({ k: t.k, name: t.name, th: t.th || '', color: t.color || '', gone: !!t.gone, rate: rateNow(t.k), isNew: false })); return TYP.L; }
+function typSync() {
+  if (!TYP.L) return;
+  $$('#rt .typ-row').forEach((row) => { const t = TYP.L.find((x) => x.k === row.dataset.k); if (!t || t.gone) return; const g = (n) => row.querySelector('[name=' + n + ']');
+    t.name = g('name').value; t.th = g('th').value; t.rate = g('rate').value.trim() === '' ? null : parseNum(g('rate').value); if (g('color')) t.color = g('color').value; });
+}
+function typEditor() {
+  const L = typDraft(), row = (t) => '<div class="typ-row' + (t.gone ? ' off' : '') + (t.isNew ? ' new' : '') + '" data-k="' + esc(t.k) + '">' +
+    (MAT_BUILTIN[t.k] ? '<span class="typ-sw"><i class="mat-' + t.k + '"></i></span>' : '<input type="color" class="typ-col" name="color" value="' + esc(t.color || '#8A94A6') + '" aria-label="สีของประเภทงาน"' + (t.gone ? ' disabled' : '') + '>') +
+    '<input class="input" name="name" value="' + esc(t.name) + '" maxlength="40" placeholder="ชื่อ เช่น HPL" aria-label="ชื่อประเภทงาน"' + (t.gone ? ' disabled' : '') + '>' +
+    '<input class="input typ-th" name="th" value="' + esc(t.th) + '" maxlength="60" placeholder="คำอธิบาย (ไม่บังคับ)" aria-label="คำอธิบาย"' + (t.gone ? ' disabled' : '') + '>' +
+    '<div class="addon typ-rate"><input class="input" name="rate" inputmode="decimal" value="' + (t.rate != null ? t.rate : '') + '" aria-label="อัตรา %"' + (t.gone ? ' disabled' : '') + '><span>%</span></div>' +
+    (t.gone ? '<button type="button" class="btn sm" data-act="typHide" data-k="' + esc(t.k) + '">' + icon('undo', 'sm') + ' กู้คืน</button>'
+      : '<button type="button" class="btn sm ghost" data-act="typHide" data-k="' + esc(t.k) + '" aria-label="ลบ ' + esc(t.name || 'ประเภทนี้') + '" title="ลบ = ซ่อนจากตัวเลือกตอนสร้าง Order (Order เดิมยังแสดงชื่อเดิม)">' + icon('trash', 'sm') + '</button>') + '</div>';
+  return '<div class="typ-list">' + L.filter((t) => !t.gone).map(row).join('') + '</div>' +
+    (L.some((t) => t.gone) ? '<div class="xs muted" style="margin:12px 0 4px">ซ่อนอยู่ — ไม่ขึ้นให้เลือกตอนสร้าง Order (Order เดิมยังแสดงชื่อเดิม)</div><div class="typ-list">' + L.filter((t) => t.gone).map(row).join('') + '</div>' : '');
+}
+on('typAdd', () => { typSync(); const L = typDraft(); L.push({ k: '__n' + (++TYP.n), name: '', th: '', color: MAT_COLORS[L.length % MAT_COLORS.length], gone: false, rate: null, isNew: true }); rerender({ keep: true });
+  setTimeout(() => { const f = $('#rt .typ-row.new:last-of-type [name=name]'); if (f) f.focus(); }, 30); });
+on('typHide', (el) => {
+  typSync(); const L = typDraft(), t = L.find((x) => x.k === el.dataset.k); if (!t) return;
+  if (t.isNew) TYP.L = L.filter((x) => x !== t);
+  else { if (!t.gone && L.filter((x) => !x.gone).length <= 1) { toast('ต้องมีประเภทงานที่เปิดใช้อย่างน้อย 1 ประเภท', 'err'); return; } t.gone = !t.gone; }
+  rerender({ keep: true });
+});
 on('rateSave', () => {
-  const nv = {}; for (const t of TYPES) { const v = r2(parseNum($('#rt [name=' + t.k + ']').value)); if (!(v > 0 && v <= 100)) { toast('อัตรา ' + t.name + ' ต้องมากกว่า 0 และไม่เกิน 100%', 'err'); return; } nv[t.k] = v; }
-  const ch = TYPES.filter((t) => nv[t.k] !== rateNow(t.k));
-  if (!ch.length) { toast('อัตราไม่มีการเปลี่ยนแปลง'); return; }
+  typSync(); const L = typDraft();
+  for (const t of L) {
+    t.name = String(t.name || '').trim(); t.th = String(t.th || '').trim();
+    if (!t.name) { toast('กรอกชื่อประเภทงานให้ครบ', 'err'); return; }
+    if (!t.gone && !(t.rate > 0 && t.rate <= 100)) { toast('อัตรา ' + t.name + ' ต้องมากกว่า 0 และไม่เกิน 100%', 'err'); return; }
+  }
+  const live = L.filter((t) => !t.gone).map((t) => t.name.toLowerCase());
+  if (live.some((n, i) => live.indexOf(n) !== i)) { toast('ชื่อประเภทงานซ้ำกัน', 'err'); return; }
+  L.forEach((t) => { if (!t.isNew) return; let b = t.name.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12); if (!/^[A-Z][A-Z0-9]+$/.test(b)) b = 'T' + Date.now().toString(36).toUpperCase().slice(-6);
+    let k = b, i = 2; while (L.some((x) => x !== t && (x.isNew ? x.newK : x.k) && String(x.isNew ? x.newK : x.k).toUpperCase() === k.toUpperCase())) k = b.slice(0, 13) + i++; t.newK = k; });
+  const types = L.map((t) => ({ k: t.isNew ? t.newK : t.k, name: t.name, th: t.th, color: MAT_BUILTIN[t.k] ? '' : t.color, gone: t.gone })), rates = {};
+  L.forEach((t, i) => { if (!t.gone) rates[types[i].k] = Math.round(t.rate * 100) / 100; });
+  const old = typesAll(), ch = [];
+  L.forEach((t, i) => { const o = old.find((x) => x.k === t.k), k = types[i].k;
+    if (t.isNew) { ch.push('เพิ่มประเภทงาน <b>' + esc(t.name) + '</b> · อัตรา ' + rates[k] + '%'); return; }
+    if (o && o.name !== t.name) ch.push(esc(o.name) + ' → เปลี่ยนชื่อเป็น <b>' + esc(t.name) + '</b>');
+    if (!!(o && o.gone) !== t.gone) ch.push((t.gone ? 'ลบ (ซ่อน) ' : 'กู้คืน ') + '<b>' + esc(t.name) + '</b>');
+    if (!t.gone && rateNow(k) !== rates[k]) ch.push(esc(t.name) + ': ' + (rateNow(k) != null ? rateNow(k) + '%' : '—') + ' → <b>' + rates[k] + '%</b>');
+    if (o && ((o.th || '') !== t.th || (o.color || '') !== (types[i].color || ''))) ch.push('แก้คำอธิบาย / สี ของ ' + esc(t.name)); });
+  if (!ch.length) { toast('ไม่มีการเปลี่ยนแปลง'); return; }
   const drafts = DB.orders.filter((o) => !o.confirmedAt).length;
-  modal({ title: icon('lock') + ' เปลี่ยนอัตราค่าติดตั้ง?', body: '<ul style="margin:0 0 12px;padding-left:20px;line-height:1.9">' + ch.map((t) => '<li>' + t.name + ': ' + rateNow(t.k) + '% → <b>' + nv[t.k] + '%</b></li>').join('') + '</ul>' +
-      notice('info', 'Order ที่ยืนยันแล้วใช้อัตราเดิม · Order ร่าง ' + drafts + ' รายการจะใช้อัตราใหม่เมื่อยืนยัน'),
-    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="rateSaveOk">' + icon('check', 'sm') + ' บันทึกอัตรา</button>' });
-  Acts.rateSaveOk = async () => { await rpc('cn_save_settings', { p_rates: nv, p_pay: null }); await refresh(); closeOverlay(); toast('บันทึกอัตราค่าติดตั้งแล้ว'); rerender(); };
+  modal({ title: icon('lock') + ' บันทึกประเภทงาน / อัตราค่าติดตั้ง?', body: '<ul style="margin:0 0 12px;padding-left:20px;line-height:1.9">' + ch.map((x) => '<li>' + x + '</li>').join('') + '</ul>' +
+      notice('info', 'Order ที่ยืนยันแล้วใช้อัตราเดิม · Order ร่าง ' + drafts + ' รายการจะใช้อัตราใหม่เมื่อยืนยัน · ประเภทที่ซ่อน: Order เดิมยังแสดงชื่อเดิม และกู้คืนได้'),
+    foot: '<button class="btn" data-act="closeOv">ยกเลิก</button><button class="btn primary" data-act="rateSaveOk">' + icon('check', 'sm') + ' บันทึก</button>' });
+  Acts.rateSaveOk = async () => { await rpc('cn_save_types', { p_types: types, p_rates: rates }); TYP.L = null; await refresh(); closeOverlay(); toast('บันทึกประเภทงาน / อัตราค่าติดตั้งแล้ว'); rerender(); };
 });
 on('paySet', async () => {
   const g = (n) => parseNum($('#pc [name=' + n + ']').value), days = g('days'), depDays = g('depDays');
