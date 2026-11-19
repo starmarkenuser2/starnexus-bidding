@@ -1457,7 +1457,7 @@ function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toS
 
 /* ---------- ค่าระบบ ---------- */
 /* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.0' : 'V7.18.11';
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.1' : 'V7.18.12';
 const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
@@ -7801,6 +7801,21 @@ on('folTog', async (el) => {
    ===================================================================== */
 const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0, depSig: '', depNew: false };
 const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'ax', 'who'];
+function prdTxtC(L, n, w) { return (Array.isArray(L) ? L : []).filter((t) => typeof t === 'string' && t).slice(0, n).map((t) => t.slice(0, w)); }
+function prdMatC(m) {   /* SPN V1.8.1 / CN V7.18.12: วัตถุดิบที่ใช้ต่อรายการ (Production V302) — เส้นยาว + ไส้ใน AX (ยอดรวมของแถว) · ไม่มีราคา */
+  const o = {}; if (m.bar != null && typeof m.bar !== 'object' && String(m.bar)) o.bar = String(m.bar).slice(0, 60);
+  const r = (Array.isArray(m.raw) ? m.raw : []).filter((c) => c && typeof c === 'object' && c.c).slice(0, 12).map((c) => ({ c: String(c.c).slice(0, 60), q: +c.q || 0, u: String(c.u || 'EA').slice(0, 12) }));
+  if (r.length) o.raw = r; return o;
+}
+function prdWdC(W) {   /* รายการเบิกต่อแผนก { <แผนก>: { bars, raw, mc } } (Production V302) */
+  const o = {};
+  Object.keys(W).slice(0, 30).forEach((k) => { const v = W[k]; if (!/^[a-z0-9]{1,24}$/.test(k) || !v || typeof v !== 'object') return;
+    const x = { bars: (Array.isArray(v.bars) ? v.bars : []).filter((b) => b && typeof b === 'object' && b.c).slice(0, 40).map((b) => ({ c: String(b.c).slice(0, 60), n: String(b.n || '').slice(0, 120), len: +b.len || 0, q: +b.q || 0, u: String(b.u || 'EA').slice(0, 12), use: prdTxtC(b.use, 30, 80), plan: prdTxtC(b.plan, 30, 200) })),
+      raw: (Array.isArray(v.raw) ? v.raw : []).filter((r) => r && typeof r === 'object' && r.c).slice(0, 60).map((r) => ({ c: String(r.c).slice(0, 60), n: String(r.n || '').slice(0, 120), q: +r.q || 0, u: String(r.u || 'EA').slice(0, 12), use: prdTxtC(r.use, 30, 80) })) };
+    if (+v.mc > 1) x.mc = Math.min(99, Math.floor(+v.mc));
+    if (x.bars.length || x.raw.length) o[k] = x; });
+  return o;
+}
 function prdClean(x) {   /* ส่งเฉพาะช่องที่กำหนด (Server ตัดซ้ำ) — ไม่มีราคา */
   const pick = (o, ks) => { const r = {}; ks.forEach((k) => { if (o && o[k] != null && typeof o[k] !== 'object') r[k] = o[k]; }); return r; };
   const arr = (v, n) => (Array.isArray(v) ? v : []).slice(0, n);
@@ -7811,7 +7826,9 @@ function prdClean(x) {   /* ส่งเฉพาะช่องที่กำ�
     colors: arr(x.cut.colors, 80).map((c) => Object.assign(pick(c, ['code', 'short', 'name', 'm2', 'pcs', 'rows']), { specs: arr(c.specs, 20).map((s) => pick(s, ['spec', 'name', 'm2', 'pcs'])) })),
     parts: arr(x.cut.parts, 1500).map((p) => pick(p, ['cab', 'name', 'bc', 'w', 'l', 't', 'q', 'mat', 'top', 'bot', 'm2'])),
     mats: arr(x.cut.mats, 120).map((m) => pick(m, ['code', 'rows', 'pcs', 'paint'])) });
-  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab', 'dep', 'depName', 'no'])) });   /* V1.3: แผนก · V1.4: เลขที่เอกสารของแผนก */
+  if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => Object.assign(pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab', 'dep', 'depName', 'no']),
+      i && i.mat && typeof i.mat === 'object' && !Array.isArray(i.mat) ? { mat: prdMatC(i.mat) } : {})) },   /* V1.3: แผนก · V1.4: เลขที่เอกสารของแผนก · V1.8.1: วัตถุดิบที่ใช้ */
+    x.mo.wd && typeof x.mo.wd === 'object' && !Array.isArray(x.mo.wd) ? { wd: prdWdC(x.mo.wd) } : {});   /* V1.8.1: รายการเบิกต่อแผนก (ไม่มี = Server คงค่าเดิม) */
   if (x.due && typeof x.due === 'object') {   /* SPN V1.5 (Production V282): วันติดตั้ง + กำหนดจบ (งานสี / ต่อแผนก) */
     const one = (v) => (v && typeof v === 'object' ? pick(v, ['d', 'n', 'ov']) : null), ds = {};
     Object.keys(x.due.deps || {}).slice(0, 30).forEach((k) => { const v = one(x.due.deps[k]); if (v && /^[a-z0-9]{1,24}$/.test(k)) ds[k] = v; });
