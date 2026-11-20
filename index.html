@@ -1457,7 +1457,7 @@ function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toS
 
 /* ---------- ค่าระบบ ---------- */
 /* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.1' : 'V7.18.12';
+const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.1' : 'V7.18.13';
 const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
@@ -7824,7 +7824,7 @@ function prdClean(x) {   /* ส่งเฉพาะช่องที่กำ�
     lines: arr(d.lines, 400).map((l) => Object.assign(pick(l, ['code', 'name', 'qty', 'unit', 'loc', 'pool']), Array.isArray(l.bom) ? { bom: l.bom.slice(0, 30).map((b) => pick(b, ['code', 'name', 'qty', 'unit'])) } : {})) })) });
   if (x.cut && typeof x.cut === 'object') out.cut = Object.assign(pick(x.cut, ['paintOnly', 'at', 'by', 'total', 'pcs', 'rows', 'all', 'more']), {   /* V1.3: paintOnly = ส่งเฉพาะงานสี */
     colors: arr(x.cut.colors, 80).map((c) => Object.assign(pick(c, ['code', 'short', 'name', 'm2', 'pcs', 'rows']), { specs: arr(c.specs, 20).map((s) => pick(s, ['spec', 'name', 'm2', 'pcs'])) })),
-    parts: arr(x.cut.parts, 1500).map((p) => pick(p, ['cab', 'name', 'bc', 'w', 'l', 't', 'q', 'mat', 'top', 'bot', 'm2'])),
+    parts: arr(x.cut.parts, 1500).map((p) => pick(p, ['cab', 'name', 'bc', 'pid', 'w', 'l', 't', 'q', 'mat', 'top', 'bot', 'm2'])),
     mats: arr(x.cut.mats, 120).map((m) => pick(m, ['code', 'rows', 'pcs', 'paint'])) });
   if (x.mo && typeof x.mo === 'object') out.mo = Object.assign(pick(x.mo, ['at', 'by']), { items: arr(x.mo.items, 600).map((i) => Object.assign(pick(i, ['sec', 'code', 'name', 'spec', 'qty', 'unit', 'cab', 'dep', 'depName', 'no']),
       i && i.mat && typeof i.mat === 'object' && !Array.isArray(i.mat) ? { mat: prdMatC(i.mat) } : {})) },   /* V1.3: แผนก · V1.4: เลขที่เอกสารของแผนก · V1.8.1: วัตถุดิบที่ใช้ */
@@ -7834,12 +7834,31 @@ function prdClean(x) {   /* ส่งเฉพาะช่องที่กำ�
     Object.keys(x.due.deps || {}).slice(0, 30).forEach((k) => { const v = one(x.due.deps[k]); if (v && /^[a-z0-9]{1,24}$/.test(k)) ds[k] = v; });
     out.due = Object.assign(pick(x.due, ['install', 'show', 'sun']), { deps: ds }, one(x.due.paint) ? { paint: one(x.due.paint) } : {}, one(x.due.lm) ? { lm: one(x.due.lm) } : {});   /* V1.7.3: + ปิดผิว (lm) · นับวันอาทิตย์ (sun) */
   }
+  if (typeof x.lot === 'string') out.lot = x.lot.replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, 40);   /* SPN V1.8.6 (Production V309): LOT ของ Order ที่แผนพิมพ์เอง · ว่าง = ล้าง */
+  if (x.rs && typeof x.rs === 'object' && !Array.isArray(x.rs)) {   /* SPN V1.8.9 (Production V315): เวลากด 📤 ส่ง (ms) ต่อส่วน → Server กู้งานที่ Admin ลบ (ซ่อน) ไว้ก่อนกด */
+    const rs = {}; ['at', 'lm', 'paint', 'mo'].forEach((k) => { const v = Math.floor(Number(x.rs[k])); if (isFinite(v) && v > 0 && v < 32503680000000) rs[k] = v; });
+    if (Object.keys(rs).length) out.rs = rs;
+  }
   if (x.none && typeof x.none === 'object') {   /* SPN V1.7 (Production V287): แผนกดแจ้ง “Order นี้ไม่มีงาน…” — เวลาที่กด (ms) ต่อประเภท */
     const nn = {}; ['lm', 'paint', 'mo'].forEach((k) => { const v = Number(x.none[k]); if (isFinite(v) && v > 0) nn[k] = Math.floor(v); });
     if (Object.keys(nn).length) out.none = nn;
   }
   return out;
 }
+/* SPN V1.8.9 (ผู้ใช้ 20/11 09:01 “ลบ Order ใน SPN — มีประวัติเอกสารให้ขึ้นส้ม ลูกศร เคยส่งแล้ว · ลบเอกสารด้วยให้กลับเป็นแดง”):
+   กรอบ SPN ใน Production อ่านงานที่ Admin ลบ (ซ่อน / ถาวร · cn_prd_gone) แล้วส่งให้ Production (คำสั่ง prdgone · Production เก็บในเครื่อง ไม่เขียนไฟล์กลาง)
+   ทุก ≤ 60 วิ ตอนซิงก์ + ทันทีหลัง Admin ลบ / กู้คืน / ลบถาวร · ยังไม่ได้รัน SQL V1.8.9 / Production รุ่นเก่า = พัก 10 นาที (ไม่กระทบการส่งเอกสาร) */
+async function prdGonePush(force) {
+  if (!SNB_FRAMED || Date.now() < (PRDS.goneOff || 0)) return;
+  let m = null;
+  try { m = (await rpc('cn_prd_gone')) || {}; }
+  catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_gone/.test(e.message || '')) PRDS.goneOff = Date.now() + 600000; return; }
+  const sig = JSON.stringify(m);
+  if (!force && sig === PRDS.goneSig && Date.now() - (PRDS.gonePush || 0) < 300000) return;
+  try { await snbCall('prdgone', { v: 1, at: Date.now(), m }, 15000); PRDS.goneSig = sig; PRDS.gonePush = Date.now(); }
+  catch (e) { if (/ไม่รู้จักคำสั่ง/.test(e.message || '')) PRDS.goneOff = Date.now() + 600000; }
+}
+function prdGoneSoon() { PRDS.goneSig = ''; PRDS.goneAt = 0; clearTimeout(PRDS.goneT); PRDS.goneT = setTimeout(() => { prdGonePush(true).catch(() => {}); }, 400); }
 async function prdSync(force) {
   if (PRDS.busy && force) PRDS.again = true;   /* SPN V1.7: Production กดส่งระหว่างที่กำลังส่งรอบก่อน → ส่งต่ออีกรอบทันทีหลังจบ (เดิมรอรอบ 30 วิ) */
   if (!snsOk() || PRDS.busy || (!force && (Date.now() - PRDS.at < 30000 || Date.now() < PRDS.off))) return;
@@ -7865,8 +7884,19 @@ async function prdSync(force) {
         try { await rpc('cn_prd_none', { p_rows: nr }); }
         catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_none/.test(e.message || '')) PRDS.noneOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL V7.18.7 — ส่งเอกสารต่อได้ (แจ้งไม่มีงานยังไม่ทำงาน) */
       }
+      const lr = rows.filter((x) => typeof x.lot === 'string').map((x) => ({ oid: x.oid, lot: x.lot }));   /* SPN V1.8.6: LOT */
+      if (lr.length && Date.now() > (PRDS.lotOff || 0)) {
+        try { await rpc('cn_prd_lot', { p_rows: lr }); }
+        catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_lot/.test(e.message || '')) PRDS.lotOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL SPN V1.8.6 — ส่งเอกสารต่อได้ (LOT ยังไม่ขึ้น) */
+      }
+      const rr = rows.filter((x) => x.rs).map((x) => ({ oid: x.oid, rs: x.rs }));   /* SPN V1.8.9 (ผู้ใช้ 20/11 08:28 “กด 📤 ส่งจาก Production แล้วให้งานที่ลบใน SPN กลับมาเสมอ”) */
+      if (rr.length && Date.now() > (PRDS.rsOff || 0)) {
+        try { const g = await rpc('cn_prd_restore', { p_rows: rr }); if (g && g.n) PRDS.back = (PRDS.back || 0) + g.n; }
+        catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_restore/.test(e.message || '')) PRDS.rsOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL SPN V1.8.9 — ส่งเอกสารต่อได้ (งานที่ลบยังไม่กลับ) */
+      }
       if (!(r && r.more)) break;
     }
+    if (n || force || Date.now() - (PRDS.goneAt || 0) > 60000) { PRDS.goneAt = Date.now(); await prdGonePush(); }   /* SPN V1.8.9: งานที่ลบ → Production */
     PRDS.last = { at: Date.now(), n };
     if (PRDS.depNew && typeof prdStLoad === 'function') { PRDS.depNew = false; await prdStLoad(true); }   /* แท็บแผนกใหม่ขึ้นทันที */
     if (n) { await refresh(); if (/^\/prd\//.test(curPath()) && !isEditing() && !$('#overlay.on')) rerender(); }
