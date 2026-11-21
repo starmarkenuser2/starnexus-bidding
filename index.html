@@ -1165,7 +1165,7 @@ body.slv-on{overflow:hidden}
   .toast .btn.pu-b{flex:1 1 100%;min-height:44px}
   .t.resp td.prd-admc{display:flex;justify-content:space-between}
 }
-/* ===== Starmark SPN V1.0 (Support Production Nexus) — ไลน์ผลิต 4 สถานี · ติ๊กสถานะรายการ · ความคืบหน้า ===== */
+/* ===== Starmark PSN V1.0 (Support Production Nexus) — ไลน์ผลิต 4 สถานี · ติ๊กสถานะรายการ · ความคืบหน้า ===== */
 .spn-logo{flex:none;width:34px;height:34px;border-radius:9px;background:#F0A63A;color:#14233B;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;letter-spacing:.3px;line-height:1}
 .spn-logo.sm{width:28px;height:28px;font-size:10px;border-radius:7px}
 .spn-logo.big{width:52px;height:52px;font-size:16px;border-radius:13px}
@@ -1456,12 +1456,12 @@ function fmtBytes(b) { b = Number(b) || 0; return b < 1024 ? b + ' B' : b < 1048
 function rid(p) { return (p || '') + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 /* ---------- ค่าระบบ ---------- */
-/* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark SPN (Support Production Nexus · ไลน์ผลิต) */
-const APP_NAME = APP_KIND === 'spn' ? 'Support Production Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.8.1' : 'V7.18.13';
-const APP_SHORT = APP_KIND === 'spn' ? 'Starmark SPN' : 'Starmark CN';
+/* V7.18: โค้ดชุดเดียวสร้าง 2 แอป — APP_KIND มาจาก build.py: 'cn' = Contractor Nexus · 'spn' = Starmark PSN (Support Production Nexus · ไลน์ผลิต) */
+const APP_NAME = APP_KIND === 'spn' ? 'Plan & Support Nexus' : 'Contractor Nexus', APP_VERSION = APP_KIND === 'spn' ? 'V1.9.0' : 'V7.18.14';   /* V7.18.14: ชื่อแอปไลน์ผลิต SPN → PSN (Plan & Support Nexus) · ตัวส่งสำรองส่งแผนผลิต */
+const APP_SHORT = APP_KIND === 'spn' ? 'Starmark PSN' : 'Starmark CN';
 /* V7.9: ลิงก์ที่ผู้รับเหมาใช้เปิดโปรแกรม (GitHub Pages) — V7.9.2 แสดงเฉพาะหน้าผู้รับเหมา (Admin ดูหน้าจอผู้รับเหมา) ให้คัดลอกส่งผู้รับเหมา / เปิดดูได้ */
 const CONTRACTOR_URL = 'https://starmarkenuser2.github.io/starnexus-bidding/';
-/* V7.18: ลิงก์แอป Starmark SPN (GitHub Pages repo starmark-spn บัญชีเดียวกับ CN) · ลิงก์ที่แชร์ของแต่ละแอป */
+/* V7.18: ลิงก์แอป Starmark PSN (GitHub Pages repo starmark-spn บัญชีเดียวกับ CN) · ลิงก์ที่แชร์ของแต่ละแอป */
 const SPN_URL = 'https://starmarkenuser2.github.io/starmark-spn/';
 const APP_URL = APP_KIND === 'spn' ? SPN_URL : CONTRACTOR_URL;
 const BID_DAYS = 10; /* ค่าเริ่มต้น — V7.11: Admin ตั้งได้ 1–60 วัน (ตั้งค่าระบบ) · แต่ละ Order ใช้วันที่ล็อกไว้ตอนยืนยัน (o.bidDays) · ผู้รับเหมาเปลี่ยนไม่ได้ */
@@ -2102,7 +2102,7 @@ function navFor(area) {
     { h: '#/pur/queue', i: 'users', t: 'ตรวจสอบคิวผู้รับเหมา' },
     { h: '#/pur/booking', i: 'calendar', t: 'Booking ผู้รับเหมา' },
     { h: '#/pur/ibooking', i: 'calendar', t: 'Booking ช่างโรงงาน' },
-  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark SPN (จัดซื้อไม่ต้องกดแล้ว) */
+  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark PSN (จัดซื้อไม่ต้องกดแล้ว) */
   if (area === 'acc') return [
     { h: '#/acc/review', i: 'file', t: 'ตรวจใบส่งมอบงาน', n: c.check, w: true, tip: NAV_TIP.check },
     { h: '#/acc/pay', i: 'wallet', t: 'การเงินผู้รับเหมา', n: c.payDue, w: true, tip: NAV_TIP.payDue },
@@ -2119,7 +2119,7 @@ function navFor(area) {
     { h: '#/wh/issue', i: 'truck', t: 'ยิงจ่ายออก', s: 'จ่ายออก', n: c.whDue, w: true, tip: NAV_TIP.whDue },
     { h: '#/wh/stock', i: 'box', t: 'สินค้าในคลัง', s: 'ในคลัง' },
     { h: '#/wh/locs', i: 'shelf', t: 'โลเคชั่น', s: 'โลเคชั่น' },
-  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark SPN */
+  ];   /* V7.18: งานสั่งทำย้ายไปสถานี Support ในแอป Starmark PSN */
   if (area === 'prd') return S.user.role === 'warehouse' ? navFor('wh') : S.user.role === 'purchasing' ? navFor('pur') : [prdNavItem(c)];   /* V7.17 */
   const k = conCounts(curCid());
   return [
@@ -2532,7 +2532,7 @@ Object.assign(HELP_NAV, {
   '#/wh/issue': 'ยิงห่อออกจากคลังขึ้นรถไปหน้างาน',
   '#/wh/stock': 'ดูว่าห่อไหนอยู่โลเคชั่นไหน',
   '#/wh/locs': 'ตั้งชื่อโลเคชั่น (โซน-แถว-ชั้น) และจำนวนห่อที่ลงได้',
-  '#/prd/orders': 'ไลน์ผลิตย้ายไปแอป Starmark SPN แล้ว — หน้านี้มีปุ่มพาไป',
+  '#/prd/orders': 'ไลน์ผลิตย้ายไปแอป Starmark PSN แล้ว — หน้านี้มีปุ่มพาไป',
   '#/con/open': 'งานใหม่รอท่านใส่ราคา — ใส่ราคาก่อนหมดเวลา',
   '#/con/sent': 'งานที่ท่านเสนอราคาแล้ว รอบริษัทอนุมัติ',
   '#/con/work': 'งานที่ท่านได้ — ยิงรับของ (เริ่มงาน) แล้วส่งใบส่งมอบเมื่อเสร็จ',
@@ -3116,7 +3116,7 @@ route(/^\/admin\/users$/, 'admin', () => {
       '<td class="r"><span class="row" style="justify-content:flex-end;gap:4px"><button class="btn xs" data-act="userForm" data-id="' + u.id + '">' + icon('edit', 'xs') + ' แก้ไข</button>' +
       (u.super || me ? '' : '<button class="btn xs" data-act="userToggle" data-id="' + u.id + '">' + (u.active ? 'ปิดใช้งาน' : 'เปิดใช้งาน') + '</button><button class="btn xs danger" data-act="userDel" data-id="' + u.id + '" aria-label="ลบ ' + esc(u.username) + '">' + icon('trash', 'xs') + '</button>') + '</span></td></tr>'; }).join('') +
     '</tbody></table></div></div>' +
-    '<div style="margin-top:12px">' + notice('info', 'บัญชีฝ่ายผลิต' + (nPrd ? ' (' + nPrd + ' บัญชี)' : '') + ' จัดการในแอป Starmark SPN → เมนู “บัญชีผู้ใช้” (ระบุแผนกได้) · Admin ใช้ Username / รหัสเดิมเข้า SPN ได้') + '</div>' +
+    '<div style="margin-top:12px">' + notice('info', 'บัญชีฝ่ายผลิต' + (nPrd ? ' (' + nPrd + ' บัญชี)' : '') + ' จัดการในแอป Starmark PSN → เมนู “บัญชีผู้ใช้” (ระบุแผนกได้) · Admin ใช้ Username / รหัสเดิมเข้า PSN ได้') + '</div>' +
     '<div class="sec-t">' + icon('building') + ' บริษัทผู้รับเหมา <span class="n">' + DB.contractors.length + '</span> <span class="xs muted" style="font-weight:400">เพิ่มบริษัทใหม่ได้ตอนเพิ่มผู้ใช้ประเภทผู้รับเหมา</span></div>' +
     '<div class="card"><div class="table-wrap"><table class="t resp"><thead><tr><th>บริษัท</th><th>ผู้ติดต่อ</th><th class="r">ช่างในทีม</th><th>บัญชีผู้ใช้</th><th class="r">จัดการ</th></tr></thead><tbody>' +
     (DB.contractors.length ? DB.contractors.map((c) => { const n = us.filter((u) => u.cid === c.id); return '<tr><td class="main"><b>' + esc(c.company) + '</b><div class="sub mono">' + esc(c.id) + '</div></td><td data-l="ผู้ติดต่อ" class="small">' + esc(c.contact || '—') + (c.phone ? '<div class="sub">' + esc(c.phone) + '</div>' : '') + '</td><td data-l="ช่าง" class="r">' + (c.team ? c.team + ' คน' : '—') + '</td>' +
@@ -7797,7 +7797,7 @@ on('folTog', async (el) => {
 
 /* =====================================================================
    ส่งเอกสารไลน์ผลิตขึ้นจาก Production (แอปเปิดในแท็บของ Production · ผู้ใช้ภายใน) — เฉพาะที่แผนกดส่ง (V272)
-   V7.18: แยกจาก prd.js — ใช้ทั้ง CN (สำรอง) และ Starmark SPN · หน้า Odoo V273 ให้ SPN ส่งก่อน (CN ส่งเมื่อไม่มีกรอบ SPN ที่เข้าระบบอยู่)
+   V7.18: แยกจาก prd.js — ใช้ทั้ง CN (สำรอง) และ Starmark PSN · หน้า Odoo V273 ให้ SPN ส่งก่อน (CN ส่งเมื่อไม่มีกรอบ SPN ที่เข้าระบบอยู่)
    ===================================================================== */
 const PRDS = { busy: false, at: 0, sigs: null, sigsAt: 0, last: null, off: 0, depSig: '', depNew: false };
 const PRD_HEAD = ['lot', 'date', 'due', 'endDate', 'prodPool', 'pdPool', 'detail', 'note', 'ax', 'who'];
@@ -7894,6 +7894,11 @@ async function prdSync(force) {
         try { const g = await rpc('cn_prd_restore', { p_rows: rr }); if (g && g.n) PRDS.back = (PRDS.back || 0) + g.n; }
         catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_restore/.test(e.message || '')) PRDS.rsOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL SPN V1.8.9 — ส่งเอกสารต่อได้ (งานที่ลบยังไม่กลับ) */
       }
+      const pr = rows.filter((x) => x.plan).map((x) => ({ oid: x.oid, plan: x.plan }));   /* PSN V1.9.0: แผนผลิต (เวลากด · ตู้ · ชิ้น · งาน Support ที่ Production รู้) */
+      if (pr.length && Date.now() > (PRDS.planOff || 0)) {
+        try { await rpc('cn_prd_plan_in', { p_rows: pr }); if (typeof PLAN !== 'undefined') PLAN.at = 0; }
+        catch (e) { if (e.code === 'session') throw e; if (e.code === 'PGRST202' || e.status === 404 || /cn_prd_plan_in/.test(e.message || '')) PRDS.planOff = Date.now() + 600000; }   /* ยังไม่ได้รัน SQL ส่วน 47 — ส่งเอกสารต่อได้ (แผนผลิตยังไม่มีตู้ / งาน Support) */
+      }
       if (!(r && r.more)) break;
     }
     if (n || force || Date.now() - (PRDS.goneAt || 0) > 60000) { PRDS.goneAt = Date.now(); await prdGonePush(); }   /* SPN V1.8.9: งานที่ลบ → Production */
@@ -7908,28 +7913,28 @@ async function prdSync(force) {
 if (SNB_FRAMED) setInterval(() => { prdSync(); }, 30000);
 
 /* =====================================================================
-   V7.18 — ไลน์ผลิตย้ายไปแอป Starmark SPN (Support Production Nexus) · ผู้ใช้ 14/11 16:37–16:54 “แยกออกจาก CN — ใน CN มีแค่ปุ่มไปที่ SPN”
+   V7.18 — ไลน์ผลิตย้ายไปแอป Starmark PSN (Support Production Nexus) · ผู้ใช้ 14/11 16:37–16:54 “แยกออกจาก CN — ใน CN มีแค่ปุ่มไปที่ SPN”
    ข้อมูล / บัญชี / แจ้งเตือนชุดเดิม (Supabase เดียวกัน) · CN ยังส่งเอกสารจาก Production ขึ้นได้ (สำรอง เมื่อไม่มีกรอบ SPN ที่เข้าระบบในหน้า Odoo)
    ===================================================================== */
 const PRD_ROLES = { admin: 1, production: 1 };
 function canPrd() { return !!S.user && !!PRD_ROLES[S.user.role]; }
 function prdNavCount() { return 0; }
-function prdNavItem() { return { h: '#/prd/orders', i: 'factory', t: 'ไลน์ผลิต → Starmark SPN', s: 'ไลน์ผลิต' }; }
+function prdNavItem() { return { h: '#/prd/orders', i: 'factory', t: 'ไลน์ผลิต → Starmark PSN', s: 'ไลน์ผลิต' }; }
 route(/^\/prd(?:\/(.*))?$/, 'prd', (m) => {
   const sub = m[0] ? String(m[0]) : 'orders', url = SPN_URL + '#/prd/' + sub;
-  return { nav: '#/prd/orders', html: pageHead('ไลน์ผลิตย้ายไปแอป Starmark SPN', 'สถานะไลน์ผลิต (ปิดผิว · ตัด · ทำสี · สั่งทำ) แยกเป็นแอปของตัวเองแล้ว — บัญชี / รหัสผ่านเดิม') +
+  return { nav: '#/prd/orders', html: pageHead('ไลน์ผลิตย้ายไปแอป Starmark PSN', 'สถานะไลน์ผลิต (ปิดผิว · ตัด · ทำสี · สั่งทำ) แยกเป็นแอปของตัวเองแล้ว — บัญชี / รหัสผ่านเดิม') +
     '<div class="card"><div class="card-b spn-go">' +
-      '<span class="spn-logo big" aria-hidden="true">SPN</span>' +
-      '<div><h2 style="margin:0">Starmark SPN · Support Production Nexus</h2>' +
+      '<span class="spn-logo big" aria-hidden="true">PSN</span>' +
+      '<div><h2 style="margin:0">Starmark PSN · Plan &amp; Support Nexus</h2>' +
         '<p class="small" style="margin:6px 0 0;line-height:1.6">ติ๊กสถานะ รับงานแล้ว · กำลังทำ · เสร็จแล้ว ทีละรายการ · ความคืบหน้า % · งานสั่งทำ (Support) · แจ้งเตือนเลือกหัวข้อได้ทุกสถานี<br>ข้อมูลทั้งหมดอยู่ที่เดิม — เข้าด้วย Username / Password เดียวกับ CN</p>' +
         '<div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap">' +
           (FRAMED && SNB.on ? '<button type="button" class="btn primary" data-act="snbNav" data-to="spn">' + icon('factory', 'sm') + ' ไปที่ Support Nexus (การ์ด 3)</button>' : '') +
-          '<a class="btn ' + (FRAMED && SNB.on ? '' : 'primary') + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + icon('external', 'sm') + ' เปิด Starmark SPN</a>' +
+          '<a class="btn ' + (FRAMED && SNB.on ? '' : 'primary') + '" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + icon('external', 'sm') + ' เปิด Starmark PSN</a>' +
           '<button type="button" class="btn" data-act="spnCopy">' + icon('copy', 'sm') + ' คัดลอกลิงก์</button></div>' +
-        '<div class="xs muted" style="margin-top:10px">มือถือ: เปิดลิงก์แล้วติดตั้งเป็นแอป “Starmark SPN” + กดเปิดการแจ้งเตือนในแอปนั้น (เครื่องที่ยังไม่ติดตั้ง SPN ยังได้รับแจ้งเตือนไลน์ผลิตผ่าน CN เหมือนเดิม)</div></div>' +
+        '<div class="xs muted" style="margin-top:10px">มือถือ: เปิดลิงก์แล้วติดตั้งเป็นแอป “Starmark PSN” + กดเปิดการแจ้งเตือนในแอปนั้น (เครื่องที่ยังไม่ติดตั้ง PSN ยังได้รับแจ้งเตือนไลน์ผลิตผ่าน CN เหมือนเดิม)</div></div>' +
     '</div></div>' };
 });
-on('spnCopy', () => copyText(SPN_URL).then((ok) => toast(ok ? 'คัดลอกลิงก์ Starmark SPN แล้ว' : 'คัดลอกไม่ได้ — ลิงก์: ' + SPN_URL, ok ? '' : 'err')));
+on('spnCopy', () => copyText(SPN_URL).then((ok) => toast(ok ? 'คัดลอกลิงก์ Starmark PSN แล้ว' : 'คัดลอกไม่ได้ — ลิงก์: ' + SPN_URL, ok ? '' : 'err')));
 
 })();
 
